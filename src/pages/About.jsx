@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 import AboutTop from "../assets/Images/about.jpg";
@@ -9,6 +9,14 @@ import SorotanProyek from "../components/about/SorotanProyek";
 import HubungiKami from "../components/about/HubungiKami";
 
 function AboutPage() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

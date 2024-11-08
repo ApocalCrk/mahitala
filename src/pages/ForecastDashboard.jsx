@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 import {
@@ -15,6 +15,14 @@ import RekomendasiAI from "../components/dashboard/RekomendasiAI";
 import ForecastKedepan from "../components/dashboard/ForecastKedepan";
 
 const ForecastDashboard = () => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
+  
   const weatherData = {
     location: "Sleman, Daerah Istimewa Yogyakarta",
     date: {
