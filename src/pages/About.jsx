@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
-import AboutTop from "../assets/Images/about.jpg";
+import AboutTop from "../assets/Images/about.jpeg";
 import HeaderTitle from "../components/about/HeaderTitle";
 import TujuanProyek from "../components/about/TujuanProyek";
 import TeknologiProyek from "../components/about/TeknologiProyek";
