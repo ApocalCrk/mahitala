@@ -5,7 +5,6 @@ import DiskusiTerakhir from "../../../components/forum/lastdiscussion/DiskusiTer
 import HeadDiskusiTerakhir from "../../../components/forum/lastdiscussion/HeadDiskusiTerakhir";
 
 const DiskusiTerakhirLayout = () => {
-  4;
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
