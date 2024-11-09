@@ -56,7 +56,6 @@ const RekomendasiAI = () => {
           <div className="ml-4">
             <div className="flex items-center gap-2">
               <h4 className="font-medium">Curah Hujan</h4>
-              <span className="text-sm">60%</span>
             </div>
             <p className="text-sm font-medium text-red-500">Tidak Ideal</p>
             <p className="text-xs text-gray-600 mt-1">
