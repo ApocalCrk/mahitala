@@ -27,7 +27,7 @@ function App() {
             </div>
           } />
           <Route path="/" element={<ForecastDashboard />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/tentang-kami" element={<About />} />
           <Route path="/forum" element={<ForumDiskusi />} />
           <Route path="/forum/buat-diskusi" element={<BuatDiskusi />} />
           <Route path="/forum/diskusi-terakhir" element={<DiskusiTerakhir />} />

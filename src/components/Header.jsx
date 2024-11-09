@@ -68,7 +68,7 @@ const Header = () => {
               Forum Diskusi
             </NavLink>
             <NavLink
-              to="/about"
+              to="/tentang-kami"
               className={({ isActive }) =>
                 `text-lg font-semibold px-5 py-3 rounded-md ${
                   isActive
@@ -126,7 +126,7 @@ const Header = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/about"
+                    to="/tentang-kami"
                     className={({ isActive }) =>
                       `text-2xl font-semibold ${
                         isActive ? "text-[#6C7D41]" : "text-black"
