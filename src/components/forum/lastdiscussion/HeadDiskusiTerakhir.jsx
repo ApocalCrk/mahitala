@@ -1,10 +1,18 @@
 import React from "react";
+import { FaChevronLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; 
 
 const HeadDiskusiTerakhir = () => {
+  const navigate = useNavigate();
+
   return (
-    <h2 className="text-2xl font-semibold text-[#6C7D41] mb-5">
+    <button
+      onClick={() => navigate(-1)}
+      className="flex justify-center items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
+    >
+      <FaChevronLeft className="mr-2" />
       Diskusi Terakhir
-    </h2>
+    </button>
   );
 };
 

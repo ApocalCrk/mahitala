@@ -1,12 +1,19 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaChevronLeft, FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const HeadKategori = ({ searchTerm, setSearchTerm }) => {
+  const navigate = useNavigate();
+
   return (
     <>
-      <h1 className="text-2xl font-bold text-[#6C7D41] mb-8">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex justify-center items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
+      >
+        <FaChevronLeft className="mr-2" />
         Kategori Diskusi
-      </h1>
+      </button>
       <div className="w-full md:w-1/3 flex items-center px-4 py-2 transition-all duration-300 rounded-lg bg-gray-200 focus-within:bg-gray-300 mb-6">
         <FaSearch className="text-gray-500" />
         <input

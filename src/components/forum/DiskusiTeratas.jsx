@@ -135,7 +135,7 @@ const DiskusiTeratas = () => {
           onClick={handlePrevious}
           disabled={currentPage === 1}
         >
-          Previous
+          Kembali
         </button>
         <span className="text-gray-500 text-sm">
           Halaman {currentPage} dari {totalPages}
@@ -149,7 +149,7 @@ const DiskusiTeratas = () => {
           onClick={handleNext}
           disabled={currentPage === totalPages}
         >
-          Next
+          Selanjutnya
         </button>
       </div>
     </>

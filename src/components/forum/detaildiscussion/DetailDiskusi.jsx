@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import ItemBalasanDiskusi from "./SubComponents/ItemBalasanDiskusi";
 import InputBalasDiskusi from "./SubComponents/InputBalasDiskusi";
 import ItemDiskusiPopuler from "./SubComponents/ItemDiskusiPopuler";
+import { FaChevronLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const DetailDiskusi = () => {
+  const navigate = useNavigate();
   const [replies, setReplies] = useState([
     {
       id: 1,
@@ -27,9 +29,13 @@ const DetailDiskusi = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 p-6 bg-white rounded-lg">
-        <h2 className="text-2xl font-bold text-[#6C7D41]">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex justify-center items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
+        >
+          <FaChevronLeft className="mr-2" />
           Teknologi dalam Pertanian Modern
-        </h2>
+        </button>
         <p className="text-gray-500 mb-4">
           Oleh Pengguna A • 02 November 2024 10:30 AM
         </p>

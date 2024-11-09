@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
 
 import {
   ClassicEditor,
@@ -39,6 +40,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 
 const FormBuatDiskusi = () => {
+  const navigate = useNavigate();
   const [editorData, setEditorData] = useState("");
   const [file, setFile] = useState(null);
 
@@ -212,10 +214,19 @@ const FormBuatDiskusi = () => {
         </div>
       </div>
 
-      <div className="my-6">
+      <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="w-full px-6 py-3 text-sm text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-300 font-semibold"
+        >
+          Kembali
+        </button>
+
+        {/* Submit button */}
         <button
           type="submit"
-          className="w-full px-6 py-3 text-sm text-white bg-[#6C7D41] rounded-lg shadow-lg hover:bg-[#5b6936] focus:outline-none focus:ring-2 focus:ring-[#6C7D41] transition-all duration-300 font-semibold"
+          className="w-full px-6 py-3 text-sm text-white bg-[#6C7D41] rounded-lg hover:bg-[#5b6936] focus:outline-none focus:ring-2 focus:ring-[#6C7D41] transition-all duration-300 font-semibold"
         >
           Buat Diskusi
         </button>

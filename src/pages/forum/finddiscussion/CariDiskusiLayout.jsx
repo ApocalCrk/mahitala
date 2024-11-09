@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import ListDiskusiDicari from "../../../components/forum/finddiscussion/ListDiskusiDicari";
 import DiskusiTrending from "../../../components/forum/finddiscussion/DiskusiTrending";
 import PaginationDicari from "../../../components/forum/finddiscussion/PaginationDicari";
+import HeadDiskusiDicari from "../../../components/forum/finddiscussion/HeadDiskusiDicari";
 
 const CariDiskusiLayout = () => {
   const discussions = [
@@ -140,9 +141,7 @@ const CariDiskusiLayout = () => {
       transition={{ duration: 0.5 }}
       className="container mx-auto px-4 py-8"
     >
-      <h1 className="text-2xl font-bold text-[#6C7D41] mb-8">
-        Hasil Pencarian: {keyword}
-      </h1>
+      <HeadDiskusiDicari keyword={keyword} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <ListDiskusiDicari displayedDiscussions={displayedDiscussions} />
