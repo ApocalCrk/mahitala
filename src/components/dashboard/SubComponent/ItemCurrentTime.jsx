@@ -4,18 +4,18 @@ import {
     Droplets
   } from 'lucide-react';
 
-const ItemCurrentTime = ({ weatherData }) => {
+const ItemCurrentTime = ({ weatherData, timestamp, location }) => {
   return (
     <>
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="font-medium">{weatherData.location}</h2>
+          <h2 className="font-medium">{location.city}, {location.province}</h2>
           <p className="text-sm text-gray-600">
-            {weatherData.date.day}, {weatherData.date.date}{" "}
-            {weatherData.date.month} {weatherData.date.year} <span className="text-gray-600 inline-flex md:hidden">| {weatherData.date.time} WIB </span>
+            {timestamp.day}, {timestamp.date}{" "}
+            {timestamp.month} {timestamp.year} <span className="text-gray-600 inline-flex md:hidden">| {timestamp.time} WIB </span>
           </p>
         </div>
-        <p className="hidden md:inline-block text-sm text-gray-600">{weatherData.date.time} WIB</p>
+        <p className="hidden md:inline-block text-sm text-gray-600">{timestamp.time} WIB</p>
       </div>
       <div className="flex flex-col  items-center gap-12">
         <div className="text-center">
