@@ -173,18 +173,19 @@ const CategoryDiscussionsPage = () => {
         setSortBy={setSortBy}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
         <ListKategoriTerkait displayedDiscussions={displayedDiscussions} />
+        {totalPages > 1 && (
+          <PaginationKategori
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
+        </div>
 
         <DiskusiTrending popularDiscussions={popularDiscussions} />
       </div>
-
-      {totalPages > 1 && (
-        <PaginationKategori
-          currentPage={currentPage}
-          totalPages={totalPages}
-          setCurrentPage={setCurrentPage}
-        />
-      )}
     </motion.div>
   );
 };

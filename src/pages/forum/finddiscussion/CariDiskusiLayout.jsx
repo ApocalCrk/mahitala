@@ -144,18 +144,18 @@ const CariDiskusiLayout = () => {
       <HeadDiskusiDicari keyword={keyword} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ListDiskusiDicari displayedDiscussions={displayedDiscussions} />
-
+        <div className="lg:col-span-2">
+          <ListDiskusiDicari displayedDiscussions={displayedDiscussions} />
+          {totalPages > 1 && (
+            <PaginationDicari
+              currentPage={currentPage}
+              totalPages={totalPages}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+        </div>
         <DiskusiTrending popularDiscussions={popularDiscussions} />
       </div>
-
-      {totalPages > 1 && (
-        <PaginationDicari
-          currentPage={currentPage}
-          totalPages={totalPages}
-          setCurrentPage={setCurrentPage}
-        />
-      )}
     </motion.div>
   );
 };
