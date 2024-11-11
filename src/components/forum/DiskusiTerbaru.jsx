@@ -41,7 +41,7 @@ const DiskusiTerbaru = () => {
         ))}
         <div className="flex justify-end mt-6">
           <button 
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#6C7D41] rounded-xl hover:bg-[#5b6936] transition-all duration-200 shadow-md transform hover:scale-105"
+            className="px-4 py-2 text-sm font-semibold text-white bg-[#6C7D41] rounded-lg hover:bg-[#5b6936] transition-all duration-200 transform hover:scale-105"
             onClick={() => window.location.href = '/forum/diskusi-terbaru'}
           >
             Lihat Semua
