@@ -1,7 +1,8 @@
 import React from "react";
 import { 
     Wind,
-    Droplets
+    Droplets,
+    TrendingUpDown
   } from 'lucide-react';
 
 const ItemCurrentTime = ({ weatherData, timestamp, location }) => {
@@ -26,7 +27,7 @@ const ItemCurrentTime = ({ weatherData, timestamp, location }) => {
         </div>
         <div className="flex flex-row gap-4">
           <div className="flex items-center gap-2">
-            <Wind className="w-6 h-6 text-[#6C7D41]" />
+            <TrendingUpDown className="w-6 h-6 text-[#6C7D41]" />
             <span className="text-sm text-gray-600">{weatherData.current.pressure}</span>
           </div>
           <div className="flex items-center gap-2">
