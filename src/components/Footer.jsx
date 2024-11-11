@@ -21,7 +21,7 @@ const Footer = () => {
             Forum Diskusi
           </NavLink>
           <NavLink
-            to="/about"
+            to="/tentang-kami"
             className="block px-4 py-2 text-sm font-semibold hover:text-[#6C7D41] transition-colors duration-200"
             aria-current="page"
           >

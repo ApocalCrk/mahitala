@@ -22,7 +22,7 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="*" element={
-            <div className="flex justify-center items-center h-96 w-full">
+            <div className="flex justify-center items-center h-96 w-full text-center">
               <h1 className="text-4xl text-gray-500">Halaman tidak ditemukan</h1>
             </div>
           } />
