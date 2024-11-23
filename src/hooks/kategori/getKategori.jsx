@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../../utils/Constants";
 import { API_STATIC } from "../../utils/Constants";
-import NonImage from "../../assets/images/nonimage.jpg";
+import {NonImage} from "../../assets/images/nonimage.jpg";
 
 export const getKategori = async () => {
   try {
