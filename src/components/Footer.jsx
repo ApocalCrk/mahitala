@@ -1,6 +1,7 @@
 import logo from "../assets/Logo/Mahitala 1.png";
 import { NavLink } from "react-router-dom";
-import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -33,7 +34,7 @@ const Footer = () => {
             <FaFacebookF size={20} />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6C7D41] transition-colors duration-200">
-            <FaTwitter size={20} />
+            <FaXTwitter size={20} />
           </a>
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6C7D41] transition-colors duration-200">
             <FaInstagram size={20} />

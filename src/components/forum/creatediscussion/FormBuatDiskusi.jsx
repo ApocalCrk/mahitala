@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
@@ -39,10 +39,22 @@ import {
 
 import "ckeditor5/ckeditor5.css";
 
+import { getKategori } from "../../../hooks/kategori/getKategori";
+import { createDiskusi } from "../../../hooks/forum/diskusi/cDiskusi";
+import Swal from "sweetalert2";
+
 const FormBuatDiskusi = () => {
   const navigate = useNavigate();
   const [editorData, setEditorData] = useState("");
   const [file, setFile] = useState(null);
+  const [kategori, setKategori] = useState([]);
+  const [judulError, setJudulError] = useState(false);
+  const [kategoriError, setKategoriError] = useState(false);
+  const [contentError, setContentError] = useState(false);
+
+  useEffect(() => {
+    getKategori().then((data) => setKategori(data));
+  }, []);
 
   const handleEditorChange = (event, editor) => {
     setEditorData(editor.getData());
@@ -60,8 +72,55 @@ const FormBuatDiskusi = () => {
     onDrop,
     accept: "image/*",
   });
+
+  const handleSubmit = () => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const data = {
+      username: user.username,
+      judul: document.getElementById("title").value,
+      id_kategori: document.getElementById("category").value,
+      gambar: file,
+      isi: editorData,
+    };
+
+    if (data.judul === "") {
+      setJudulError(true);
+    } else {
+      setJudulError(false);
+    }
+    if (data.id_kategori === "") {
+      setKategoriError(true);
+    } else {
+      setKategoriError(false);
+    }
+    if (data.isi === "") {
+      setContentError(true);
+    } else {
+      setContentError(false);
+    }
+
+    if (data.judul && data.id_kategori && data.isi) {
+      createDiskusi(data).then((res) => {
+        if (res === "401") {
+          localStorage.removeItem("currentUser");
+          navigate("/forum");
+        } else {
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: "Diskusi berhasil dibuat",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          console.log(res);
+          navigate(`/forum/diskusi/${res.id_diskusi}`);
+        }
+      });
+    }
+  };
+
   return (
-    <form className="space-y-6">
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label
@@ -69,6 +128,9 @@ const FormBuatDiskusi = () => {
             className="block text-sm font-medium text-gray-600"
           >
             Judul
+            {judulError && (
+              <p className="text-red-500 text-xs">Judul tidak boleh kosong</p>
+            )}
           </label>
           <input
             type="text"
@@ -84,15 +146,22 @@ const FormBuatDiskusi = () => {
             className="block text-sm font-medium text-gray-600"
           >
             Kategori
+            {kategoriError && (
+              <p className="text-red-500 text-xs">
+                Kategori tidak boleh kosong
+              </p>
+            )}
           </label>
           <select
             id="category"
             name="category"
             className="w-full px-4 py-3 mt-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-[#6C7D41] focus:ring-2 focus:ring-[#6C7D41]"
           >
-            <option value="1">Pertanyaan</option>
-            <option value="2">Diskusi</option>
-            <option value="3">Tutorial</option>
+            {kategori.map((item) => (
+              <option key={item.id_kategori} value={item.id_kategori}>
+                {item.nama}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -138,6 +207,11 @@ const FormBuatDiskusi = () => {
           className="block text-sm font-medium text-gray-600 mb-2"
         >
           Isi Diskusi
+          {contentError && (
+            <p className="text-red-500 text-xs">
+              Isi diskusi tidak boleh kosong
+            </p>
+          )}
         </label>
         <div className="shadow-sm">
           <CKEditor
@@ -223,15 +297,14 @@ const FormBuatDiskusi = () => {
           Kembali
         </button>
 
-        {/* Submit button */}
         <button
-          type="submit"
+          onClick={handleSubmit}
           className="w-full px-6 py-3 text-sm text-white bg-[#6C7D41] rounded-lg hover:bg-[#5b6936] focus:outline-none focus:ring-2 focus:ring-[#6C7D41] transition-all duration-300 font-semibold"
         >
           Buat Diskusi
         </button>
       </div>
-    </form>
+    </div>
   );
 };
 

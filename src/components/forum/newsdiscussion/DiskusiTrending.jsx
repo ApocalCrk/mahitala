@@ -14,7 +14,7 @@ const DiskusiTrending = ({ popularDiscussions }) => {
           <div className="space-y-4">
             {popularDiscussions.map((discussion) => (
               <ItemDiskusiTrending
-                key={discussion.id}
+                key={discussion.id_diskusi}
                 discussion={discussion}
               />
             ))}

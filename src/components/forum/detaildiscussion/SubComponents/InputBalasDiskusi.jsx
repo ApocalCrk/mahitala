@@ -1,6 +1,10 @@
 import React from "react";
+import { checkWaktu } from "../../../../utils/Constants";
+import { balasDiskusi } from "../../../../hooks/forum/diskusi/cDiskusi";
+import { useNavigate } from "react-router-dom";
 
 const InputBalasDiskusi = ({
+  id_diskusi,
   replyReference,
   setReplyReference,
   newReplyContent,
@@ -8,22 +12,25 @@ const InputBalasDiskusi = ({
   replies,
   setReplies,
 }) => {
+  const navigate = useNavigate();
   const handleReplySubmit = () => {
+    const user =  JSON.parse(localStorage.getItem("currentUser"));
     if (newReplyContent.trim()) {
       const newReply = {
-        id: replies.length + 1,
-        user: "Anda",
-        time: new Date().toLocaleTimeString(),
+        id: id_diskusi,
+        user: user.username,
+        time: checkWaktu(new Date()),
         content: newReplyContent,
         parentId: replyReference ? replyReference.id : null,
       };
       setReplies([...replies, newReply]);
       setNewReplyContent("");
       setReplyReference(null);
+      balasDiskusi(id_diskusi, replyReference ? replyReference.id : null, user.username, newReplyContent);
     }
   };
   return (
-    <div className="mt-8 bg-white rounded-lg">
+    <div className="mt-8 bg-white rounded-lg" id="replyInput">
       <h3 className="text-lg font-semibold text-[#6C7D41]">Balas Diskusi</h3>
       {replyReference && (
         <div className="mb-4 p-4 bg-gray-100 rounded-lg">
@@ -55,6 +62,12 @@ const InputBalasDiskusi = ({
           className="px-4 py-2 mt-2 text-white bg-[#6C7D41] rounded-lg hover:bg-green-700"
         >
           Kirim Balasan
+        </button>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-4 py-2 mt-2 text-white bg-red-500 rounded-lg hover:bg-red-700 ml-2 md:hidden"
+        >
+          Kembali
         </button>
       </div>
     </div>

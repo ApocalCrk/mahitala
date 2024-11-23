@@ -1,81 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import ItemDiskusiTeratas from "./SubComponents/ItemDiskusiTeratas";
 
+import { getForumTeratas } from "../../hooks/forum/getForum";
+
 const DiskusiTeratas = () => {
-  const discussions = [
-    {
-      id: 1,
-      user: "Pengguna A",
-      date: "02 November 2024",
-      time: "10:30",
-      title: "Teknologi dalam Pertanian Modern",
-      content:
-        "Dengan perkembangan teknologi, kita bisa meningkatkan produktivitas...",
-      category: "Pertanian",
-      readers: 120,
-      replies: 15,
-    },
-    {
-      id: 2,
-      user: "Pengguna B",
-      date: "02 November 2024",
-      time: "12:00",
-      title: "Pengelolaan Sumber Daya Air",
-      content:
-        "Pengelolaan air sangat penting untuk menjaga keberlanjutan perkebunan...",
-      category: "Perkebunan",
-      readers: 89,
-      replies: 8,
-    },
-    {
-      id: 3,
-      user: "Pengguna C",
-      date: "02 November 2024",
-      time: "15:15",
-      title: "Otomatisasi dalam Peternakan",
-      content:
-        "Dengan otomatisasi, kita dapat memantau kesehatan hewan ternak...",
-      category: "Peternakan",
-      readers: 76,
-      replies: 12,
-    },
-    {
-      id: 4,
-      user: "Pengguna D",
-      date: "02 November 2024",
-      time: "11:00",
-      title: "Inovasi Pupuk Organik",
-      content:
-        "Pupuk organik memainkan peran penting dalam mempertahankan kesuburan...",
-      category: "Pertanian",
-      readers: 102,
-      replies: 7,
-    },
-    {
-      id: 5,
-      user: "Pengguna E",
-      date: "02 November 2024",
-      time: "11:45",
-      title: "Pengelolaan Limbah Peternakan",
-      content:
-        "Mengelola limbah peternakan dengan baik bisa berdampak besar pada lingkungan...",
-      category: "Peternakan",
-      readers: 110,
-      replies: 11,
-    },
-    {
-      id: 6,
-      user: "Pengguna F",
-      date: "02 November 2024",
-      time: "17:20",
-      title: "Hidroponik untuk Pemula",
-      content:
-        "Hidroponik menjadi alternatif bagi yang ingin bercocok tanam di lahan terbatas...",
-      category: "Pertanian",
-      readers: 134,
-      replies: 18,
-    },
-  ];
+  const [discussions, setDiscussions] = useState([]);
+
+  useEffect(() => {
+    getForumTeratas().then((data) => setDiscussions(data));
+  }, []);
 
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);

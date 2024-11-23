@@ -6,7 +6,7 @@ const ListDiskusiDicari = ({ displayedDiscussions }) => {
     <div className="lg:col-span-2 space-y-4">
       {displayedDiscussions.length > 0 ? (
         displayedDiscussions.map((discussion) => (
-          <ItemDiskusiDicari key={discussion.id} discussion={discussion} />
+          <ItemDiskusiDicari key={discussion.id_diskusi} discussion={discussion} />
         ))
       ) : (
         <div className="p-8">

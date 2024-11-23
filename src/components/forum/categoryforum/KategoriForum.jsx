@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ItemKategoriForum from "./SubComponents/ItemKategoriForum";
+import { getKategori } from "../../../hooks/kategori/getKategori";
 
-const KategoriForum = ({ categories, searchTerm }) => {
+const KategoriForum = ({ searchTerm }) => {
+  const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    getKategori().then((data) => setCategories(data));
+  }, []);
 
   const itemsPerPage = 8;
 
   const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    category.nama.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
@@ -29,7 +35,7 @@ const KategoriForum = ({ categories, searchTerm }) => {
           </>
         ) : (
           displayedCategories.map((category) => (
-            <ItemKategoriForum key={category.id} category={category} />
+            <ItemKategoriForum key={category.id_kategori} category={category} />
           ))
         )}
       </div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Copy, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Modal = React.memo(({ isOpen, onClose, title, description, children }) => {
+const Modal = React.memo(({ isOpen, onClose, isError, errorMessage, title, description, children }) => {
   const overlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -65,6 +65,11 @@ const Modal = React.memo(({ isOpen, onClose, title, description, children }) => 
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">{title}</h2>
                 <p className="text-gray-500">{description}</p>
+                {isError && (
+                  <div className="bg-red-50 text-red-700 px-4 py-3 mt-4" role="alert">
+                    <p>{errorMessage}</p>
+                  </div>
+                )}
               </div>
 
               {children}
@@ -105,7 +110,7 @@ const LoginForm = React.memo(({ onSubmit }) => {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Token Unik</label>
         <input
-          type="text"
+          type="password"
           name="token"
           placeholder="Masukkan token Anda"
           value={formData.token}
@@ -143,7 +148,7 @@ const RegisterForm = React.memo(({ onSubmit, initialToken }) => {
     try {
       await navigator.clipboard.writeText(formData.token);
       setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
+      setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
     } catch (err) {
       console.error('Failed to copy token:', err);
     }
@@ -170,11 +175,9 @@ const RegisterForm = React.memo(({ onSubmit, initialToken }) => {
             type="text"
             value={formData.token}
             readOnly
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 pr-12"
+            className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 pr-12 font-semibold text-lg"
           />
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
             onClick={handleCopyToken}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
           >
@@ -185,6 +188,9 @@ const RegisterForm = React.memo(({ onSubmit, initialToken }) => {
             )}
           </motion.button>
         </div>
+        <p className="text-sm text-gray-600 mt-2">
+          <strong>Perhatian:</strong> Pastikan untuk mencatat atau menyalin token ini, karena token ini tidak dapat dipulihkan jika Anda kehilangan atau melupakan nya.
+        </p>
       </div>
 
       <motion.button

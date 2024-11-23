@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { truncateText } from "../../../../utils/Constants";
 
 const ItemDiskusiPopuler = ({ discussion }) => {
   return (
@@ -18,13 +19,13 @@ const ItemDiskusiPopuler = ({ discussion }) => {
       </div>
       <div className="ml-3 flex-1">
         <Link
-          to={`/forum/diskusi/${discussion.id}`}
+          to={`/forum/diskusi/${discussion.id_diskusi}`}
           className="text-md font-semibold text-gray-800 hover:underline cursor-pointer"
         >
-          {discussion.title}
+          {truncateText(discussion.judul, 50)}
         </Link>
         <p className="text-xs text-gray-500">
-          {discussion.readers} pembaca • {discussion.replies} balasan
+          {discussion.jumlah_pembaca} pembaca • {discussion.jumlah_replies} balasan
         </p>
       </div>
     </li>

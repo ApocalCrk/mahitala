@@ -1,13 +1,14 @@
 import React from "react";
 
-const ItemBalasanDiskusi = ({ reply, replies, setReplyReference }) => {
+const ItemBalasanDiskusi = ({ reply, replies, setReplyReference, handleDeleteMainReply, handleDeleteSubReply }) => {
+  const user = JSON.parse(localStorage.getItem("currentUser"));
   const renderReplies = (parentId) => {
     return replies
       .filter((reply) => reply.parentId === parentId)
       .map((reply) => (
         <div
           key={reply.id}
-          className="p-4 bg-gray-50 rounded-md shadow-sm ml-8"
+          className="p-4 bg-gray-50 rounded-md ml-8 border-l-2 border-gray-200 mt-4"
         >
           <p className="text-gray-600 font-semibold">
             {reply.user} • {reply.time}
@@ -16,12 +17,26 @@ const ItemBalasanDiskusi = ({ reply, replies, setReplyReference }) => {
           {parentId === null && (
             <div className="mt-2">
               <button
-                onClick={() => setReplyReference(reply)}
-                className="text-xs text-[#6C7D41] hover:underline"
+                onClick={() => {
+                  setReplyReference(reply);
+                  document.getElementById("replyInput").scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                }}
+                className="text-xs text-[#6C7D41] hover:underline mr-2"
               >
                 Balas
               </button>
             </div>
+          )}
+          {user && user.username === reply.user && (
+            <button
+              onClick={() => handleDeleteSubReply(reply.id)}
+              className="text-xs text-red-500 hover:underline"
+            >
+              Hapus
+            </button>
           )}
         </div>
       ));
@@ -34,11 +49,25 @@ const ItemBalasanDiskusi = ({ reply, replies, setReplyReference }) => {
       <p className="text-gray-700">{reply.content}</p>
       <div className="mt-2">
         <button
-          onClick={() => setReplyReference(reply)}
+          onClick={() => {
+            setReplyReference(reply)
+            document.getElementById("replyInput").scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }}
           className="text-xs text-[#6C7D41] hover:underline"
         >
           Balas
         </button>
+        { user && user.username === reply.user && (
+          <button
+            onClick={() => handleDeleteMainReply(reply.id)}
+            className="text-xs text-red-500 hover:underline ml-2"
+          >
+            Hapus
+          </button>
+        )}
       </div>
       {renderReplies(reply.id)}
     </div>

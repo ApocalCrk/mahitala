@@ -2,21 +2,23 @@ import React, { useState, useCallback, useEffect } from "react";
 import { FaSearch, FaPlus, FaList } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogIn, LogOut, Newspaper, User } from "lucide-react";
+import { LogIn, LogOut, Newspaper } from "lucide-react";
+import { loginAuth, registerAuth, logoutAuth } from "../../hooks/forum/auth/Authentication";
+import { useUser } from "../../utils/userContext";
 
 import { Modal, LoginForm, RegisterForm } from "./SubComponents/ModalAuth";
 
 const HeadForum = () => {
-  const navigate = useNavigate();
+  const { setIsAuthenticated, setCurrentUser, isAuthenticated } = useUser();
   const [searchText, setSearchText] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("currentUser");
+    const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
       setIsAuthenticated(true);
       setCurrentUser(JSON.parse(storedUser));
@@ -28,33 +30,73 @@ const HeadForum = () => {
   };
 
   const toggleLoginModal = useCallback(() => {
+    setIsError(false);
     setIsLoginOpen((prev) => !prev);
   }, []);
 
   const toggleRegisterModal = useCallback(() => {
+    setIsError(false);
     setIsRegisterOpen((prev) => !prev);
   }, []);
 
-  const handleLogin = useCallback((formData) => {
-    setIsAuthenticated(true);
-    setCurrentUser(formData);
-    setIsLoginOpen(false);
-    sessionStorage.setItem("currentUser", JSON.stringify(formData));
-  }, []);
+  const handleLogin = useCallback(async (formData) => {
+    try {
+      if (!formData.username || !formData.token) {
+        setIsError(true);
+        setErrorMessage("Username dan token harus diisi");
+        return;
+      }
 
-  const handleRegister = useCallback((formData) => {
-    setIsAuthenticated(true);
-    setCurrentUser(formData);
-    setIsRegisterOpen(false);
-    sessionStorage.setItem("currentUser", JSON.stringify(formData));
+      const res = await loginAuth(formData);
+      if (res.status === 200) {
+        const { user } = res.data;
+        setIsAuthenticated(true);
+        setCurrentUser(user);
+        setIsLoginOpen(false);
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        setIsError(true);
+        setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
+      }
+    } catch (error) {
+      setIsError(true);
+      setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
+    }
   }, []);
+  
+  const handleRegister = useCallback(async (formData) => {
+    try {
+      if (!formData.username) {
+        setIsError(true);
+        setErrorMessage("Username harus diisi");
+        return;
+      }
 
+      const res = await registerAuth(formData);
+  
+      if (res.status === 200) {
+        const { user } = res.data;
+        setIsAuthenticated(true);
+        setCurrentUser(user);
+        setIsRegisterOpen(false);
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        setIsError(true);
+        setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
+      }
+    } catch (error) {
+      setIsError(true);
+      setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
+    }
+  }, []);
+  
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
     setCurrentUser(null);
-    sessionStorage.removeItem("currentUser");
-    navigate("/forum");
-  }, [navigate]);
+    localStorage.removeItem("token");
+    localStorage.removeItem("currentUser");
+    logoutAuth();
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-between w-full md:px-0 space-y-4 md:space-y-0">
@@ -156,6 +198,8 @@ const HeadForum = () => {
       <Modal
         isOpen={isLoginOpen}
         onClose={toggleLoginModal}
+        isError={isError}
+        errorMessage={errorMessage}
         title="Selamat Datang"
         description="Silahkan masuk untuk melanjutkan diskusi"
       >
@@ -165,6 +209,8 @@ const HeadForum = () => {
       <Modal
         isOpen={isRegisterOpen}
         onClose={toggleRegisterModal}
+        isError={isError}
+        errorMessage={errorMessage}
         title="Buat Akun"
         description="Silahkan buat akun untuk bergabung dalam diskusi"
       >

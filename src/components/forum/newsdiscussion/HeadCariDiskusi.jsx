@@ -1,12 +1,18 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaChevronLeft, FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const HeadCariDiskusi = ({ searchTerm, setSearchTerm }) => {
+  const navigate = useNavigate();
   return (
     <>
-      <div className="flex items-center gap-2 mb-8">
-        <h1 className="text-3xl font-bold text-[#6C7D41]">Diskusi Terbaru</h1>
-      </div>
+      <button
+        onClick={() => navigate(-1)}
+        className="flex justify-center text-start items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
+      >
+        <FaChevronLeft className="hidden md:flex mr-2" />
+        Diskusi Terbaru
+      </button>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="flex flex-col md:flex-row gap-6 mb-8 items-center justify-between lg:col-span-2">
           <div className="relative w-full md:w-1/2">

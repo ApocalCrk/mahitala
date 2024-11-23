@@ -7,117 +7,31 @@ import ListKategoriTerkait from "../../../../components/forum/categoryforum/deta
 import DiskusiTrending from "../../../../components/forum/categoryforum/detailcategory/DiskusiTrending";
 import PaginationKategori from "../../../../components/forum/categoryforum/detailcategory/PaginationKategori";
 
+import { getKategoriById } from "../../../../hooks/kategori/getKategori";
+import { getForumKategori, getForumTeratas } from "../../../../hooks/forum/getForum";
+
 const CategoryDiscussionsPage = () => {
-  const discussions = [
-    {
-      id: 1,
-      title: "Cara Meningkatkan Produktivitas Tanaman Padi",
-      readers: 134,
-      replies: 20,
-      categoryId: 1,
-      author: "Ahmad S.",
-      lastActive: "2 jam yang lalu",
-    },
-    {
-      id: 2,
-      title: "Inovasi Pertanian Berkelanjutan",
-      readers: 134,
-      replies: 15,
-      categoryId: 1,
-      author: "Budi W.",
-      lastActive: "5 jam yang lalu",
-    },
-    {
-      id: 3,
-      title: "Penggunaan Teknologi Drone untuk Pertanian",
-      readers: 134,
-      replies: 18,
-      categoryId: 1,
-      author: "Clara D.",
-      lastActive: "1 hari yang lalu",
-    },
-    {
-      id: 4,
-      title: "Ekonomi Pertanian dan Harga Pasar",
-      readers: 134,
-      replies: 22,
-      categoryId: 1,
-      author: "David R.",
-      lastActive: "2 hari yang lalu",
-    },
-    {
-      id: 5,
-      title: "Pengendalian Hama Terpadu",
-      readers: 134,
-      replies: 30,
-      categoryId: 1,
-      author: "Elena M.",
-      lastActive: "3 hari yang lalu",
-    },
-    {
-      id: 6,
-      title: "Teknik Irigasi Modern",
-      readers: 134,
-      replies: 10,
-      categoryId: 1,
-      author: "Fajar K.",
-      lastActive: "4 hari yang lalu",
-    },
-    {
-      id: 7,
-      title: "Manfaat Kompos untuk Tanaman",
-      readers: 134,
-      replies: 25,
-      categoryId: 1,
-      author: "Gita P.",
-      lastActive: "5 hari yang lalu",
-    },
-    {
-      id: 8,
-      title: "Sistem Pertanian Organik",
-      readers: 134,
-      replies: 5,
-      categoryId: 1,
-      author: "Hadi S.",
-      lastActive: "1 minggu yang lalu",
-    },
-    {
-      id: 9,
-      title: "Pentingnya Konservasi Lahan",
-      readers: 134,
-      replies: 12,
-      categoryId: 1,
-      author: "Indah R.",
-      lastActive: "2 minggu yang lalu",
-    },
-  ];
+  const [category, setCategory] = useState({});
+  const { id } = useParams();
+  const [discussions, setDiscussions] = useState([]);
 
-  const categories = [
-    { id: 1, name: "Pertanian Modern" },
-    { id: 2, name: "Teknologi & Inovasi" },
-    { id: 3, name: "Ekonomi Pertanian" },
-  ];
+  const [popularDiscussions, setPopularDiscussions] = useState([]);
 
-  const popularDiscussions = [
-    {
-      id: 1,
-      title: "Pertanian Organik di Era Modern",
-      readers: 85,
-      replies: 12,
-    },
-    {
-      id: 2,
-      title: "Pemanfaatan Drone untuk Pertanian",
-      readers: 60,
-      replies: 7,
-    },
-    {
-      id: 3,
-      title: "Pengendalian Hama Terpadu",
-      readers: 45,
-      replies: 5,
-    },
-  ];
+  useEffect(() => {
+    getKategoriById(id).then((data) => {
+      setCategory(data[0]);
+    });
+  }, []);
+
+  useEffect(() => {
+    getForumKategori(id).then((data) => {
+      setDiscussions(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    getForumTeratas().then((data) => setPopularDiscussions(data));
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -127,7 +41,6 @@ const CategoryDiscussionsPage = () => {
     scrollToTop();
   }, []);
 
-  const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
@@ -143,13 +56,19 @@ const CategoryDiscussionsPage = () => {
     );
   }
 
-  const category = categories.find((cat) => cat.id === numericCategoryId);
-
   const filteredDiscussions = discussions
-    .filter((discussion) => discussion.categoryId === numericCategoryId)
     .filter((discussion) =>
-      discussion.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      discussion.judul.toLowerCase().includes(searchTerm.toLowerCase())
+    ).sort((a, b) => {
+      if (sortBy === "newest") {
+        return new Date(b.tgl_dibuat) - new Date(a.tgl_dibuat);
+      } else if (sortBy === "oldest") {
+        return new Date(a.tgl_dibuat) - new Date(b.tgl_dibuat);
+      } else if (sortBy === "popular") {
+        return b.jumlah_diskusi - a.jumlah_diskusi;
+      }
+      return 0;
+    });
 
   const totalPages = Math.ceil(filteredDiscussions.length / itemsPerPage);
   const displayedDiscussions = filteredDiscussions.slice(

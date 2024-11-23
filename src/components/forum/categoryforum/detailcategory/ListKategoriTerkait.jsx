@@ -6,7 +6,7 @@ const ListKategoriTerkait = ({ displayedDiscussions }) => {
     <div className="lg:col-span-2 space-y-4">
       {displayedDiscussions.length > 0 ? (
         displayedDiscussions.map((discussion) => (
-          <ItemKategoriTerkait key={discussion.id} discussion={discussion} />
+          <ItemKategoriTerkait key={discussion.id_diskusi} discussion={discussion} />
         ))
       ) : (
         <div className="p-8">

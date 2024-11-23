@@ -1,51 +1,124 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ItemBalasanDiskusi from "./SubComponents/ItemBalasanDiskusi";
 import InputBalasDiskusi from "./SubComponents/InputBalasDiskusi";
 import ItemDiskusiPopuler from "./SubComponents/ItemDiskusiPopuler";
 import { FaChevronLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getDetailDiskusi, deleteMainReply, deleteSubReply } from "../../../hooks/forum/diskusi/cDiskusi";
+import { getForumTeratas } from "../../../hooks/forum/getForum";
+import { checkWaktu } from "../../../utils/Constants";
+import Swal from 'sweetalert2';
 
 const DetailDiskusi = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [replies, setReplies] = useState([
-    {
-      id: 1,
-      user: "Pengguna B",
-      time: "10:45 AM",
-      content: "Sangat setuju!",
-      parentId: null,
-    },
-    {
-      id: 2,
-      user: "Pengguna C",
-      time: "11:15 AM",
-      content: "Saya punya pandangan berbeda.",
-      parentId: null,
-    },
-  ]);
+  const [discussion, setDiscussion] = useState({});
+  const [popularDiscussion, setPopularDiscussion] = useState([]);
+  const [replies, setReplies] = useState([]);
   const [newReplyContent, setNewReplyContent] = useState("");
-  const [replyReference, setReplyReference] = useState(null);
+  const [replyReference, setReplyReference] = useState();
 
-  return (
+  useEffect(() => {
+    getDetailDiskusi(id).then((data) => {
+      setDiscussion(data);
+      const mainReplies = data.main_replies.map((reply) => ({
+        id: reply.id_interact,
+        user: reply.user.username,
+        time: checkWaktu(reply.tanggal),
+        content: reply.isi,
+        parentId: null,
+      }));
+      const subReplies = data.main_replies.map((reply) =>
+        reply.sub_replies.map((subReply) => ({
+          id: subReply.id_reply,
+          user: subReply.user.username,
+          time: checkWaktu(subReply.tanggal), 
+          content: subReply.isi,
+          parentId: reply.id_interact
+        }))
+      );
+      setReplies([...mainReplies, ...subReplies.flat()]);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    getForumTeratas().then((data) => setPopularDiscussion(data));
+  }, []);
+
+  const handleDeleteMainReply = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Balasan utama akan dihapus, dan tidak dapat dikembalikan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const subReplies = replies.filter((reply) => reply.parentId === id);
+        if (subReplies.length > 0) {
+          const updatedReplies = replies.map((reply) => {
+            if (reply.id === id) {
+              reply.content = '[deleted]';
+            }
+            return reply;
+          });
+          setReplies(updatedReplies);
+        } else {
+          const updatedReplies = replies.filter((reply) => reply.id !== id);
+          setReplies(updatedReplies);
+        }
+        deleteMainReply(id);
+        Swal.fire('Deleted!', 'The main reply has been deleted.', 'success');
+      }
+    });
+  };
+  
+  const handleDeleteSubReply = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Balasan akan dihapus, dan tidak dapat dikembalikan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedReplies = replies.filter((reply) => reply.id !== id);
+        setReplies(updatedReplies);
+        deleteSubReply(id);
+        Swal.fire('Deleted!', 'The sub-reply has been deleted.', 'success');
+      }
+    });
+  };
+
+  return discussion && Object.keys(discussion).length === 0 ? null : (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 p-6 bg-white rounded-lg">
         <button
           onClick={() => navigate(-1)}
-          className="flex justify-center items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
+          className="flex justify-center text-start items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
         >
-          <FaChevronLeft className="mr-2" />
-          Teknologi dalam Pertanian Modern
+          <FaChevronLeft className="hidden md:flex mr-2" />
+          {discussion.judul}
         </button>
         <p className="text-gray-500 mb-4">
-          Oleh Pengguna A • 02 November 2024 10:30 AM
+          Oleh {discussion.user.username} • {checkWaktu(discussion.tgl_dibuat)}
         </p>
-        <p className="text-gray-700 mb-6">
-          Dengan perkembangan teknologi, kita bisa meningkatkan produktivitas
-          pertanian dengan cara yang lebih efisien dan ramah lingkungan...
-        </p>
+        {discussion.gambar && (
+          <img src={discussion.gambar} alt="gambar diskusi" className="w-full md:w-80 rounded-lg mb-6" />
+        )}
+        <p className="text-gray-700 mb-6" dangerouslySetInnerHTML={{ __html: discussion.isi }}></p>
         <div className="mt-8">
           <h3 className="text-lg font-semibold text-[#6C7D41]">Balasan</h3>
           <div className="space-y-6 mt-4">
+            {replies.length === 0 && (
+              <div className="text-gray-500 text-center bg-gray-100 p-4 rounded-lg">Belum ada balasan</div>
+            )}
             {replies
               .filter((reply) => reply.parentId === null)
               .map((reply) => (
@@ -54,11 +127,14 @@ const DetailDiskusi = () => {
                   reply={reply}
                   replies={replies}
                   setReplyReference={setReplyReference}
+                  handleDeleteMainReply={handleDeleteMainReply}
+                  handleDeleteSubReply={handleDeleteSubReply}
                 />
               ))}
           </div>
         </div>
         <InputBalasDiskusi
+          id_diskusi={discussion.id_diskusi}
           newReplyContent={newReplyContent}
           setNewReplyContent={setNewReplyContent}
           replyReference={replyReference}
@@ -72,26 +148,7 @@ const DetailDiskusi = () => {
           Diskusi Populer
         </h3>
         <ul className="space-y-3">
-          {[
-            {
-              id: 1,
-              title: "Pertanian Organik di Era Modern",
-              readers: 85,
-              replies: 12,
-            },
-            {
-              id: 2,
-              title: "Pemanfaatan Drone untuk Pertanian",
-              readers: 60,
-              replies: 7,
-            },
-            {
-              id: 3,
-              title: "Inovasi Teknologi pada Sektor Pertanian",
-              readers: 110,
-              replies: 20,
-            },
-          ].map((discussion, index) => (
+          {popularDiscussion.map((discussion, index) => (
             <ItemDiskusiPopuler key={index} discussion={discussion} />
           ))}
         </ul>

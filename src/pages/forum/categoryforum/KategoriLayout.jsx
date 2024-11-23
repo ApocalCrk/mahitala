@@ -18,17 +18,6 @@ const CategoriesPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const categories = [
-    { id: 1, name: "Pertanian Modern", discussions: 25, imageUrl: Perbuahan },
-    { id: 2, name: "Teknologi & Inovasi", discussions: 18, imageUrl: Obat },
-    { id: 3, name: "Pertanian Organik", discussions: 12, imageUrl: Perkebunan },
-    { id: 4, name: "Ekonomi Pertanian", discussions: 30, imageUrl: Perbuahan },
-    { id: 5, name: "Manajemen Lahan", discussions: 10, imageUrl: Obat },
-    { id: 6, name: "Perkebunan", discussions: 22, imageUrl: Perkebunan },
-    { id: 7, name: "Peternakan", discussions: 15, imageUrl: Perbuahan },
-    { id: 8, name: "Perikanan", discussions: 8, imageUrl: Obat },
-  ];
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -39,7 +28,7 @@ const CategoriesPage = () => {
     >
       <HeadKategori searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <KategoriForum categories={categories} searchTerm={searchTerm} />
+      <KategoriForum searchTerm={searchTerm} />
     </motion.div>
   );
 };
