@@ -60,28 +60,28 @@ function App() {
     <UserProvider>
       <div className="flex flex-col min-h-screen">
         {location && data ? (
-          // location.province !== "Daerah Istimewa Yogyakarta" ? (
-          //   <div className="flex items-center justify-center h-screen">
-          //     <div className="grid grid-cols-1 gap-4 text-center">
-          //       <OctagonAlert className="w-16 h-16 text-red-500 animate-pulse flex items-center justify-center mx-auto" />
-          //       <p className="text-gray-500 text-lg">
-          //         Maaf, layanan ini hanya tersedia untuk wilayah Daerah Istimewa
-          //         Yogyakarta
-          //       </p>
-          //       <span className="text-[#6C7D41] text-lg font-medium">
-          //         Butuh bantuan? Hubungi kami di{" "}
-          //         <a
-          //           href="https://wa.me/081234567890"
-          //           target="_blank"
-          //           rel="noreferrer"
-          //           className="text-[#6C7D41] underline"
-          //         >
-          //           081234567890
-          //         </a>
-          //       </span>
-          //     </div>
-          //   </div>
-          // ) : (
+          location.province !== "Daerah Istimewa Yogyakarta" ? (
+            <div className="flex items-center justify-center h-screen">
+              <div className="grid grid-cols-1 gap-4 text-center">
+                <OctagonAlert className="w-16 h-16 text-red-500 animate-pulse flex items-center justify-center mx-auto" />
+                <p className="text-gray-500 text-lg">
+                  Maaf, layanan ini hanya tersedia untuk wilayah Daerah Istimewa
+                  Yogyakarta
+                </p>
+                <span className="text-[#6C7D41] text-lg font-medium">
+                  Butuh bantuan? Hubungi kami di{" "}
+                  <a
+                    href="https://wa.me/081234567890"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#6C7D41] underline"
+                  >
+                    081234567890
+                  </a>
+                </span>
+              </div>
+            </div>
+          ) : (
           <>
             <Header />
             <main className="flex-grow">
@@ -138,7 +138,7 @@ function App() {
             </main>
             <Footer />
           </>
-          // )
+          )
         ) : 
         error ? (
           <div className="flex items-center justify-center h-64">
