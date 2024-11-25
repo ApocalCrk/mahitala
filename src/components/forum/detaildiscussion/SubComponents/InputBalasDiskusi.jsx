@@ -2,6 +2,7 @@ import React from "react";
 import { checkWaktu } from "../../../../utils/Constants";
 import { balasDiskusi } from "../../../../hooks/forum/diskusi/cDiskusi";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const InputBalasDiskusi = ({
   id_diskusi,
@@ -15,6 +16,16 @@ const InputBalasDiskusi = ({
   const navigate = useNavigate();
   const handleReplySubmit = () => {
     const user =  JSON.parse(localStorage.getItem("currentUser"));
+    if (!user) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Anda harus login terlebih dahulu!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      return;
+    }
     if (newReplyContent.trim()) {
       const newReply = {
         id: id_diskusi,
