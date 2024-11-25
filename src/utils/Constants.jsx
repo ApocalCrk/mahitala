@@ -5,40 +5,59 @@ import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 export const Icon = ({ icon, className }) => {
   let Icon;
   switch (icon) {
-    case "Cerah" || 0 || 100:
+    case "Cerah":
+    case 0:
+    case 100:
       Icon = Sun;
       break;
-    case "Cerah Berawan" || 1 || 101 || 2 || 102:
+    case "Cerah Berawan":
+    case 1:
+    case 101:
+    case 2:
+    case 102:
       Icon = Cloud;
       break;
-    case "Berawan" || 3 || 103:
+    case "Berawan":
+    case 3:
+    case 103:
       Icon = CloudRain;
       break;
-    case "Berawan Tebal" || 4 || 104:
+    case "Berawan Tebal":
+    case 4:
+    case 104:
       Icon = CloudRain;
       break;
-    case "Udara Kabur" || 5:
+    case "Udara Kabur":
+    case 5:
       Icon = Wind;
       break;
-    case "Asap" || 10:
+    case "Asap":
+    case 10:
       Icon = Wind;
       break;
-    case "Kabut" || 45:
+    case "Kabut":
+    case 45:
       Icon = Wind;
       break;
-    case "Hujan Ringan" || 60:
+    case "Hujan Ringan":
+    case 60:
       Icon = CloudRain;
       break;
-    case "Hujan Sedang" || 61:
+    case "Hujan Sedang":
+    case 61:
       Icon = CloudRain;
       break;
-    case "Hujan Lebat" || 63:
+    case "Hujan Lebat":
+    case 63:
       Icon = CloudRain;
       break;
-    case "Hujan Lokal" || 80:
+    case "Hujan Lokal":
+    case 80:
       Icon = CloudRain;
       break;
-    case "Hujan Petir" || 85 || 97:
+    case "Hujan Petir":
+    case 85:
+    case 97:
       Icon = CloudRain;
       break;
     default:
