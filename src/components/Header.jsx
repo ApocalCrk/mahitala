@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-import logo from "../assets/Logo/Mahitala 1.png";
+import logo from "../assets/Logo/Mahitala.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
