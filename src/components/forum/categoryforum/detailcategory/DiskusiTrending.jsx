@@ -12,11 +12,13 @@ const DiskusiTrending = ({ popularDiscussions }) => {
         </div>
         <div>
           <div className="space-y-4">
-            {popularDiscussions.map((discussion) => (
+            {popularDiscussions.map((discussion, index) => (
+              index <= 2 ? 
               <ItemDiskusiTrending
                 key={discussion.id_diskusi}
                 discussion={discussion}
               />
+              : null
             ))}
           </div>
         </div>

@@ -149,7 +149,7 @@ const DetailDiskusi = () => {
         </h3>
         <ul className="space-y-3">
           {popularDiscussion.map((discussion, index) => (
-            <ItemDiskusiPopuler key={index} discussion={discussion} />
+            index <= 2 ? <ItemDiskusiPopuler key={index} discussion={discussion} /> : null
           ))}
         </ul>
       </div>
