@@ -190,19 +190,16 @@ export const cropIdeal = (temp, hum, rain) => {
   if (
     (temp === "Sangat Ideal" &&
       hum === "Sangat Ideal" &&
-      rain === "Sangat Ideal") ||
-    (temp === "Sangat Ideal" && hum === "Sangat Ideal") ||
-    (hum === "Sangat Ideal" && rain === "Sangat Ideal") ||
-    (temp === "Sangat Ideal" && rain === "Sangat Ideal")
+      rain === "Sangat Ideal")
   ) {
     return "Sangat Ideal";
   } else if (
     (temp === "Mendekati Ideal" &&
       hum === "Mendekati Ideal" &&
       rain === "Mendekati Ideal") ||
-    (temp === "Mendekati Ideal" && hum === "Mendekati Ideal") ||
-    (hum === "Mendekati Ideal" && rain === "Mendekati Ideal") ||
-    (temp === "Mendekati Ideal" && rain === "Mendekati Ideal")
+    (temp === "Sangat Ideal" && hum === "Tidak Ideal") ||
+    (hum === "Sangat Ideal" && rain === "Tidak Ideal") ||
+    (temp === "Sangat Ideal" && rain === "Tidak Ideal")
   ) {
     return "Mendekati Ideal";
   } else {
@@ -219,9 +216,12 @@ export const cropIdealDescription = (temp, hum, rain) => {
     return "Kondisi tanaman sangat ideal untuk pertumbuhan dan produktivitas optimal.";
   }
   if (
-    temp === "Mendekati Ideal" &&
-    hum === "Mendekati Ideal" &&
-    rain === "Mendekati Ideal"
+    (temp === "Mendekati Ideal" &&
+      hum === "Mendekati Ideal" &&
+      rain === "Mendekati Ideal") ||
+    (temp === "Sangat Ideal" && hum === "Tidak Ideal") ||
+    (hum === "Sangat Ideal" && rain === "Tidak Ideal") ||
+    (temp === "Sangat Ideal" && rain === "Tidak Ideal")
   ) {
     return "Kondisi tanaman mendekati ideal, namun perlu perhatian ekstra untuk mempertahankan kondisi optimal.";
   }
