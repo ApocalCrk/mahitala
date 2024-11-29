@@ -41,7 +41,7 @@ const ForecastHariIni = ({ timestamp, location, data }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ItemStatusForecast key="Indeks Suhu" title="Indeks Suhu" description={tempRecommendation(nearestData.t)} metric={nearestData.t} Icon={ThermometerSun} format="°C" />
-        <ItemStatusForecast key="Tingkat Kelembaban" title="Tingkat Kelembaban" description={humidityRecommendationRecommendation(nearestData.hu)} metric={nearestData.hu} Icon={Droplets} format="%" />
+        <ItemStatusForecast key="Tingkat Kelembaban" title="Tingkat Kelembaban" description={humidityRecommendation(nearestData.hu)} metric={nearestData.hu} Icon={Droplets} format="%" />
         <ItemStatusForecast key="Kecepatan Angin" title="Kecepatan Angin" description={windRecommendation(nearestData.ws)} metric={nearestData.ws} Icon={Wind} format="km/j" />
         <ItemStatusForecast key="Pengendapan Hujan" title="Pengendapan Hujan" description={rainRecommendation(nearestData.tp)} metric={nearestData.tp} Icon={Cloud} format="%" />
       </div>
