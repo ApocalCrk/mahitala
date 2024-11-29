@@ -2,7 +2,7 @@ import React from "react";
 import ItemCurrentTime from "./SubComponent/ItemCurrentTime";
 import ItemForecast from "./SubComponent/ItemForecastSelective";
 import ItemStatusForecast from "./SubComponent/ItemStatusForecast";
-import { findNearestTimestamp, tempRecommendation } from "../../utils/Constants";
+import { findNearestTimestamp, humidityRecommendation, rainRecommendation, tempRecommendation, windRecommendation } from "../../utils/Constants";
 import { Cloud, Droplets, ThermometerSun, Wind } from "lucide-react";
 
 const ForecastHariIni = ({ timestamp, location, data }) => {
@@ -40,10 +40,10 @@ const ForecastHariIni = ({ timestamp, location, data }) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ItemStatusForecast key="Indeks Suhu" title="Indeks Suhu" description={tempRecommendation(nearestData.t)} metric={nearestData.tp} Icon={ThermometerSun} format="°C" />
-        <ItemStatusForecast key="Tingkat Kelembaban" title="Tingkat Kelembaban" description={tempRecommendation(nearestData.hu)} metric={nearestData.hu} Icon={Droplets} format="%" />
-        <ItemStatusForecast key="Kecepatan Angin" title="Kecepatan Angin" description={tempRecommendation(nearestData.ws)} metric={nearestData.ws} Icon={Wind} format="km/j" />
-        <ItemStatusForecast key="Pengendapan Hujan" title="Pengendapan Hujan" description={tempRecommendation(nearestData.tp)} metric={nearestData.tp} Icon={Cloud} format="%" />
+        <ItemStatusForecast key="Indeks Suhu" title="Indeks Suhu" description={tempRecommendation(nearestData.t)} metric={nearestData.t} Icon={ThermometerSun} format="°C" />
+        <ItemStatusForecast key="Tingkat Kelembaban" title="Tingkat Kelembaban" description={humidityRecommendationRecommendation(nearestData.hu)} metric={nearestData.hu} Icon={Droplets} format="%" />
+        <ItemStatusForecast key="Kecepatan Angin" title="Kecepatan Angin" description={windRecommendation(nearestData.ws)} metric={nearestData.ws} Icon={Wind} format="km/j" />
+        <ItemStatusForecast key="Pengendapan Hujan" title="Pengendapan Hujan" description={rainRecommendation(nearestData.tp)} metric={nearestData.tp} Icon={Cloud} format="%" />
       </div>
     </div>
   );
