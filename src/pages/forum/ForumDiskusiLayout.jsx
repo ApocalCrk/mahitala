@@ -22,7 +22,7 @@ const ForumDiskusi = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="container px-4 mx-auto my-8"
+      className="container px-6 mx-auto my-8"
     >
       <HeadForum />
       <div className="my-4 md:my-12" />

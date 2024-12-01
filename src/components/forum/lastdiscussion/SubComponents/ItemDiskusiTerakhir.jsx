@@ -2,13 +2,34 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { checkWaktu, truncateText } from "../../../../utils/Constants";
 import { deleteDiskusi } from "../../../../hooks/forum/diskusi/cDiskusi";
+import Swal from "sweetalert2";
 
 const ItemDiskusiTerakhir = ({ discussion, setDiscussion }) => {
   const handleDelete = async () => {
-    const res = await deleteDiskusi(discussion.id_diskusi);
-    if (res) {
-      setDiscussion((prevState) => prevState.filter((item) => item.id_diskusi !== discussion.id_diskusi));
-    }
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Diskusi akan dihapus, dan tidak dapat dikembalikan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#6C7D41",
+      cancelButtonColor: "#C53030",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await deleteDiskusi(discussion.id_diskusi);
+        if (res) {
+          setDiscussion((prevState) => prevState.filter((item) => item.id_diskusi !== discussion.id_diskusi));
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: "Diskusi berhasil dihapus",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      }
+    });
   };
   return (
     <div
@@ -19,8 +40,8 @@ const ItemDiskusiTerakhir = ({ discussion, setDiscussion }) => {
           {discussion.judul}
         </h3>
         <div className="flex items-center space-x-2">
-          <Link to={`/forum/diskusi/${discussion.id_diskusi}`} className="text-xs text-white bg-[#6c7d41b3] px-2 py-0.5 rounded-full">Lihat</Link>
-          <button className="text-xs text-red-500 bg-red-100 px-2 py-0.5 rounded-full" onClick={handleDelete}>Hapus</button>
+          <Link to={`/forum/diskusi/${discussion.id_diskusi}`} className="text-xs text-white bg-[#6C7D41] px-2 py-0.5 rounded-full">Lihat</Link>
+          <button className="text-xs text-white bg-red-600 px-2 py-0.5 rounded-full" onClick={handleDelete}>Hapus</button>
         </div>
       </div>
       <p className="text-xs text-gray-500 mb-1">

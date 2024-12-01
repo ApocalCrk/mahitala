@@ -14,6 +14,11 @@ const DiskusiTerbaru = () => {
     <>
       <h2 className="text-2xl font-semibold text-[#6C7D41] mb-5">Diskusi Terbaru</h2>
       <div className="p-6 bg-white border border-gray-200 rounded-lg space-y-6">
+        {discussions.length === 0 && (
+          <div className="text-gray-600 text-center p-4 rounded-lg">
+            Tidak ada diskusi terbaru
+          </div>
+        )}
         {discussions.map((discussion, index) => (
           index <= 2 ? <ItemDiskusiTerbaru key={discussion.id_diskusi} discussion={discussion} /> : null
         ))}

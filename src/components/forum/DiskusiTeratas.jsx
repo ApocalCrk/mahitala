@@ -53,6 +53,11 @@ const DiskusiTeratas = () => {
         Diskusi Teratas
       </h2>
       <div className="space-y-4">
+        {discussions.length === 0 && (
+          <div className="text-gray-500 text-center bg-gray-100 p-4 rounded-lg">
+            Tidak ada diskusi teratas, buat diskusi pertama Anda!
+          </div>
+        )}
         {currentItems.map((discussion, index) => (
           <ItemDiskusiTeratas key={index} discussion={discussion} />
         ))}
@@ -71,7 +76,7 @@ const DiskusiTeratas = () => {
           Kembali
         </button>
         <span className="text-gray-500 text-sm">
-          Halaman {currentPage} dari {totalPages}
+          Halaman {totalPages === 0 ? 0 : currentPage} dari {totalPages}
         </span>
         <button
           className={`px-4 py-2 text-sm rounded-lg transition-all duration-200 ease-in-out ${

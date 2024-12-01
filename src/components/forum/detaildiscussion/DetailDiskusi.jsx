@@ -53,8 +53,8 @@ const DetailDiskusi = () => {
       showCancelButton: true,
       confirmButtonText: 'Ya, hapus!',
       cancelButtonText: 'Batal',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      confirmButtonColor: '#6C7D41',
+      cancelButtonColor: '#C53030',
     }).then((result) => {
       if (result.isConfirmed) {
         const subReplies = replies.filter((reply) => reply.parentId === id);
@@ -71,7 +71,13 @@ const DetailDiskusi = () => {
           setReplies(updatedReplies);
         }
         deleteMainReply(id);
-        Swal.fire('Deleted!', 'The main reply has been deleted.', 'success');
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Balasan telah dihapus.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       }
     });
   };
@@ -84,14 +90,20 @@ const DetailDiskusi = () => {
       showCancelButton: true,
       confirmButtonText: 'Ya, hapus!',
       cancelButtonText: 'Batal',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      confirmButtonColor: '#6C7D41',
+      cancelButtonColor: '#C53030',
     }).then((result) => {
       if (result.isConfirmed) {
         const updatedReplies = replies.filter((reply) => reply.id !== id);
         setReplies(updatedReplies);
         deleteSubReply(id);
-        Swal.fire('Deleted!', 'The sub-reply has been deleted.', 'success');
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Balasan telah dihapus.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       }
     });
   };
@@ -100,7 +112,15 @@ const DetailDiskusi = () => {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 p-6 bg-white rounded-lg">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            const previousPath = document.referrer;
+            if (previousPath.includes("/forum")) {
+              navigate(-1);
+            } else {
+              navigate("/forum");
+            }
+          }
+          }
           className="flex justify-center text-start items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"
         >
           <FaChevronLeft className="hidden md:flex mr-2" />
@@ -148,6 +168,11 @@ const DetailDiskusi = () => {
           Diskusi Populer
         </h3>
         <ul className="space-y-3">
+          {popularDiscussion.length === 0 && (
+            <div className="text-gray-500 text-center bg-gray-100 p-4 rounded-lg">
+              Tidak ada diskusi populer
+            </div>
+          )}
           {popularDiscussion.map((discussion, index) => (
             index <= 2 ? <ItemDiskusiPopuler key={index} discussion={discussion} /> : null
           ))}

@@ -12,6 +12,11 @@ const DiskusiTrending = ({ popularDiscussions }) => {
         </div>
         <div>
           <div className="space-y-4">
+            {popularDiscussions.length === 0 && (
+              <div className="text-gray-500 text-center bg-gray-100 p-4 rounded-lg">
+                Tidak ada diskusi populer
+              </div>
+            )}
             {popularDiscussions.map((discussion, index) => (
               index <= 2 ? 
               <ItemDiskusiTrending
