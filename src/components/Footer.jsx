@@ -1,4 +1,4 @@
-import logo from "../assets/Logo/Mahitala 1.png";
+import logo from "../assets/Logo/Mahitala.png";
 import { NavLink } from "react-router-dom";
 import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";
