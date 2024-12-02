@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
-import ItemForecastMingguan from './SubComponent/ItemForecastMingguan';
+import ItemForecastMingguan from './SubComponents/ItemForecastMingguan';
 
 import { getForecastMingguan } from '../../hooks/forecast/getForecastMingguan';
 

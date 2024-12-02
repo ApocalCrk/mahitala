@@ -1,7 +1,7 @@
 import React from "react";
-import ItemCurrentTime from "./SubComponent/ItemCurrentTime";
-import ItemForecast from "./SubComponent/ItemForecastSelective";
-import ItemStatusForecast from "./SubComponent/ItemStatusForecast";
+import ItemCurrentTime from "./SubComponents/ItemCurrentTime";
+import ItemForecast from "./SubComponents/ItemForecastSelective";
+import ItemStatusForecast from "./SubComponents/ItemStatusForecast";
 import { findNearestTimestamp, humidityRecommendation, rainRecommendation, tempRecommendation, windRecommendation } from "../../utils/Constants";
 import { Cloud, Droplets, ThermometerSun, Wind } from "lucide-react";
 
