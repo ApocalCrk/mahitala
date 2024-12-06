@@ -1,5 +1,6 @@
 export const API_URL = "http://localhost:3000";
 export const API_STATIC = "http://localhost:3000/static/";
+import { getSHA256Hash } from "boring-webcrypto-sha256";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 
 export const Icon = ({ icon, className }) => {
@@ -270,4 +271,14 @@ export const checkWaktu = (waktu) => {
   } else {
     return `${formattedDate} • ${formattedTime} WIB`;
   }
+};
+
+export const generateHash = async (input) => {
+  const textAsBuffer = new TextEncoder().encode(input);
+  const hashBuffer = await window.crypto.subtle.digest("SHA-256", textAsBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hash = hashArray
+    .map((item) => item.toString(16).padStart(2, "0"))
+    .join("");
+  return hash;
 };

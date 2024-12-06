@@ -31,7 +31,6 @@ export const createDiskusi = async (data) => {
   }
 };
 
-
 export const deleteDiskusi = async (id) => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
   if (!user || !user.token) {
@@ -70,7 +69,7 @@ export const getDetailDiskusi = async (id) => {
   }
 };
 
-export const balasDiskusi = async (id_diskusi, id_interact, username, isi) => {
+export const balasDiskusi = async (id_diskusi, id_interact, id_reply, username, isi) => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
   if (!user || !user.token) {
     return "401";
@@ -82,6 +81,7 @@ export const balasDiskusi = async (id_diskusi, id_interact, username, isi) => {
       {
         id_diskusi,
         id_interact,
+        id_reply,
         username,
         isi,
       },
