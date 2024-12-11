@@ -1,5 +1,5 @@
-export const API_URL = "http://mahitala.noturminesv.my.id";
-export const API_STATIC = "http://mahitala.noturminesv.my.id/static/";
+export const API_URL = "https://mahitala.noturminesv.my.id";
+export const API_STATIC = "https://mahitala.noturminesv.my.id/static/";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 
 export const Icon = ({ icon, className }) => {
