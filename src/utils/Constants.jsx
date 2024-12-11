@@ -1,6 +1,5 @@
 export const API_URL = "http://localhost:3000";
 export const API_STATIC = "http://localhost:3000/static/";
-import { getSHA256Hash } from "boring-webcrypto-sha256";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 
 export const Icon = ({ icon, className }) => {
@@ -188,19 +187,13 @@ export const rainfallRecommendation = (rain) => {
 };
 
 export const cropIdeal = (temp, hum, rain) => {
-  if (
-    (temp === "Sangat Ideal" &&
-      hum === "Sangat Ideal" &&
-      rain === "Sangat Ideal")
-  ) {
+  if (temp === "Sangat Ideal" && hum === "Sangat Ideal" && rain === "Sangat Ideal") {
     return "Sangat Ideal";
   } else if (
-    (temp === "Mendekati Ideal" &&
-      hum === "Mendekati Ideal" &&
-      rain === "Mendekati Ideal") ||
-    (temp === "Sangat Ideal" && hum === "Tidak Ideal") ||
-    (hum === "Sangat Ideal" && rain === "Tidak Ideal") ||
-    (temp === "Sangat Ideal" && rain === "Tidak Ideal")
+    (temp === "Mendekati Ideal" && hum === "Mendekati Ideal" && rain === "Mendekati Ideal") ||
+    (temp === "Sangat Ideal" && hum !== "Tidak Ideal" && rain !== "Tidak Ideal") ||
+    (hum === "Sangat Ideal" && rain !== "Tidak Ideal") ||
+    (rain === "Sangat Ideal" && temp !== "Tidak Ideal")
   ) {
     return "Mendekati Ideal";
   } else {
@@ -209,31 +202,22 @@ export const cropIdeal = (temp, hum, rain) => {
 };
 
 export const cropIdealDescription = (temp, hum, rain) => {
-  if (
-    temp === "Sangat Ideal" &&
-    hum === "Sangat Ideal" &&
-    rain === "Sangat Ideal"
-  ) {
+  if (temp === "Sangat Ideal" && hum === "Sangat Ideal" && rain === "Sangat Ideal") {
     return "Kondisi tanaman sangat ideal untuk pertumbuhan dan produktivitas optimal.";
   }
   if (
-    (temp === "Mendekati Ideal" &&
-      hum === "Mendekati Ideal" &&
-      rain === "Mendekati Ideal") ||
-    (temp === "Sangat Ideal" && hum === "Tidak Ideal") ||
-    (hum === "Sangat Ideal" && rain === "Tidak Ideal") ||
-    (temp === "Sangat Ideal" && rain === "Tidak Ideal")
+    (temp === "Mendekati Ideal" && hum === "Mendekati Ideal" && rain === "Mendekati Ideal") ||
+    (temp === "Sangat Ideal" && hum !== "Tidak Ideal" && rain !== "Tidak Ideal") ||
+    (hum === "Sangat Ideal" && rain !== "Tidak Ideal") ||
+    (rain === "Sangat Ideal" && temp !== "Tidak Ideal")
   ) {
     return "Kondisi tanaman mendekati ideal, namun perlu perhatian ekstra untuk mempertahankan kondisi optimal.";
   }
-  if (
-    temp === "Tidak Ideal" ||
-    hum === "Tidak Ideal" ||
-    rain === "Tidak Ideal"
-  ) {
+  if (temp === "Tidak Ideal" || hum === "Tidak Ideal" || rain === "Tidak Ideal") {
     return "Kondisi tanaman tidak ideal, pertimbangkan langkah-langkah perbaikan untuk mendukung pertumbuhan tanaman.";
   }
 };
+
 
 export const truncateText = (text, length) => {
   return text.length > length ? text.substring(0, length) + "..." : text;
