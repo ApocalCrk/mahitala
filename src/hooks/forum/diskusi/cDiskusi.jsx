@@ -27,11 +27,9 @@ export const createDiskusi = async (data) => {
 
     return res.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
-
 
 export const deleteDiskusi = async (id) => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
@@ -48,7 +46,6 @@ export const deleteDiskusi = async (id) => {
 
     return res.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -68,12 +65,11 @@ export const getDetailDiskusi = async (id) => {
 
     return data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
 
-export const balasDiskusi = async (id_diskusi, id_interact, username, isi) => {
+export const balasDiskusi = async (id_diskusi, id_interact, id_reply, username, isi) => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
   if (!user || !user.token) {
     return "401";
@@ -85,6 +81,7 @@ export const balasDiskusi = async (id_diskusi, id_interact, username, isi) => {
       {
         id_diskusi,
         id_interact,
+        id_reply,
         username,
         isi,
       },
@@ -97,7 +94,6 @@ export const balasDiskusi = async (id_diskusi, id_interact, username, isi) => {
 
     return res.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -120,7 +116,6 @@ export const deleteMainReply = async (id) => {
 
     return res.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
@@ -140,7 +135,6 @@ export const deleteSubReply = async (id) => {
 
     return res.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

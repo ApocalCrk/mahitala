@@ -1,5 +1,5 @@
 import React from "react";
-import { checkWaktu } from "../../../../utils/Constants";
+import { checkWaktu, generateHash } from "../../../../utils/Constants";
 import { balasDiskusi } from "../../../../hooks/forum/diskusi/cDiskusi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -27,17 +27,19 @@ const InputBalasDiskusi = ({
       return;
     }
     if (newReplyContent.trim()) {
-      const newReply = {
-        id: id_diskusi,
-        user: user.username,
-        time: checkWaktu(new Date()),
-        content: newReplyContent,
-        parentId: replyReference ? replyReference.id : null,
-      };
-      setReplies([...replies, newReply]);
-      setNewReplyContent("");
-      setReplyReference(null);
-      balasDiskusi(id_diskusi, replyReference ? replyReference.id : null, user.username, newReplyContent);
+      generateHash(new Date().toString() + user.username + newReplyContent).then((id) => {
+        const newReply = {
+          id: id,
+          user: user.username,
+          time: checkWaktu(new Date()),
+          content: newReplyContent,
+          parentId: replyReference ? replyReference.id : null,
+        };
+        setReplies([...replies, newReply]);
+        setNewReplyContent("");
+        setReplyReference(null);
+        balasDiskusi(id_diskusi, replyReference ? replyReference.id : null, id, user.username, newReplyContent);
+      });
     }
   };
   return (
