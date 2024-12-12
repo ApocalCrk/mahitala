@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="flex flex-col md:items-start items-center mb-4 md:mb-0">
           <img src={logo} className="w-40 mb-3" alt="Mahitala Logo" />
           <p className="text-gray-700 text-sm md:text-base text-center">
-            Solusi terpercaya untuk membantu petani mengelola risiko terkait perubahan cuaca ekstrem.
+            Teknologi untuk petani solusi untuk indonesia.
           </p>
         </div>
         <div className="flex flex-col md:flex-row items-center text-gray-800 mb-4 md:mb-0">
