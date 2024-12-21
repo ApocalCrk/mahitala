@@ -1,8 +1,36 @@
-# React + Vite
+# Weather Prediction System with AI-based Crop Recommendations
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend repository for the Weather Prediction System, which integrates AI-powered crop recommendations. The system provides weather forecasts and suggests suitable crops based on temperature, humidity, and rainfall data.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Weather Prediction Integration**: Provides weather data forecasts from BMKG APIs.
+- **AI-based Crop Recommendation**: Suggests suitable crops based on parameters such as temperature, humidity, and rainfall.
+- **Data Management**: Handles storage and retrieval of agricultural data including land usage, production, and crop statistics.
+- **Scalable Architecture**: Built with Express.js, ensuring efficient handling of requests and responses.
+
+## Tech Stack
+
+- **Language**: JavaScript (Node.js)
+- **Framework**: Express.js
+- **Database**: MySQL
+- **AI Model**: Python-based `.pkl` model integrated via SQL database insertion and API calls
+
+## Future Enhancements
+
+- Add real-time data syncing with BMKG.
+- Implement user authentication and role-based access control.
+- Integrate additional AI models for pest control recommendations.
+
+## About
+
+This project was developed as part of the **Massive Project Challenge** by the PT Kinema Systrans Multimedia (Infinite Learning) interns. The goal was to create a weather prediction system with AI-based crop recommendations to help farmers make informed decisions in the field of agriculture.
+
+## Feedback
+
+Feel free to send me feedback on [Instagram](https://instagram.com/ferdyfrms) or [Twitter](https://x.com/algorithmehuman).
+
+
+## Special Thanks
+
+- **[BMKG](https://www.bmkg.go.id/)** for providing the weather data APIs.
