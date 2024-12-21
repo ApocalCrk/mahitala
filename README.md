@@ -28,7 +28,7 @@ This project was developed as part of the **Massive Project Challenge** by the P
 
 ## Feedback
 
-Feel free to send me feedback on [Instagram](https://instagram.com/ferdyfrms) or [Twitter](https://x.com/algorithmehuman).
+Feel free to send me feedback on [Instagram](https://instagram.com/ferdyfrms) or [X](https://x.com/algorithmehuman).
 
 
 ## Special Thanks
