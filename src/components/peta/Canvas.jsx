@@ -22,8 +22,7 @@ const Canvas = ({ location, error }) => {
 
   useEffect(() => {
     if (location && mapRef.current) {
-      // Zoom in to the marker's position
-      mapRef.current.setView([location.latitude, location.longitude], 18); // Adjust zoom level as needed
+      mapRef.current.setView([location.latitude, location.longitude], 18); 
     }
   }, [location]);
 
@@ -35,7 +34,7 @@ const Canvas = ({ location, error }) => {
         zoom={12}
         zoomControl={false}
         style={{ height: '100vh', width: '100%' }}
-        ref={mapRef} // Attach the ref to the MapContainer
+        ref={mapRef}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
