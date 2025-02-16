@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { motion } from "framer-motion";
 
 import ForecastDashboard from "./pages/ForecastDashboard";
 import About from "./pages/About";
@@ -19,6 +18,7 @@ import CariDiskusiLayout from "./pages/forum/finddiscussion/CariDiskusiLayout";
 
 import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
+import Peta from "./pages/Peta";
 
 function App() {
   return (
@@ -26,6 +26,7 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <Routes>
           <Route path="/" element={<ForecastDashboard />} />
+          <Route path="/peta" element={<Peta />} />
           <Route
             path="*"
             element={
