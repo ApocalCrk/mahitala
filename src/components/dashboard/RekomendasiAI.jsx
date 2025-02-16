@@ -33,7 +33,7 @@ const RekomendasiAI = ({ location }) => {
 
   return (
     <div className="rounded-xl border border-gray-200 shadow-sm">
-      <div className="border-b border-gray-100 p-4 bg-[#F4F7F4] rounded-t-xl">
+      <div className="flex border-b border-gray-100 p-4 bg-[#F4F7F4] rounded-t-xl">
         <h2 className="text-lg font-medium text-[#6C7D41]">Rekomendasi AI</h2>
       </div>
       <div className="p-6">
@@ -88,6 +88,21 @@ const RekomendasiAI = ({ location }) => {
                 )
               )}
             </p>
+          </div>
+        </div>
+        <div className="flex items-center mt-4 p-4 bg-gray-50 rounded-xl">
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-gray-600 font-medium">
+                Ambil Gambar Tanah
+              </h4>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">
+              Untuk meningkatkan akurasi rekomendasi, silahkan ambil gambar tanah yang akan ditanami. Pastikan gambar yang diambil jelas dan tidak terlalu gelap.
+            </p>
+            <button className="bg-[#6C7D41] text-white px-4 py-2 mt-2 rounded-md w-full">
+              Ambil Gambar
+            </button>
           </div>
         </div>
         <h4 className="text-sm font-medium mt-6">Rata-rata 3 Bulan Kedepan</h4>

@@ -1,22 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-import logo from "../assets/Logo/Mahitala.png";
+import logo from "../../assets/Logo/Mahitala.png";
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -25,9 +15,8 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full transition duration-300 ease-in-out ${
-          isScrolled ? "shadow-lg bg-white" : "bg-transparent"
-        } z-50`}
+        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f979]`}
+        style={{ zIndex: 999 }}
       >
         <div className="flex container justify-between mx-auto px-5 py-4">
           <a href="/" className="flex items-center">
@@ -49,7 +38,7 @@ const Header = () => {
                 `text-lg font-semibold px-5 py-3 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-gray-100"
+                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
                 }`
               }
             >
@@ -61,7 +50,7 @@ const Header = () => {
                 `text-lg font-semibold px-5 py-3 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-gray-100"
+                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
                 }`
               }
             >
@@ -73,7 +62,7 @@ const Header = () => {
                 `text-lg font-semibold px-5 py-3 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-gray-100"
+                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
                 }`
               }
             >
@@ -85,7 +74,7 @@ const Header = () => {
                 `text-lg font-semibold px-5 py-3 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-gray-100"
+                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
                 }`
               }
             >
@@ -154,7 +143,6 @@ const Header = () => {
           )}
         </AnimatePresence>
       </nav>
-      <div className="h-[3.5rem] md:h-20"></div>
     </>
   );
 };

@@ -17,6 +17,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
+import Peta from "./pages/Peta";
 
 const ROUTES = [
   {
@@ -28,6 +29,16 @@ const ROUTES = [
         "Mahitala App adalah aplikasi penyedia solusi agrikultur berbasis teknologi yang membantu petani dalam perencanaan dan pengelolaan pertanian. Aplikasi ini menawarkan fitur seperti prediksi cuaca akurat, rekomendasi tanaman berbasis AI, serta analisis data pertanian untuk meningkatkan produktivitas dan efisiensi.",
       keywords:
         "Mahitala App, aplikasi agrikultur, teknologi pertanian, prediksi cuaca, rekomendasi tanaman, AI untuk pertanian, analisis data pertanian, efisiensi pertanian, solusi agrikultur, produktivitas pertanian, inovasi teknologi pertanian, Infinite Learning, IL, Mahitala IL, Mahitala",
+    },
+  },
+  {
+    path: '/peta',
+    element: <Peta />,
+    helmet: {
+      title: "Mahitala - Peta Interaktif",
+      description:
+        "Peta interaktif Mahitala adalah fitur yang memungkinkan pengguna untuk melihat informasi cuaca dan tanaman di lokasi mereka. Dengan peta ini, pengguna dapat mengetahui kondisi cuaca saat ini, prediksi cuaca, serta rekomendasi tanaman yang cocok untuk ditanam di lokasi mereka.",
+      keywords: "Mahitala Peta Interaktif, peta cuaca, peta tanaman, peta pertanian, peta agrikultur, peta interaktif, peta lokasi, peta prediksi cuaca, peta rekomendasi tanaman, peta informasi pertanian, peta petani, peta agrikultur Indonesia",
     },
   },
   {
@@ -80,9 +91,9 @@ function App() {
                         <meta name="keywords" content={helmet.keywords} />
                       </Helmet>
                     )}
-                    {path !== "/" && <Header />}
+                    {path !== "/" && path !== "/peta" && <Header />}
                     <main className="flex-grow">{element}</main>
-                    {path !== "/" && <Footer />}
+                    {path !== "/" && path !== "/peta" && <Footer />}
                   </>
                 }
               />
