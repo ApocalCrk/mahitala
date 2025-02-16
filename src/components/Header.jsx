@@ -125,6 +125,19 @@ const Header = () => {
                 </li>
                 <li>
                   <NavLink
+                    to="/peta"
+                    className={({ isActive }) =>
+                      `text-2xl font-semibold ${
+                        isActive ? "text-[#6C7D41]" : "text-black"
+                      }`
+                    }
+                    onClick={toggleMenu}
+                  >
+                    Peta Interaktif
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
                     to="/forum"
                     className={({ isActive }) =>
                       `text-2xl font-semibold ${
