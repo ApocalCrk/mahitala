@@ -5,6 +5,7 @@ import { API_URL } from "../../utils/Constants";
 export const getDataForecast = async ({ location }) => {
     const { latitude, longitude } = location;
     const token = localStorage.getItem("token");
+    
     try {
         if (token) {
             const res = await axiosInstance.post(`/api/cuaca/forecast`, {latitude, longitude});
