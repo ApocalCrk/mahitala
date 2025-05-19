@@ -15,7 +15,8 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   const { title, body } = payload.notification;
   const notificationOptions = {
-    body: body
+    body: body,
+    icon: "https://mahitala.noturmine.my.id/static/images/favicon.png",
   };
 
   self.registration.showNotification(title, notificationOptions);
