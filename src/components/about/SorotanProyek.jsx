@@ -48,7 +48,7 @@ const SorotanProyek = () => {
             description: "Akurasi tinggi dalam pengenalan jenis tanah dan rekomendasi tanaman",
             date: "April 2025"
           }
-        ].map((item) => (
+        ].map((index, item) => (
           <div
             key={index}
             className="min-w-[300px] bg-white rounded-lg p-6 border border-gray-200"
