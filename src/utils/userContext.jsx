@@ -4,10 +4,9 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
 
   return (
-    <UserContext.Provider value={{ isAuthenticated, setIsAuthenticated, currentUser, setCurrentUser }}>
+    <UserContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
       {children}
     </UserContext.Provider>
   );

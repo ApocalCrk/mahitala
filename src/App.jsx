@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import ForecastDashboard from "./pages/ForecastDashboard";
@@ -19,8 +19,18 @@ import CariDiskusiLayout from "./pages/forum/finddiscussion/CariDiskusiLayout";
 import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
 import Peta from "./pages/Peta";
+import { requestPermissionAndRegisterToken, onMessageListener } from "./utils/firebase";
 
 function App() {
+  useEffect(() => {
+    requestPermissionAndRegisterToken();
+
+    onMessageListener().then((payload) => {
+      const { title, body } = payload.notification;
+      new Notification(title, { body });
+    });
+  }, []);
+
   return (
     <UserProvider>
       <div className="flex flex-col min-h-screen">

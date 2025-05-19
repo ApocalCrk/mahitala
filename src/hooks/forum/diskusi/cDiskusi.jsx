@@ -1,16 +1,10 @@
-import axios from "axios";
 import { API_URL } from "../../../utils/Constants";
 import { API_STATIC } from "../../../utils/Constants";
+import axiosInstance from "../../../utils/axiosInstance";
 
 export const createDiskusi = async (data) => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return "401";
-  }
-
   try {
     const formData = new FormData();
-    formData.append("username", data.username);
     formData.append("judul", data.judul);
     formData.append("id_kategori", data.id_kategori);
     formData.append("isi", data.isi);
@@ -18,11 +12,7 @@ export const createDiskusi = async (data) => {
       formData.append("gambar", data.gambar);
     }
 
-    const res = await axios.post(`${API_URL}/api/forum/diskusi`, formData, {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-        "Content-Type": "multipart/form-data",
-      },
+    const res = await axiosInstance.post(`${API_URL}/api/forum/diskusi`, formData, {
     });
 
     return res.data;
@@ -32,17 +22,8 @@ export const createDiskusi = async (data) => {
 };
 
 export const deleteDiskusi = async (id) => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return "401";
-  }
-
   try {
-    const res = await axios.delete(`${API_URL}/api/forum/diskusi/${id}`, {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const res = await axiosInstance.delete(`${API_URL}/api/forum/diskusi/${id}`);
 
     return res.data;
   } catch (error) {
@@ -52,7 +33,7 @@ export const deleteDiskusi = async (id) => {
 
 export const getDetailDiskusi = async (id) => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi/${id}`);
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi/${id}`);
     const data = res.data[0];
     const dateObj = new Date(data.tgl_dibuat);
     const options = { day: "2-digit", month: "long", year: "numeric" };
@@ -69,26 +50,15 @@ export const getDetailDiskusi = async (id) => {
   }
 };
 
-export const balasDiskusi = async (id_diskusi, id_interact, id_reply, username, isi) => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return "401";
-  }
-
+export const balasDiskusi = async (id_diskusi, id_interact, id_reply, isi) => {
   try {
-    const res = await axios.post(
+    const res = await axiosInstance.post(
       `${API_URL}/api/forum/diskusi/reply`,
       {
         id_diskusi,
         id_interact,
         id_reply,
-        username,
-        isi,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
+        isi
       }
     );
 
@@ -99,19 +69,9 @@ export const balasDiskusi = async (id_diskusi, id_interact, id_reply, username, 
 };
 
 export const deleteMainReply = async (id) => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return "401";
-  }
-
   try {
-    const res = await axios.delete(
-      `${API_URL}/api/forum/diskusi/reply/firstIn/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
+    const res = await axiosInstance.delete(
+      `${API_URL}/api/forum/diskusi/reply/firstIn/${id}`
     );
 
     return res.data;
@@ -121,17 +81,8 @@ export const deleteMainReply = async (id) => {
 };
 
 export const deleteSubReply = async (id) => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return "401";
-  }
-
   try {
-    const res = await axios.delete(`${API_URL}/api/forum/diskusi/reply/secIn/${id}`, {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const res = await axiosInstance.delete(`${API_URL}/api/forum/diskusi/reply/secIn/${id}`);
 
     return res.data;
   } catch (error) {

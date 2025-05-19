@@ -1,10 +1,10 @@
-import axios from "axios";
 import { API_URL } from "../../utils/Constants";
 import { API_STATIC } from "../../utils/Constants";
+import axiosInstance from "../../utils/axiosInstance";
 
 export const getForumTeratas = async () => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/top-diskusi`);
+    const res = await axiosInstance.get(`${API_URL}/api/forum/top-diskusi`);
     res.data.map((item) => {
       const dateObj = new Date(item.tgl_dibuat);
       const options = { day: "2-digit", month: "long", year: "numeric" };
@@ -28,7 +28,7 @@ export const getForumSaya = async () => {
   }
 
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi-saya`, {
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi-saya`, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -56,7 +56,7 @@ export const getForumSaya = async () => {
 
 export const getForumTerbaru = async () => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi-terbaru`);
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi-terbaru`);
     res.data.map((item) => {
       const dateObj = new Date(item.tgl_dibuat);
       const options = { day: "2-digit", month: "long", year: "numeric" };
@@ -74,17 +74,8 @@ export const getForumTerbaru = async () => {
 }
 
 export const getForumTerakhir = async () => {
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (!user || !user.token) {
-    return '401';
-  }
-
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi-terakhir`, {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi-terakhir`);
 
     const data = res.data.map((item) => {
       const dateObj = new Date(item.tgl_dibuat);
@@ -108,7 +99,7 @@ export const getForumTerakhir = async () => {
 
 export const getForumKategori = async (id) => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi-kategori/${id}`);
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi-kategori/${id}`);
     res.data.map((item) => {
       const dateObj = new Date(item.tgl_dibuat);
       const options = { day: "2-digit", month: "long", year: "numeric" };
@@ -127,7 +118,7 @@ export const getForumKategori = async (id) => {
 
 export const getSearchForum = async (search) => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/diskusi-search/${search}`);
+    const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi-search/${search}`);
     res.data.map((item) => {
       const dateObj = new Date(item.tgl_dibuat);
       const options = { day: "2-digit", month: "long", year: "numeric" };

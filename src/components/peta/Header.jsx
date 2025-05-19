@@ -15,13 +15,15 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f979]`}
-        style={{ zIndex: 999 }}
+        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f93f]`}
+        style={{ zIndex: 999999 }}
       >
         <div className="flex container justify-between mx-auto px-5 py-4">
-          <a href="/" className="flex items-center">
-            <img src={logo} alt="Mahitala" className="w-36" />
-          </a>
+          <span className="flex items-center">
+            <a href="/" className="flex items-center">
+              <img src={logo} alt="Mahitala" className="w-36" />
+            </a>
+          </span>
 
           <button
             type="button"
@@ -56,7 +58,7 @@ const Header = () => {
             >
               Peta Interaktif
             </NavLink>
-            <NavLink
+            {/* <NavLink
               to="/forum"
               className={({ isActive }) =>
                 `text-lg font-semibold px-5 py-3 rounded-md ${
@@ -67,7 +69,7 @@ const Header = () => {
               }
             >
               Forum Diskusi
-            </NavLink>
+            </NavLink> */}
             <NavLink
               to="/tentang-kami"
               className={({ isActive }) =>
@@ -114,6 +116,19 @@ const Header = () => {
                 </li>
                 <li>
                   <NavLink
+                    to="/peta"
+                    className={({ isActive }) =>
+                      `text-2xl font-semibold ${
+                        isActive ? "text-[#6C7D41]" : "text-black"
+                      }`
+                    }
+                    onClick={toggleMenu}
+                  >
+                    Peta Interaktif
+                  </NavLink>
+                </li>
+                {/* <li>
+                  <NavLink
                     to="/forum"
                     className={({ isActive }) =>
                       `text-2xl font-semibold ${
@@ -124,7 +139,7 @@ const Header = () => {
                   >
                     Forum Diskusi
                   </NavLink>
-                </li>
+                </li> */}
                 <li>
                   <NavLink
                     to="/tentang-kami"

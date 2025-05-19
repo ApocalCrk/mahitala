@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getKategoriBest } from "../../hooks/kategori/getKategori";
+import { getKategoriBest } from "../../hooks/forum/kategori/getKategori";
 
 import ItemKategori from "./SubComponents/ItemKategori";
 

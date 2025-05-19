@@ -4,11 +4,9 @@ const TujuanProyek = () => {
   return (
     <>
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-semibold mb-4">Proyek Terbaru Kami</h2>
+        <h2 className="text-3xl font-semibold mb-4">Pengembangan Proyek</h2>
         <p className="text-gray-700">
-          Menggunakan AI untuk memberikan prediksi cuaca yang akurat dan
-          merekomendasikan waktu penanaman yang optimal untuk meningkatkan
-          produktivitas pertanian.
+          Menggunakan AI dengan integrasi data GIS dan API BMKG untuk memberikan rekomendasi tanaman yang optimal berdasarkan cuaca dan lokasi.
         </p>
       </div>
       <div className="flex flex-wrap gap-8 justify-center">
@@ -25,9 +23,9 @@ const TujuanProyek = () => {
             Teknologi yang Digunakan
           </h3>
           <p className="text-gray-700">
-            Memanfaatkan AI dan pembelajaran mesin dengan data cuaca dari BMKG,
-            kami memprediksi jendela penanaman yang sesuai dan memberikan
-            rekomendasi yang dapat ditindaklanjuti.
+            Memanfaatkan teknologi AI untuk analisis data cuaca dan GIS untuk
+            visualisasi data geospasial, memungkinkan petani untuk membuat keputusan
+            yang lebih baik.
           </p>
         </div>
         <div className="w-full md:w-1/4 bg-white rounded-lg p-8 border border-gray-200">
@@ -35,9 +33,9 @@ const TujuanProyek = () => {
             Dampak pada Keberlanjutan
           </h3>
           <p className="text-gray-700">
-            Dengan mendukung pertanian berkelanjutan, proyek ini membantu
-            mengurangi pemborosan sumber daya dan mempromosikan praktik ramah
-            lingkungan.
+            Dengan memberikan rekomendasi tanaman yang tepat, proyek ini
+            bertujuan untuk meningkatkan keberlanjutan pertanian, mengurangi
+            limbah, dan meningkatkan ketahanan pangan.
           </p>
         </div>
       </div>

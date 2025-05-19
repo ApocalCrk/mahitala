@@ -36,17 +36,17 @@ const Header = () => {
 
           <button
             type="button"
-            className="md:hidden text-gray-500 hover:text-[#6C7D41] focus:outline-none"
+            className="xl:hidden text-gray-500 hover:text-[#6C7D41] focus:outline-none"
             onClick={toggleMenu}
           >
             <FaBars size={20} />
           </button>
 
-          <div className="hidden md:flex space-x-6">
+          <div className="hidden xl:flex space-x-6">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
+                `text-md font-semibold flex items-center px-5 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
                     : "text-[#6C7D41] hover:bg-gray-100"
@@ -58,7 +58,7 @@ const Header = () => {
             <NavLink
               to="/peta"
               className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
+                `text-md flex items-center font-semibold px-5 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
                     : "text-[#6C7D41] hover:bg-gray-100"
@@ -70,7 +70,7 @@ const Header = () => {
             <NavLink
               to="/forum"
               className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
+                `text-md flex items-center font-semibold px-5 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
                     : "text-[#6C7D41] hover:bg-gray-100"
@@ -82,7 +82,7 @@ const Header = () => {
             <NavLink
               to="/tentang-kami"
               className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
+                `text-md flex items-center font-semibold px-5 rounded-md ${
                   isActive
                     ? "text-white bg-[#6C7D41]"
                     : "text-[#6C7D41] hover:bg-gray-100"
@@ -121,6 +121,19 @@ const Header = () => {
                     onClick={toggleMenu}
                   >
                     Halaman Utama
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/peta"
+                    className={({ isActive }) =>
+                      `text-2xl font-semibold ${
+                        isActive ? "text-[#6C7D41]" : "text-black"
+                      }`
+                    }
+                    onClick={toggleMenu}
+                  >
+                    Peta Interaktif
                   </NavLink>
                 </li>
                 <li>

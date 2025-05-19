@@ -170,13 +170,13 @@ export const colorRecommendation = (prediction, min, max) => {
 
 export const rainfallRecommendation = (rain) => {
   if (rain < 50) {
-    return "Curah hujan terlalu rendah. Tanaman padi mungkin membutuhkan irigasi tambahan untuk mendukung pertumbuhan.";
+    return "Curah hujan terlalu rendah. Tanaman membutuhkan irigasi tambahan untuk pertumbuhan yang optimal.";
   }
   if (rain >= 50 && rain < 200) {
-    return "Curah hujan sedang. Cocok untuk tanaman padi dengan dukungan drainase yang baik untuk menghindari kekeringan pada fase kritis.";
+    return "Curah hujan sedang. Cocok untuk tanaman dengan dukungan drainase yang baik untuk menghindari kekeringan pada fase kritis.";
   }
   if (rain >= 200 && rain <= 300) {
-    return "Curah hujan ideal untuk budidaya padi. Pastikan distribusi air merata agar pertumbuhan optimal.";
+    return "Curah hujan ideal untuk budidaya. Pastikan distribusi air merata agar pertumbuhan optimal.";
   }
   if (rain > 300 && rain <= 500) {
     return "Curah hujan tinggi. Pastikan sistem drainase sawah dapat mengelola kelebihan air untuk mencegah genangan atau banjir.";
@@ -186,38 +186,23 @@ export const rainfallRecommendation = (rain) => {
   }
 };
 
-export const cropIdeal = (temp, hum, rain) => {
-  if (temp === "Sangat Ideal" && hum === "Sangat Ideal" && rain === "Sangat Ideal") {
-    return "Sangat Ideal";
-  } else if (
-    (temp === "Mendekati Ideal" && hum === "Mendekati Ideal" && rain === "Mendekati Ideal") ||
-    (temp === "Sangat Ideal" && hum !== "Tidak Ideal" && rain !== "Tidak Ideal") ||
-    (hum === "Sangat Ideal" && rain !== "Tidak Ideal") ||
-    (rain === "Sangat Ideal" && temp !== "Tidak Ideal")
-  ) {
-    return "Mendekati Ideal";
-  } else {
-    return "Tidak Ideal";
-  }
-};
-
-export const cropIdealDescription = (temp, hum, rain) => {
-  if (temp === "Sangat Ideal" && hum === "Sangat Ideal" && rain === "Sangat Ideal") {
+export const cropIdealDescription = (kategori) => {
+  if (kategori === "Sangat Ideal") {
     return "Kondisi tanaman sangat ideal untuk pertumbuhan dan produktivitas optimal.";
-  }
-  if (
-    (temp === "Mendekati Ideal" && hum === "Mendekati Ideal" && rain === "Mendekati Ideal") ||
-    (temp === "Sangat Ideal" && hum !== "Tidak Ideal" && rain !== "Tidak Ideal") ||
-    (hum === "Sangat Ideal" && rain !== "Tidak Ideal") ||
-    (rain === "Sangat Ideal" && temp !== "Tidak Ideal")
-  ) {
-    return "Kondisi tanaman mendekati ideal, namun perlu perhatian ekstra untuk mempertahankan kondisi optimal.";
-  }
-  if (temp === "Tidak Ideal" || hum === "Tidak Ideal" || rain === "Tidak Ideal") {
-    return "Kondisi tanaman tidak ideal, pertimbangkan langkah-langkah perbaikan untuk mendukung pertumbuhan tanaman.";
+  } else if (kategori === "Mendekati Ideal") {
+    return "Kondisi tanaman mendekati ideal, tetapi ada beberapa faktor yang perlu diperhatikan.";
+  } else {
+    return "Kondisi tanaman cukup ideal, tetapi ada beberapa faktor yang perlu diperhatikan.";
   }
 };
 
+export function capitalizeEachWord(text) {
+  if (!text) return "";
+  return text
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
 
 export const truncateText = (text, length) => {
   return text.length > length ? text.substring(0, length) + "..." : text;
@@ -265,4 +250,85 @@ export const generateHash = async (input) => {
     .map((item) => item.toString(16).padStart(2, "0"))
     .join("");
   return hash;
+};
+
+export const geodesicArea = (latLngs) => {
+  const pointsCount = latLngs.length;
+  let area = 0.0;
+  const d2r = Math.PI / 180;
+  let p1, p2;
+
+  if (pointsCount > 2) {
+    for (let i = 0; i < pointsCount; i++) {
+      p1 = latLngs[i];
+      p2 = latLngs[(i + 1) % pointsCount];
+      area +=
+        (p2.lng - p1.lng) *
+        d2r *
+        (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
+    }
+    area = (area * 6378137.0 * 6378137.0) / 2.0;
+  }
+
+  return Math.abs(area);
+};
+
+export const calculateArea = (latLngs) => {
+  if (!latLngs || latLngs.length < 3) return null;
+
+  try {
+    const points = latLngs.map((point) =>
+      Array.isArray(point) ? { lat: point[0], lng: point[1] } : point
+    );
+
+    const area = geodesicArea(points);
+    return {
+      squareMeters: area,
+      hectares: area / 10000,
+    };
+  } catch (error) {
+    console.error("Error calculating area:", error);
+    return null;
+  }
+};
+
+export const calculateCentroid = (coordinates) => {
+  if (!Array.isArray(coordinates) || coordinates.length === 0) {
+    throw new Error("Input harus berupa array koordinat yang tidak kosong");
+  }
+
+  let sumLat = 0;
+  let sumLng = 0;
+  const count = coordinates.length;
+
+  for (const coord of coordinates) {
+    if (!Array.isArray(coord) || coord.length !== 2) {
+      throw new Error(
+        "Setiap koordinat harus berupa pasangan [latitude, longitude]"
+      );
+    }
+
+    sumLat += coord[0];
+    sumLng += coord[1];
+  }
+
+  const centroidLat = sumLat / count;
+  const centroidLng = sumLng / count;
+
+  return [centroidLat, centroidLng];
+};
+
+export const formatCurrency = (value) => {
+  const num = parseFloat(value.toString().replace(/[^\d.-]/g, ''));
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(num);
+};
+
+export const formatNumber = (value) => {
+  const num = parseFloat(value.toString().replace(/[^\d.-]/g, ''));
+  return new Intl.NumberFormat('id-ID').format(num);
 };

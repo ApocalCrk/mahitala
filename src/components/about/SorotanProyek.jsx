@@ -6,21 +6,40 @@ const SorotanProyek = () => {
       <div className="text-center mb-12">
         <h2 className="text-3xl font-semibold mb-4">Sorotan Proyek</h2>
         <p className="text-gray-700">
-          Hasil utama dan pencapaian yang diraih selama proyek ini.
+          Proyek ini bertujuan untuk memberdayakan petani dengan wawasan berbasis
+          data mengenai pola cuaca dan kecocokan tanaman untuk mengoptimalkan
+          hasil panen. Dengan memanfaatkan teknologi AI dan GIS, kami memberikan
+          rekomendasi tanaman yang tepat berdasarkan data cuaca dan lokasi.
         </p>
       </div>
       <div className="flex gap-6 pb-4 scrollbar-hide overflow-x-auto">
-        {[1, 2, 3].map((item) => (
+        {
+        [
+          {
+            title: "Akurasi Tinggi",
+            description: "Hasil prediksi rekomendasi tanaman berdasarkan cuaca mendapatkan skor lebih dari 90%",
+            date: "January 2025"
+          },
+          {
+            title: "Teknologi AI dan GIS",
+            description: "Penggunaan teknologi AI dan GIS untuk analisis data cuaca dan visualisasi geospasial",
+            date: "Maret 2025"
+          },
+          {
+            title: "Rekomendasi Tanaman",
+            description: "Akurasi tinggi dalam pengenalan jenis tanah dan rekomendasi tanaman",
+            date: "April 2025"
+          }
+        ].map((item) => (
           <div
             key={item}
             className="min-w-[300px] bg-white rounded-lg p-6 border border-gray-200"
           >
             <p className="text-gray-700 mb-4">
-              "Meningkatkan hasil panen hingga 20% melalui penjadwalan penanaman
-              yang optimal!"
+              {item.description}
             </p>
-            <h4 className="font-semibold text-gray-800">Hasil Proyek</h4>
-            <p className="text-gray-500">Agustus 2024</p>
+            <h4 className="font-semibold text-gray-800">{item.title}</h4>
+            <p className="text-gray-500">{item.date}</p>
           </div>
         ))}
       </div>

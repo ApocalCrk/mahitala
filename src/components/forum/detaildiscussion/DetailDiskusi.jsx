@@ -113,12 +113,7 @@ const DetailDiskusi = () => {
       <div className="lg:col-span-2 p-6 bg-white rounded-lg">
         <button
           onClick={() => {
-            const previousPath = document.referrer;
-            if (previousPath.includes("/forum")) {
-              navigate(-1);
-            } else {
-              navigate("/forum");
-            }
+            navigate(-1);
           }
           }
           className="flex justify-center text-start items-center text-[#6C7D41] text-2xl font-semibold hover:text-[#4A5A2C] transition-colors mb-5"

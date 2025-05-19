@@ -7,7 +7,7 @@ import ListKategoriTerkait from "../../../../components/forum/categoryforum/deta
 import DiskusiTrending from "../../../../components/forum/categoryforum/detailcategory/DiskusiTrending";
 import PaginationKategori from "../../../../components/forum/categoryforum/detailcategory/PaginationKategori";
 
-import { getKategoriById } from "../../../../hooks/kategori/getKategori";
+import { getKategoriById } from "../../../../hooks/forum/kategori/getKategori";
 import { getForumKategori, getForumTeratas } from "../../../../hooks/forum/getForum";
 
 const CategoryDiscussionsPage = () => {

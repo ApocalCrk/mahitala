@@ -4,7 +4,7 @@ const ItemKomponenTeknologi = ({ tech }) => {
   return (
     <div
       key={tech}
-      className="w-64 bg-white rounded-lg p-6 text-center border border-gray-200"
+      className="w-96 bg-white rounded-lg p-6 text-center border border-gray-200"
     >
       <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
         {tech === "Pembelajaran Mesin" ? (
@@ -12,13 +12,13 @@ const ItemKomponenTeknologi = ({ tech }) => {
             src="https://img.icons8.com/color/96/000000/artificial-intelligence.png"
             alt="AI"
           />
-        ) : tech === "Integrasi API Cuaca" ? (
+        ) : tech === "Data API BMKG" ? (
           <img
             src="https://img.icons8.com/color/96/000000/cloud.png"
             alt="Weather API"
           />
         ) : (
-          tech === "Analisis Data" && (
+          tech === "Geographic Information System" && (
             <img
               src="https://img.icons8.com/color/96/000000/data-configuration.png"
               alt="Data Analysis"
