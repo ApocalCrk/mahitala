@@ -30,9 +30,9 @@ const SorotanProyek = () => {
             description: "Akurasi tinggi dalam pengenalan jenis tanah dan rekomendasi tanaman",
             date: "April 2025"
           }
-        ].map((index, item) => (
+        ].map((item) => (
           <div
-            key={index}
+            key={item}
             className="min-w-[300px] bg-white rounded-lg p-6 border border-gray-200"
           >
             <p className="text-gray-700 mb-4">
