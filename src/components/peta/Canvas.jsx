@@ -1406,9 +1406,14 @@ const Canvas = ({ location, data }) => {
 
             <span className="block h-8" />
 
-            {!isMobile & isAuthenticated &&
-              activeSection === "weather" &&
-              renderSummarySection()}
+            {!isMobile & isAuthenticated ? (
+              activeSection === "weather" ? renderSummarySection()
+              : null
+            ) : (
+              <div className="text-center text-gray-500">
+                <p>Silakan masuk untuk mengakses fitur ini</p>
+              </div>
+            )}
           </m.div>
         )}
 
