@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
@@ -18,6 +18,7 @@ import Footer from "./components/Footer";
 import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
 import Peta from "./pages/Peta";
+import { requestPermissionAndRegisterToken, onMessageListener } from "./utils/firebase";
 
 const ROUTES = [
   {
@@ -73,6 +74,15 @@ const ROUTES = [
 ];
 
 function App() {
+  useEffect(() => {
+    requestPermissionAndRegisterToken();
+
+    onMessageListener().then((payload) => {
+      const { title, body } = payload.notification;
+      new Notification(title, { body });
+    });
+  }, []);
+
   return (
     <HelmetProvider>
       <UserProvider>

@@ -39,7 +39,7 @@ import {
 
 import "ckeditor5/ckeditor5.css";
 
-import { getKategori } from "../../../hooks/kategori/getKategori";
+import { getKategori } from "../../../hooks/forum/kategori/getKategori";
 import { createDiskusi } from "../../../hooks/forum/diskusi/cDiskusi";
 import Swal from "sweetalert2";
 
@@ -74,9 +74,7 @@ const FormBuatDiskusi = () => {
   });
 
   const handleSubmit = () => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
     const data = {
-      username: user.username,
       judul: document.getElementById("title").value,
       id_kategori: document.getElementById("category").value,
       gambar: file,
@@ -112,7 +110,6 @@ const FormBuatDiskusi = () => {
             showConfirmButton: false,
             timer: 1500,
           });
-          console.log(res);
           navigate(`/forum/diskusi/${res.id_diskusi}`);
         }
       });

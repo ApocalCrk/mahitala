@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ItemKategoriForum from "./SubComponents/ItemKategoriForum";
-import { getKategori } from "../../../hooks/kategori/getKategori";
+import { getKategori } from "../../../hooks/forum/kategori/getKategori";
 
 const KategoriForum = ({ searchTerm }) => {
   const [categories, setCategories] = useState([]);

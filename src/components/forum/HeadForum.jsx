@@ -2,14 +2,14 @@ import React, { useState, useCallback, useEffect } from "react";
 import { FaSearch, FaPlus, FaList } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogIn, LogOut, Newspaper } from "lucide-react";
-import { loginAuth, registerAuth, logoutAuth } from "../../hooks/forum/auth/Authentication";
+import { LogIn, LogOut, UserPlus2Icon } from "lucide-react";
+import { loginAuth, registerAuth, logoutAuth } from "../../hooks/auth/Authentication";
 import { useUser } from "../../utils/userContext";
 
-import { Modal, LoginForm, RegisterForm } from "./SubComponents/ModalAuth";
+import { Modal, LoginForm, RegisterForm } from "../auth/ModalAuth";
 
 const HeadForum = () => {
-  const { setIsAuthenticated, setCurrentUser, isAuthenticated } = useUser();
+  const { setIsAuthenticated, isAuthenticated } = useUser();
   const [searchText, setSearchText] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -18,10 +18,9 @@ const HeadForum = () => {
   const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
+    const storedUser = localStorage.getItem("token");
     if (storedUser) {
       setIsAuthenticated(true);
-      setCurrentUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -51,9 +50,7 @@ const HeadForum = () => {
       if (res.status === 200) {
         const { user } = res.data;
         setIsAuthenticated(true);
-        setCurrentUser(user);
         setIsLoginOpen(false);
-        localStorage.setItem("currentUser", JSON.stringify(user));
       } else {
         setIsError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
@@ -77,9 +74,7 @@ const HeadForum = () => {
       if (res.status === 200) {
         const { user } = res.data;
         setIsAuthenticated(true);
-        setCurrentUser(user);
         setIsRegisterOpen(false);
-        localStorage.setItem("currentUser", JSON.stringify(user));
       } else {
         setIsError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
@@ -92,9 +87,6 @@ const HeadForum = () => {
   
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
-    setCurrentUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
     logoutAuth();
   }, []);
 
@@ -188,7 +180,7 @@ const HeadForum = () => {
               onClick={toggleRegisterModal}
               className="flex px-8 py-2 text-md font-semibold items-center justify-center text-[#6C7D41] bg-transparent border border-[#6C7D41] rounded-lg hover:bg-[#6C7D41] hover:text-white transition-all duration-300 w-full md:w-auto"
             >
-              <Newspaper className="w-5 h-5 mr-2" />
+              <UserPlus2Icon className="w-5 h-5 mr-2" />
               Daftar
             </button>
           </>

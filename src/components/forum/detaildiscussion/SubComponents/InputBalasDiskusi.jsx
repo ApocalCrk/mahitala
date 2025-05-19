@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { checkWaktu, generateHash } from "../../../../utils/Constants";
 import { balasDiskusi } from "../../../../hooks/forum/diskusi/cDiskusi";
 import { useNavigate } from "react-router-dom";
+import { checkUser } from "../../../../hooks/auth/Authentication";
 import Swal from "sweetalert2";
 
 const InputBalasDiskusi = ({
@@ -13,10 +14,22 @@ const InputBalasDiskusi = ({
   replies,
   setReplies,
 }) => {
+  const token = localStorage.getItem("token");
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      checkUser().then((data) => {
+        if (data) {
+          setUser(data);
+        }
+      });
+    }
+  }, [token]);
+
   const handleReplySubmit = () => {
-    const user =  JSON.parse(localStorage.getItem("currentUser"));
-    if (!user) {
+    if (!token) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -27,7 +40,7 @@ const InputBalasDiskusi = ({
       return;
     }
     if (newReplyContent.trim()) {
-      generateHash(new Date().toString() + user.username + newReplyContent).then((id) => {
+      generateHash(new Date().toString() + newReplyContent).then((id) => {
         const newReply = {
           id: id,
           user: user.username,
@@ -38,7 +51,7 @@ const InputBalasDiskusi = ({
         setReplies([...replies, newReply]);
         setNewReplyContent("");
         setReplyReference(null);
-        balasDiskusi(id_diskusi, replyReference ? replyReference.id : null, id, user.username, newReplyContent);
+        balasDiskusi(id_diskusi, replyReference ? replyReference.id : null, id, newReplyContent);
       });
     }
   };

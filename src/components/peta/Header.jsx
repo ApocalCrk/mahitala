@@ -15,13 +15,15 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f979]`}
-        style={{ zIndex: 999 }}
+        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f93f]`}
+        style={{ zIndex: 999999 }}
       >
         <div className="flex container justify-between mx-auto px-5 py-4">
-          <a href="/" className="flex items-center">
-            <img src={logo} alt="Mahitala" className="w-36" />
-          </a>
+          <span className="flex items-center">
+            <a href="/" className="flex items-center">
+              <img src={logo} alt="Mahitala" className="w-36" />
+            </a>
+          </span>
 
           <button
             type="button"

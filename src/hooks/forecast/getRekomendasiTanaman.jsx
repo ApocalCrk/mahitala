@@ -1,16 +1,12 @@
-import { API_URL } from "../../utils/Constants";
+import axiosInstance from "../../utils/axiosInstance";
 
 export const getRekomendasiTanaman = async ({ label }) => {
   try {
-    const res = await fetch(`${API_URL}/api/crop/recommendation`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ label }),
+    const res = await axiosInstance.post(`/api/crop/recommendation`, {
+      label,
     });
 
-    return res.json();
+    return res.data;
   } catch (error) {
     console.error(error);
   }

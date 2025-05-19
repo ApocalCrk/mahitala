@@ -3,7 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import ItemDiskusiTerakhir from "./SubComponents/ItemDiskusiTerakhir";
 import { Link } from "react-router-dom";
 import { getForumTerakhir } from "../../../hooks/forum/getForum";
-import { getKategori } from "../../../hooks/kategori/getKategori";
+import { getKategori } from "../../../hooks/forum/kategori/getKategori";
 
 const DiskusiTerakhir = () => {
   const [ discussions, setDiscussions ] = useState([]);
