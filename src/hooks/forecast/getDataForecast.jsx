@@ -1,7 +1,6 @@
 import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_URL } from "../../utils/Constants";
-import axiosInstance from "../../utils/axiosInstance";
 
 export const getDataForecast = async ({ location }) => {
     const { latitude, longitude } = location;
