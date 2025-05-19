@@ -69,6 +69,7 @@ const ForecastDashboard = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsLoginOpen(false);
+        window.location.reload();
       } else {
         setIsError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
@@ -92,6 +93,7 @@ const ForecastDashboard = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
+        window.location.reload();
       } else {
         setIsError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
