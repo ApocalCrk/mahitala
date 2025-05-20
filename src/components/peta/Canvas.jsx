@@ -2113,7 +2113,7 @@ const Canvas = ({ location, data }) => {
 
           {/* floating context  */}
           {isMobile && (
-            <div className="absolute bottom-4 right-4 flex flex-col gap-2 z-[99999]">
+            <div className="absolute bottom-4 right-4 flex flex-col gap-2 z-[99998]">
               <button
                 onClick={() => {
                   setPanelState(
@@ -2244,7 +2244,7 @@ const Canvas = ({ location, data }) => {
 
         {/* Camera Layout */}
         {open && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[999999]">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[99999]">
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl relative">
               <button
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
