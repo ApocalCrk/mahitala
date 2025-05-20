@@ -1,4 +1,5 @@
 export const API_URL = "http://localhost:3000";
+export const API_URL_CLF = "http://localhost:8000";
 export const API_STATIC = "http://localhost:3000/static/";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 

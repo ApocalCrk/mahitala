@@ -27,6 +27,7 @@ import {
   calculateArea,
   capitalizeFirstLetter,
   calculateCentroid,
+  API_URL_CLF,
 } from "../../utils/Constants";
 
 import {
@@ -717,7 +718,7 @@ const Canvas = ({ location, data }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/soil/predict",
+        API_URL_CLF + "/api/soil/predict",
         formData
       );
       setResult(res.data);
@@ -1406,14 +1407,9 @@ const Canvas = ({ location, data }) => {
 
             <span className="block h-8" />
 
-            {!isMobile & isAuthenticated ? (
-              activeSection === "weather" ? renderSummarySection()
-              : null
-            ) : (
-              <div className="text-center text-gray-500">
-                <p>Silakan masuk untuk mengakses fitur ini</p>
-              </div>
-            )}
+            {!isMobile & isAuthenticated &&
+              activeSection === "weather" &&
+              renderSummarySection()}
           </m.div>
         )}
 
