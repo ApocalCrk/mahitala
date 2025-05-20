@@ -71,7 +71,8 @@ L.Icon.Default.mergeOptions({
 const videoConstraints = {
   width: 224,
   height: 224,
-  facingMode: "environment"
+  facingMode: "environment",
+  mirrored: false,
 };
 
 const Canvas = ({ location, data }) => {
