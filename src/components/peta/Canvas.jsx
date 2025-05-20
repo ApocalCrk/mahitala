@@ -72,7 +72,7 @@ const videoConstraints = {
   width: 224,
   height: 224,
   facingMode: "environment",
-  mirrored: false,
+  mirrored: true
 };
 
 const Canvas = ({ location, data }) => {
