@@ -71,8 +71,7 @@ L.Icon.Default.mergeOptions({
 const videoConstraints = {
   width: 224,
   height: 224,
-  facingMode: "environment",
-  mirrored: true
+  facingMode: "environment"
 };
 
 const Canvas = ({ location, data }) => {
@@ -2245,7 +2244,7 @@ const Canvas = ({ location, data }) => {
 
         {/* Camera Layout */}
         {open && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[9999]">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[999999]">
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl relative">
               <button
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -2273,7 +2272,7 @@ const Canvas = ({ location, data }) => {
                     <Webcam
                       ref={webcamRef}
                       audio={false}
-                      mirrored={true}
+                      mirrored={false}
                       screenshotFormat="image/jpeg"
                       videoConstraints={videoConstraints}
                       className="rounded-xl border shadow-lg"
