@@ -27,6 +27,7 @@ import {
   calculateArea,
   capitalizeFirstLetter,
   calculateCentroid,
+  API_URL_CLF,
 } from "../../utils/Constants";
 
 import {
@@ -717,7 +718,7 @@ const Canvas = ({ location, data }) => {
 
     try {
       const res = await axios.post(
-        "/api/soil/predict",
+        API_URL_CLF + "/api/soil/predict",
         formData
       );
       setResult(res.data);
