@@ -717,7 +717,7 @@ const Canvas = ({ location, data }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/soil/predict",
+        "/api/soil/predict",
         formData
       );
       setResult(res.data);

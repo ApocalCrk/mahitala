@@ -1,4 +1,5 @@
 export const API_URL = "https://mahitala.noturmine.my.id";
+export const API_URL_CLF = "https://mahitala-clf.noturmine.my.id";
 export const API_STATIC = "https://mahitala.noturmine.my.id/static/";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 
