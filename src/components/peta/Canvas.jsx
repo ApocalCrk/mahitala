@@ -442,6 +442,7 @@ const Canvas = ({ location, data }) => {
 
       await handleAnalyze(JSON.stringify(data));
       setTempData(data);
+      alert(data);
 
       return newLayerData;
     } catch (err) {
