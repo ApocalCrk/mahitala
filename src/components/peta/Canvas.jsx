@@ -732,7 +732,7 @@ const Canvas = ({ location, data }) => {
       const jsonData = JSON.parse(data);
 
       try {
-        const res = await axios.post("http://localhost:8000/api/soil/analyze", {
+        const res = await axios.post(API_URL_CLF+"/api/soil/analyze", {
           ph: jsonData.ph,
           soil: jsonData.soil,
           organic_matter: jsonData.organic_matter,
@@ -947,9 +947,6 @@ const Canvas = ({ location, data }) => {
               Nama Tanaman
             </label>
             <div className="w-full max-w-md mx-auto">
-              {
-                alert(resultData, result, soilType)
-              }
               {resultData && result && soilType && (
                 <div className="mb-4 bg-blue-50 p-4 rounded-lg">
                   <div className="flex items-start gap-2">
