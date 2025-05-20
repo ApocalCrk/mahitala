@@ -442,7 +442,6 @@ const Canvas = ({ location, data }) => {
 
       await handleAnalyze(JSON.stringify(data));
       setTempData(data);
-      alert(data);
 
       return newLayerData;
     } catch (err) {
@@ -948,6 +947,9 @@ const Canvas = ({ location, data }) => {
               Nama Tanaman
             </label>
             <div className="w-full max-w-md mx-auto">
+              {
+                alert(resultData, result, soilType)
+              }
               {resultData && result && soilType && (
                 <div className="mb-4 bg-blue-50 p-4 rounded-lg">
                   <div className="flex items-start gap-2">
