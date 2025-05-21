@@ -5,7 +5,7 @@ import {
 } from "../../hooks/field_user/getDataField";
 
 import { getCropDataById } from "../../hooks/crop/getCropData";
-import { capitalizeFirstLetter } from "../../utils/Constants";
+import { API_URL_CLF, capitalizeFirstLetter } from "../../utils/Constants";
 import {
   healthAssessmentRules,
   conditionScores,
@@ -224,7 +224,7 @@ function DashboardData() {
     setLoading(true);
     const result = assessHealth();
     const explain_req = axios
-      .post("http://localhost:8000/api/health-assessment", healthCheckData)
+      .post(API_URL_CLF+"/api/health-assessment", healthCheckData)
       .then((res) => {
         setLoading(false);
         setHealthResult(result);
