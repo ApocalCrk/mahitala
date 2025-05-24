@@ -38,7 +38,7 @@ export const requestPermissionAndRegisterToken = async () => {
 
     const fcmToken = await getToken(messaging, {
       vapidKey:
-        "BD46aur8KkhuqCQxmT0Mvp0RtuMUmX1PBhZB8k6yM1pn6_OmA1X9kECzn_f0844dwSKJ2_Ke2uR0H2FP8pDrgAk",
+        "BCLRrmurifCU5zU_aNYrTg0y7gOqyQyhsCsd_XwOyvSgffNbtiN0aY8UqnYmsSE5jDY8Myog51Fw5KQLnYGwoYc",
       serviceWorkerRegistration: registration,
     });
 
@@ -65,7 +65,6 @@ export const requestPermissionAndRegisterToken = async () => {
 export const onMessageListener = () =>
   new Promise((resolve) => {
     onMessage(messaging, (payload) => {
-      console.log("Foreground message received: ", payload);
       resolve(payload);
     });
   });

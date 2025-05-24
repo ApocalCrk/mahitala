@@ -16,6 +16,10 @@ import Footer from "../components/Footer";
 import { Modal, LoginForm, RegisterForm } from "../components/auth/ModalAuth";
 import { loginAuth, registerAuth } from "../hooks/auth/Authentication";
 import { useUser } from "../utils/userContext";
+import HargaKomoditas from "../components/dashboard/HargaKomoditas";
+import DashboardData from "../components/dashboard/DashboardData";
+import WaspadaCuaca from "../components/dashboard/WaspadaCuaca";
+import { getForecastMingguan } from "../hooks/forecast/getForecastMingguan";
 
 const ForecastDashboard = () => {
   const { day, date, month, year, time } = useCurrentTimestamp();
@@ -39,6 +43,8 @@ const ForecastDashboard = () => {
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
+
+  const [dataMingguan, setDataMingguan] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("token");
@@ -159,15 +165,31 @@ const ForecastDashboard = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
+
   useEffect(() => {
     scrollToTop();
   }, []);
 
+  useEffect(() => {
+    if (location) {
+      const fetchForecastMingguan = async () => {
+        try {
+          const res = await getForecastMingguan({ location });
+          setDataMingguan(res);
+        } catch (error) {
+          console.error("Error fetching forecast mingguan:", error);
+        }
+      };
+      fetchForecastMingguan();
+    }
+  }, [location]);
+
   return (
     <>
       {location && data ? (
-        location.province.toLowerCase().includes("Daerah Istimewa Yogyakarta") ? (
+        location.province
+          .toLowerCase()
+          .includes("Daerah Istimewa Yogyakarta") ? (
           <div className="flex items-center justify-center h-screen">
             <div className="grid grid-cols-1 gap-4 text-center">
               <OctagonAlert className="w-16 h-16 text-red-500 animate-pulse flex items-center justify-center mx-auto" />
@@ -230,14 +252,21 @@ const ForecastDashboard = () => {
                 </div>
               )}
               <div className="flex flex-col lg:flex-row gap-6 mx-auto">
-                <ForecastHariIni
-                  timestamp={timestamp}
-                  location={location}
-                  data={data}
-                  dataHargaKomoditas={hargaKomoditas}
-                />
+                <div className="w-full lg:w-3/5 space-y-6">
+                  <ForecastHariIni
+                    timestamp={timestamp}
+                    location={location}
+                    data={data}
+                    dataMingguan={dataMingguan}
+                  />
+
+                  <DashboardData />
+
+                  <HargaKomoditas dataHargaKomoditas={hargaKomoditas} />
+                </div>
 
                 <div className="w-full lg:w-2/5 space-y-6">
+                  <WaspadaCuaca />
                   <RekomendasiAI location={location} />
 
                   <ForecastKedepan location={location} />
