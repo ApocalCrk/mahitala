@@ -60,6 +60,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { getRekomendasiAI } from "../../hooks/forecast/getRekomendasiAI";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -77,6 +78,14 @@ const videoConstraints = {
 const Canvas = ({ location, data }) => {
   const mapRef = useRef(null);
   const webcamRef = useRef(null);
+  const dateNow = new Date().toLocaleDateString("id-ID", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Jakarta"
+  });
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [cropData, setCropData] = useState([]);
   const [initialWeatherLoaded, setInitialWeatherLoaded] = useState(false);
@@ -104,6 +113,8 @@ const Canvas = ({ location, data }) => {
   const [confirm, setConfirm] = useState(false);
 
   const [type, setType] = useState("add");
+  const [isLoading, setIsLoading] = useState(false);
+  const [recommendationResult, setRecommendationResult] = useState(null);
 
   // For responsive design
   const [isMobile, setIsMobile] = useState(false);
@@ -239,6 +250,39 @@ const Canvas = ({ location, data }) => {
       }
     });
   }, []);
+
+  const recommendationData = async (lat, lng, plants) => {
+    setIsLoading(true);
+    const [temperature, humidity, rainfall, rainfalltype] =
+      await getRekomendasiAI({
+        location: {
+          latitude: lat,
+          longitude: lng,
+        },
+      }).then((res) => {
+        return [
+          res[0].temperature,
+          res[0].humidity,
+          res[0].rainfall,
+          res[0].sifat_hujan_rata,
+        ];
+      });
+
+    const res = await axios.post(API_URL_CLF + "/api/soil/recommendation", {
+      plants: plants,
+      averageTemperature: temperature,
+      averageHumidity: humidity,
+      averageRainfall: rainfall,
+      averageRainfallType: rainfalltype,
+    });
+
+    if (res) {
+      setRecommendationResult(res.data);
+      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  };
 
   const handleDeleteLahan = (id) => {
     Swal.fire({
@@ -717,10 +761,8 @@ const Canvas = ({ location, data }) => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post(
-        API_URL_CLF + "/api/soil/predict",
-        formData
-      );
+      const res = await axios.post(API_URL_CLF + "/api/soil/predict", formData);
+
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -738,6 +780,7 @@ const Canvas = ({ location, data }) => {
           organic_matter: jsonData.organic_matter,
           water_content: jsonData.water_content,
         });
+
         setResultData(res.data);
       } catch (err) {
         console.error(err);
@@ -847,21 +890,14 @@ const Canvas = ({ location, data }) => {
 
         <div className="mt-4 text-xs text-gray-500 text-center">
           Diperbarui:{" "}
-          {new Date(nearestData?.local_datetime).toLocaleString("id-ID", {
-            timeZone: "Asia/Jakarta",
-            month: "long",
-            day: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+          {dateNow}
         </div>
       </div>
     </div>
   );
 
   const renderFieldSection = () => (
-    <div className="p-4 md:p-2 pt-4">
+    <div className="p-4 md:p-2 pt-4 overflow-y-auto">
       {polygonPoints.length > 0 && (
         <div className="bg-[#6C7D4110] backdrop-blur-sm rounded-lg p-3 shadow-sm mb-2">
           <div className="flex justify-between gap-2">
@@ -879,6 +915,7 @@ const Canvas = ({ location, data }) => {
               onClick={() => {
                 setPolygonPoints([]);
                 setConfirm(false);
+                setPanelState("collapsed");
               }}
               className="text-xs bg-red-100 text-red-600 py-1 px-3 rounded-full"
             >
@@ -889,6 +926,7 @@ const Canvas = ({ location, data }) => {
                 onClick={async () => {
                   if (polygonPoints.length > 2) {
                     setConfirm(true);
+                    setPanelState("expanded");
                   } else {
                     Swal.fire({
                       icon: "error",
@@ -907,7 +945,6 @@ const Canvas = ({ location, data }) => {
           </div>
         </div>
       )}
-
       <div className="bg-white rounded-xl">
         <div className="space-y-4">
           <div>
@@ -1012,7 +1049,9 @@ const Canvas = ({ location, data }) => {
                               </div>
                             </div>
                             <small className="text-xs text-gray-500 italic">
-                              Jika data pH, Kandungan Organik, dan Ketersedian Air memiliki nilai 0 maka data tidak tersedia di area tersebut
+                              Jika data pH, Kandungan Organik, dan Ketersedian
+                              Air memiliki nilai 0 maka data tidak tersedia di
+                              area tersebut
                             </small>
                           </div>
                         </>
@@ -1023,27 +1062,12 @@ const Canvas = ({ location, data }) => {
                         (result?.recommendation?.suitable_crops &&
                           result?.soilType)) && (
                         <div className="bg-white p-3 rounded shadow-sm mb-3">
-                          {result?.recommendation && result?.soilType && (
-                            <>
-                              <div className="flex items-center gap-2 mb-2">
-                                <Info size={16} className="text-blue-600" />
-                                <p className="text-sm font-medium text-blue-600">
-                                  Rekomendasi untuk {result.soilType}
-                                </p>
-                              </div>
-
-                              <p className="text-xs text-gray-700 italic leading-relaxed mb-3">
-                                "{result.recommendation.reason}"
-                              </p>
-                            </>
-                          )}
-
                           {(resultData?.recommended_plants ||
                             result?.recommendation?.suitable_crops) && (
                             <>
                               <div className="mb-2 flex items-center justify-between gap-1">
                                 <p className="text-xs font-medium text-gray-600">
-                                  Tanaman yang direkomendasikan:
+                                  Tanaman yang direkomendasikan
                                 </p>
                                 <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
                                   {combinedPlants().length}
@@ -1064,6 +1088,26 @@ const Canvas = ({ location, data }) => {
                           )}
                         </div>
                       )}
+                      <div className="bg-white p-3 rounded shadow-sm mb-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Info size={16} className="text-gray-600" />
+                          <p className="text-xs font-medium text-gray-600">
+                            Umpan Balik Tanaman Berdasarkan Cuaca {isLoading && "(Mohon Tunggu)"}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          {isLoading ? (
+                            <div className="animate-pulse">
+                              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                              <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            </div>
+                            ) : (
+                              <p className="text-xs text-gray-500" dangerouslySetInnerHTML={{__html: recommendationResult.response}} />
+
+                            )}
+                          </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1136,7 +1180,9 @@ const Canvas = ({ location, data }) => {
                       estimatedDate.getDate() +
                         parseInt(selectedCrop.estimated_time)
                     );
-                    setEstimatedTime(estimatedDate.toISOString().split("T")[0]);
+                    setEstimatedTime(
+                      estimatedDate.toISOString().split("T")[0]
+                    );
                   } else {
                     setEstimatedTime("");
                   }
@@ -1218,15 +1264,15 @@ const Canvas = ({ location, data }) => {
               !cropDate
             }
             className={`w-full py-3 px-4 rounded-lg font-medium text-white flex items-center justify-center
-              ${
-                polygonPoints.length < 3 ||
-                !fieldName.trim() ||
-                !soilType.trim() ||
-                !cropId.trim() ||
-                !cropDate
-                  ? "bg-gray-300"
-                  : "bg-gradient-to-r from-[#6C7D41] to-[#8a9d52]"
-              }`}
+            ${
+              polygonPoints.length < 3 ||
+              !fieldName.trim() ||
+              !soilType.trim() ||
+              !cropId.trim() ||
+              !cropDate
+                ? "bg-gray-300"
+                : "bg-gradient-to-r from-[#6C7D41] to-[#8a9d52]"
+            }`}
           >
             {type === "add" ? "Simpan Lahan" : "Perbarui Lahan"}
           </button>
@@ -1407,14 +1453,9 @@ const Canvas = ({ location, data }) => {
 
             <span className="block h-8" />
 
-            {!isMobile & isAuthenticated ? (
-              activeSection === "weather" ? renderSummarySection()
-              : null
-            ) : (
-              <div className="text-center text-gray-500">
-                <p>Silakan masuk untuk mengakses fitur ini</p>
-              </div>
-            )}
+            {!isMobile & isAuthenticated &&
+              activeSection === "weather" &&
+              renderSummarySection()}
           </m.div>
         )}
 
@@ -1477,8 +1518,6 @@ const Canvas = ({ location, data }) => {
         >
           <MapContainer
             center={yogyakartaPosition}
-            zoom={15}
-            minZoom={15}
             style={{ height: "100%", width: "100%" }}
             ref={mapRef}
             zoomControl={false}
@@ -1737,8 +1776,7 @@ const Canvas = ({ location, data }) => {
 
                               <div className="text-right text-xs text-gray-400 mt-1">
                                 Diperbarui:{" "}
-                                {weatherData?.params?.datetime?.value[0]
-                                  ?.text || "-"}
+                                {dateNow}
                               </div>
                             </>
                           ) : (
@@ -1889,15 +1927,14 @@ const Canvas = ({ location, data }) => {
                           <div className="flex items-center justify-between">
                             <div className="text-gray-500">Tanggal Tanam</div>
                             <div className="font-semibold text-gray-700">
-                              {poly.cropDate
-                                ? new Date(poly.cropDate).toLocaleDateString(
-                                    "id-ID",
-                                    {
-                                      year: "numeric",
-                                      month: "long",
-                                      day: "2-digit",
-                                    }
-                                  )
+                              {poly.cropDate || poly.tanggal_tanam
+                                ? new Date(
+                                    poly.cropDate || poly.tanggal_tanam
+                                  ).toLocaleDateString("id-ID", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "2-digit",
+                                  })
                                 : "Tidak Diketahui"}
                             </div>
                           </div>
@@ -2113,7 +2150,7 @@ const Canvas = ({ location, data }) => {
 
           {/* floating context  */}
           {isMobile && (
-            <div className="absolute bottom-4 right-4 flex flex-col gap-2 z-[99998]">
+            <div className={`absolute bottom-10 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}>
               <button
                 onClick={() => {
                   setPanelState(
@@ -2151,7 +2188,7 @@ const Canvas = ({ location, data }) => {
           )}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-5 left-4 z-[999]">
+          <div className="absolute bottom-10 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
@@ -2184,7 +2221,7 @@ const Canvas = ({ location, data }) => {
         {/* Info panel - Bottom sliding panel for mobile */}
         {isMobile && (
           <div
-            className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg overflow-hidden transition-transform duration-300 ease-in-out z-[9999]`}
+            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[99999] rounded-t-3xl`}
             style={{
               transform:
                 panelState === "collapsed"
@@ -2192,7 +2229,7 @@ const Canvas = ({ location, data }) => {
                   : panelState === "peek"
                     ? "translateY(0)"
                     : "translateY(0)",
-              height: panelState === "expanded" ? "70vh" : "50vh",
+              height: panelState === "expanded" ? "85vh" : "50vh"
             }}
           >
             {/* Drag handle */}
@@ -2234,7 +2271,7 @@ const Canvas = ({ location, data }) => {
               </button>
             </div>
 
-            <div className="overflow-y-auto h-full pb-safe">
+            <div className="overflow-y-auto pb-safe h-[calc(100vh-200px)]">
               {activeSection === "weather" && renderWeatherSection()}
               {activeSection === "field" && renderFieldSection()}
               {activeSection === "summary" && renderSummarySection()}
@@ -2349,6 +2386,12 @@ const Canvas = ({ location, data }) => {
                       className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition mt-4"
                       onClick={() => {
                         setSoilType(result.label);
+                        const centroidPosition = calculateCentroid(polygonPoints);
+                        recommendationData(
+                          centroidPosition[0],
+                          centroidPosition[1],
+                          combinedPlants()
+                        );
                         setOpen(false);
                       }}
                     >

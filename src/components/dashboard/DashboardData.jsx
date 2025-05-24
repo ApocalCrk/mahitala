@@ -101,7 +101,7 @@ function DashboardData() {
               timer: 1500,
             });
             setDataLahan((prev) => prev.filter((item) => item.id !== id));
-            setTotalPages(dataLahan.length / itemsPerPage);
+            setTotalPages(Math.ceil((dataLahan.length - 1) / itemsPerPage));
           } else {
             Swal.fire({
               icon: "error",
@@ -374,7 +374,7 @@ function DashboardData() {
                       {currentLahan.map((lahan, idx) => (
                         <div
                           key={idx}
-                          className="border border-gray-100 rounded-xl px-4 py-3 bg-white shadow-sm transition duration-200"
+                          className="border border-gray-200 rounded-xl px-4 py-3 bg-white transition duration-200"
                         >
                           <div className="flex justify-between items-center">
                             <h4 className="text-md font-semibold text-gray-700">
@@ -382,8 +382,8 @@ function DashboardData() {
                             </h4>
                           </div>
 
-                          <div className="flex flex-wrap mt-2">
-                            <div className="w-1/2 pr-2">
+                          <div className="block md:flex flex-wrap mt-2">
+                            <div className="w-full md:w-1/2 pr-2">
                               <p className="text-sm text-gray-500">
                                 Tanaman:{" "}
                                 <span className="text-gray-700 font-medium">
@@ -397,7 +397,7 @@ function DashboardData() {
                                 Estimasi Panen: {lahan.estimasi_panen}
                               </p>
                             </div>
-                            <div className="w-1/2 pl-2 border-l border-gray-100">
+                            <div className="w-full md:w-1/2 md:pl-2 border-l border-gray-100">
                               <p className="text-sm text-gray-500">
                                 Luas Lahan: {lahan.luas_lahan} hektar
                               </p>

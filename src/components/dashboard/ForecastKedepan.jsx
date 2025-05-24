@@ -14,7 +14,7 @@ const ForecastKedepan = ({ location }) => {
     }, [location]);
 
     return (
-        <div className="rounded-xl border border-gray-200 shadow-sm">
+        <div className="hidden md:block rounded-xl border border-gray-200 shadow-sm">
           <div className="p-6">
             <div className="space-y-6">
               <div className="flex items-center gap-2">
