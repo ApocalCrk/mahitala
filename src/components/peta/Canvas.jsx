@@ -8,8 +8,7 @@ import {
   Popup,
   useMapEvents,
   Polygon,
-  Tooltip,
-  WMSTileLayer,
+  Tooltip
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
