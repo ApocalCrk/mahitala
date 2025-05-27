@@ -10,7 +10,7 @@ const ItemDiskusiTerbaru = ({ discussion }) => {
           {discussion.judul}
         </h3>
         <p className="text-sm text-gray-600">
-          {discussion.username} • {checkWaktu(discussion.tgl_dibuat)}
+          {checkWaktu(discussion.tgl_dibuat)}
         </p>
         <p
           className="text-gray-700 mt-2"
