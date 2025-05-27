@@ -150,11 +150,19 @@ const Canvas = ({ location, data }) => {
    * Initial Map and Location
    * =====================================================
    */
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     if (location && mapRef.current) {
       mapRef.current.setView([location.latitude, location.longitude], 18);
     }
-  }, [location]);
+  }, [mounted, location]);
   /* ==================================================== */
 
   /***
