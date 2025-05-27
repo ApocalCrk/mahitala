@@ -1453,9 +1453,10 @@ const Canvas = ({ location, data }) => {
 
             <span className="block h-8" />
 
-            {!isMobile & isAuthenticated &&
+            {!isMobile & isAuthenticated ?
               activeSection === "weather" &&
-              renderSummarySection()}
+              renderSummarySection()
+              : null}
           </m.div>
         )}
 
@@ -1528,7 +1529,7 @@ const Canvas = ({ location, data }) => {
             />
 
             {!isAuthenticated && (
-              <div className="absolute bottom-2 left-2 rounded-lg shadow-md z-[9999]">
+              <div className="absolute md:top-2 top-20 m-2 rounded-lg shadow-md z-[9999]">
                 <div
                   className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
                   role="alert"
