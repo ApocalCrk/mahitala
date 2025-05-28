@@ -17,7 +17,7 @@ const SorotanProyek = () => {
         [
           {
             title: "Akurasi Tinggi",
-            description: "Hasil prediksi rekomendasi tanaman berdasarkan cuaca mendapatkan skor lebih dari 90%",
+            description: "Hasil prediksi rekomendasi tanaman berdasarkan cuaca mendapatkan skor lebih dari 80%",
             date: "January 2025"
           },
           {
