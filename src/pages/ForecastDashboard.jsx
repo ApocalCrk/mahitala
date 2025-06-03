@@ -153,17 +153,17 @@ const ForecastDashboard = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const fetchHargaKomoditas = async () => {
-  //     try {
-  //       const res = await getHargaKomoditas({ location });
-  //       setHargaKomoditas(res);
-  //     } catch (error) {
-  //       console.error("Error fetching harga komoditas:", error);
-  //     }
-  //   };
-  //   fetchHargaKomoditas();
-  // }, []);
+  useEffect(() => {
+    const fetchHargaKomoditas = async () => {
+      try {
+        const res = await getHargaKomoditas({ location });
+        setHargaKomoditas(res);
+      } catch (error) {
+        console.error("Error fetching harga komoditas:", error);
+      }
+    };
+    fetchHargaKomoditas();
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -265,7 +265,7 @@ const ForecastDashboard = () => {
 
                   <DashboardData />
 
-                  {/* <HargaKomoditas dataHargaKomoditas={hargaKomoditas} /> */}
+                  <HargaKomoditas dataHargaKomoditas={hargaKomoditas} />
                 </div>
 
                 <div className="w-full lg:w-2/5 space-y-6">
