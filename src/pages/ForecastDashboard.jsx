@@ -111,7 +111,6 @@ const ForecastDashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Fetching location and data...");
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -119,12 +118,10 @@ const ForecastDashboard = () => {
           const longitude = position.coords.longitude;
 
           try {
-            console.log("Fetching location...");
             const loc = await getLocation(latitude, longitude);
             loc.latitude = latitude;
             loc.longitude = longitude;
 
-            console.log("Fetching forecast data...");
             const res = await getDataForecast({ location: loc });
 
             if (!location || JSON.stringify(loc) !== JSON.stringify(location)) {
