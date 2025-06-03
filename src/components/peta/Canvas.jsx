@@ -84,7 +84,7 @@ const Canvas = ({ location, data }) => {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Asia/Jakarta"
+    timeZone: "Asia/Jakarta",
   });
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [cropData, setCropData] = useState([]);
@@ -119,6 +119,9 @@ const Canvas = ({ location, data }) => {
   // For responsive design
   const [isMobile, setIsMobile] = useState(false);
   const [mapHeight, setMapHeight] = useState("100%");
+  const [isDragging, setIsDragging] = useState(false);
+  const [startY, setStartY] = useState(0);
+  const [currentY, setCurrentY] = useState(0);
 
   // set initial data
   const yogyakartaPosition = [-7.797068, 110.370529];
@@ -202,12 +205,96 @@ const Canvas = ({ location, data }) => {
   const togglePanel = () => {
     if (panelState === "collapsed") {
       setPanelState("peek");
-    } else if (panelState === "peek") {
+    } else if (panelState === "peek" & isAuthenticated) {
       setPanelState("expanded");
     } else {
       setPanelState("collapsed");
     }
   };
+
+  const handleTouchStart = useCallback((e) => {
+  setIsDragging(true);
+  setStartY(e.touches[0].clientY);
+  setCurrentY(e.touches[0].clientY);
+}, []);
+
+const handleTouchMove = useCallback((e) => {
+  if (!isDragging) return;
+  
+  e.preventDefault(); // Prevent scrolling
+  const deltaY = e.touches[0].clientY - startY;
+  const threshold = 50; // Minimum drag distance to trigger state change
+  
+  // Determine new panel state based on drag direction and current state
+  if (deltaY > threshold && panelState !== "collapsed") {
+    if (panelState === "expanded") {
+      setPanelState("peek");
+    } else if (panelState === "peek") {
+      setPanelState("collapsed");
+    }
+    setStartY(e.touches[0].clientY); // Reset start position
+  } else if (deltaY < -threshold && panelState !== "expanded") {
+    if (panelState === "collapsed") {
+      setPanelState("peek");
+    } else if (panelState === "peek" && isAuthenticated) {
+      setPanelState("expanded");
+    }
+    setStartY(e.touches[0].clientY); // Reset start position
+  }
+}, [isDragging, startY, panelState]);
+
+const handleTouchEnd = useCallback(() => {
+  setIsDragging(false);
+  setStartY(0);
+}, []);
+
+// Mouse event handlers (for desktop compatibility)
+const handleMouseDown = useCallback((e) => {
+  setIsDragging(true);
+  setStartY(e.clientY);
+  setCurrentY(e.clientY);
+}, []);
+
+const handleMouseMove = useCallback((e) => {
+  if (!isDragging) return;
+  
+  const deltaY = e.clientY - startY;
+  const threshold = 50;
+  
+  if (deltaY > threshold && panelState !== "collapsed") {
+    if (panelState === "expanded") {
+      setPanelState("peek");
+    } else if (panelState === "peek") {
+      setPanelState("collapsed");
+    }
+    setStartY(e.clientY);
+  } else if (deltaY < -threshold && panelState !== "expanded") {
+    if (panelState === "collapsed") {
+      setPanelState("peek");
+    } else if (panelState === "peek" && isAuthenticated) {
+      setPanelState("expanded");
+    }
+    setStartY(e.clientY);
+  }
+}, [isDragging, startY, panelState]);
+
+const handleMouseUp = useCallback(() => {
+  setIsDragging(false);
+  setStartY(0);
+}, []);
+
+// Prevent body scroll when panel is being dragged
+useEffect(() => {
+  if (isDragging) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'unset';
+  }
+  
+  return () => {
+    document.body.style.overflow = 'unset';
+  };
+}, [isDragging]);
   /* ==================================================== */
 
   /***
@@ -889,8 +976,7 @@ const Canvas = ({ location, data }) => {
         </div>
 
         <div className="mt-4 text-xs text-gray-500 text-center">
-          Diperbarui:{" "}
-          {dateNow}
+          Diperbarui: {dateNow}
         </div>
       </div>
     </div>
@@ -1092,7 +1178,8 @@ const Canvas = ({ location, data }) => {
                         <div className="flex items-center gap-2 mb-2">
                           <Info size={16} className="text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">
-                            Umpan Balik Tanaman Berdasarkan Cuaca {isLoading && "(Mohon Tunggu)"}
+                            Umpan Balik Tanaman Berdasarkan Cuaca{" "}
+                            {isLoading && "(Mohon Tunggu)"}
                           </p>
                         </div>
                         <div className="flex flex-col gap-1">
@@ -1102,11 +1189,15 @@ const Canvas = ({ location, data }) => {
                               <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
                               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                             </div>
-                            ) : (
-                              <p className="text-xs text-gray-500" dangerouslySetInnerHTML={{__html: recommendationResult.response}} />
-
-                            )}
-                          </div>
+                          ) : (
+                            <p
+                              className="text-xs text-gray-500"
+                              dangerouslySetInnerHTML={{
+                                __html: recommendationResult.response,
+                              }}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1180,9 +1271,7 @@ const Canvas = ({ location, data }) => {
                       estimatedDate.getDate() +
                         parseInt(selectedCrop.estimated_time)
                     );
-                    setEstimatedTime(
-                      estimatedDate.toISOString().split("T")[0]
-                    );
+                    setEstimatedTime(estimatedDate.toISOString().split("T")[0]);
                   } else {
                     setEstimatedTime("");
                   }
@@ -1453,9 +1542,9 @@ const Canvas = ({ location, data }) => {
 
             <span className="block h-8" />
 
-            {!isMobile & isAuthenticated &&
-              activeSection === "weather" &&
-              renderSummarySection()}
+            {!isMobile & isAuthenticated
+              ? activeSection === "weather" && renderSummarySection()
+              : null}
           </m.div>
         )}
 
@@ -1527,8 +1616,8 @@ const Canvas = ({ location, data }) => {
               attribution="&copy; OpenStreetMap contributors"
             />
 
-            {!isAuthenticated && (
-              <div className="absolute bottom-2 left-2 rounded-lg shadow-md z-[9999]">
+            {!isAuthenticated ? isMobile && (
+              <div className="absolute bottom-5 rounded-lg shadow-md z-[9999] m-2">
                 <div
                   className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
                   role="alert"
@@ -1539,7 +1628,21 @@ const Canvas = ({ location, data }) => {
                   </span>
                 </div>
               </div>
-            )}
+            ) : null}
+            
+            {!isAuthenticated ? !isMobile && (
+              <div className="absolute top-5 rounded-lg shadow-md z-[9999] m-2">
+                <div
+                  className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
+                  role="alert"
+                >
+                  <span className="block sm:inline">
+                    <strong className="font-bold">Peringatan!</strong> Akses
+                    data terbatas, silahkan masuk untuk mendapatkan akses penuh.
+                  </span>
+                </div>
+              </div>
+            ) : null}
 
             {location && (
               <Marker
@@ -1775,8 +1878,7 @@ const Canvas = ({ location, data }) => {
                               </div>
 
                               <div className="text-right text-xs text-gray-400 mt-1">
-                                Diperbarui:{" "}
-                                {dateNow}
+                                Diperbarui: {dateNow}
                               </div>
                             </>
                           ) : (
@@ -2149,8 +2251,10 @@ const Canvas = ({ location, data }) => {
           )}
 
           {/* floating context  */}
-          {isMobile && (
-            <div className={`absolute bottom-10 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}>
+          {isMobile & isAuthenticated && (
+            <div
+              className={`absolute bottom-10 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
+            >
               <button
                 onClick={() => {
                   setPanelState(
@@ -2229,15 +2333,23 @@ const Canvas = ({ location, data }) => {
                   : panelState === "peek"
                     ? "translateY(0)"
                     : "translateY(0)",
-              height: panelState === "expanded" ? "85vh" : "50vh"
+              height: panelState === "expanded" & isAuthenticated ? "85vh" : "50vh",
+              touchAction: "none", // Prevent default touch behaviors
             }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           >
             {/* Drag handle */}
             <div
-              className="h-8 w-full flex items-center justify-center cursor-pointer"
+              className="h-8 w-full flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
               onClick={togglePanel}
             >
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+              <div className="w-12 h-1 bg-gray-300 rounded-full transition-colors duration-200 hover:bg-gray-400"></div>
             </div>
 
             {/* Section tabs */}
@@ -2251,27 +2363,31 @@ const Canvas = ({ location, data }) => {
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
                 )}
               </button>
-              <button
-                className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "field" ? "text-[#6C7D41]" : "text-gray-400"}`}
-                onClick={() => setActiveSection("field")}
-              >
-                <span>Tambah Lahan</span>
-                {activeSection === "field" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
-                )}
-              </button>
-              <button
-                className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "summary" ? "text-[#6C7D41]" : "text-gray-400"}`}
-                onClick={() => setActiveSection("summary")}
-              >
-                <span>Lahan Saya</span>
-                {activeSection === "summary" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
-                )}
-              </button>
+              {isAuthenticated && (
+                <>
+                  <button
+                    className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "field" ? "text-[#6C7D41]" : "text-gray-400"}`}
+                    onClick={() => setActiveSection("field")}
+                  >
+                    <span>Tambah Lahan</span>
+                    {activeSection === "field" && (
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
+                    )}
+                  </button>
+                  <button
+                    className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "summary" ? "text-[#6C7D41]" : "text-gray-400"}`}
+                    onClick={() => setActiveSection("summary")}
+                  >
+                    <span>Lahan Saya</span>
+                    {activeSection === "summary" && (
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
+                    )}
+                  </button>
+                </>
+              )}
             </div>
 
-            <div className="overflow-y-auto pb-safe h-[calc(100vh-200px)]">
+            <div className="overflow-y-auto pb-safe h-[calc(100vh-250px)]">
               {activeSection === "weather" && renderWeatherSection()}
               {activeSection === "field" && renderFieldSection()}
               {activeSection === "summary" && renderSummarySection()}
@@ -2386,7 +2502,8 @@ const Canvas = ({ location, data }) => {
                       className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition mt-4"
                       onClick={() => {
                         setSoilType(result.label);
-                        const centroidPosition = calculateCentroid(polygonPoints);
+                        const centroidPosition =
+                          calculateCentroid(polygonPoints);
                         recommendationData(
                           centroidPosition[0],
                           centroidPosition[1],
