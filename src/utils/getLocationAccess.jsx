@@ -7,9 +7,9 @@ const getLocation = async (latitude, longitude) => {
 
     // const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=id`; // geocode.maps.co
 
-    // const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=id&addressdetails=1`; // nominatim dengan address details
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=id&addressdetails=1`; // nominatim dengan address details
 
-    const url = API_URL + `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
+    // const url = API_URL + `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
   
     try {
       const response = await fetch(url);
