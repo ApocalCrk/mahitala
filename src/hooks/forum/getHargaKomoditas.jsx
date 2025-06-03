@@ -1,10 +1,14 @@
 import axios from "axios";
 import { API_URL } from "../../utils/Constants";
-import { API_STATIC } from "../../utils/Constants";
 
 export const getHargaKomoditas = async () => {
   try {
-    const res = await axios.get(`${API_URL}/api/forum/harga-komoditas`);
+    const res = await axios.get(`${API_URL}/api/forum/harga-komoditas`,
+      {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": API_URL,
+      }
+    );
 
     return res.data;
   } catch (error) {
