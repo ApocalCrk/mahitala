@@ -14,13 +14,8 @@ export const getDataForecast = async ({ location }) => {
       });
       return res.data;
     } else {
-      const res = await axios.post(API_URL + `/api/cuaca/forecastNT`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "https://mahitala-re.vercel.app",
-        },
-        latitude,
-        longitude,
+      const res = await axios.get(API_URL + `/api/cuaca/forecastNT`, {
+        params: { latitude, longitude },
       });
       return res.data;
     }
