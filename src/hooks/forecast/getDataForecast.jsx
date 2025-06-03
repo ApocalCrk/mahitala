@@ -14,14 +14,10 @@ export const getDataForecast = async ({ location }) => {
       });
       return res.data;
     } else {
-      const res = await axios.get("https://cuaca.bmkg.go.id/api/df/v1/forecast/coord?lon=" + longitude + "&lat=" + latitude);
-      
-      const dataCuaca = res.data.data[0];
-
-      return {
-        nearestLocation: dataCuaca.lokasi,
-        weatherData: dataCuaca.cuaca
-      }
+      const res = await axios.get(API_URL + `/api/cuaca/forecastNT`, {
+        params: { latitude, longitude },
+      });
+      return res.data;
     }
   } catch (error) {
     return error;
