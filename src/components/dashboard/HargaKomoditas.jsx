@@ -154,15 +154,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                         >
                           {/* Top Section - Image and Name */}
                           <div className="flex items-center gap-2 mb-3">
-                            <div
-                              className={`w-10 h-10 p-1.5 rounded-lg ${bgAccent}`}
-                            >
-                              <img
-                                src={item.gambar}
-                                alt={item.nama}
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
                             <div className="flex-1">
                               <h3
                                 className="text-sm font-semibold text-gray-800 line-clamp-1"
