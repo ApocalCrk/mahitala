@@ -21,14 +21,12 @@ const messaging = getMessaging(app);
 export const requestPermissionAndRegisterToken = async () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    console.warn("No token found in local storage.");
     return null;
   }
 
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.warn("Notification permission not granted.");
       return null;
     }
 
@@ -58,7 +56,7 @@ export const requestPermissionAndRegisterToken = async () => {
 
     return fcmToken;
   } catch (err) {
-    console.error("FCM setup error:", err);
+    return null;
   }
 };
 
