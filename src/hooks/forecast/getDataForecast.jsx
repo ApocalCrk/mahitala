@@ -17,7 +17,7 @@ export const getDataForecast = async ({ location }) => {
       const res = await axios.post(API_URL + `/api/cuaca/forecastNT`, {
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": API_URL,
+          "Access-Control-Allow-Origin": "https://mahitala-re.vercel.app",
         },
         latitude,
         longitude,
