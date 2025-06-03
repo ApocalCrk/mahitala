@@ -15,11 +15,14 @@ import Footer from "../components/Footer";
 
 import { Modal, LoginForm, RegisterForm } from "../components/auth/ModalAuth";
 import { loginAuth, registerAuth } from "../hooks/auth/Authentication";
+import { getForecastMingguan } from "../hooks/forecast/getForecastMingguan";
+
 import { useUser } from "../utils/userContext";
+
 import HargaKomoditas from "../components/dashboard/HargaKomoditas";
 import DashboardData from "../components/dashboard/DashboardData";
 import WaspadaCuaca from "../components/dashboard/WaspadaCuaca";
-import { getForecastMingguan } from "../hooks/forecast/getForecastMingguan";
+
 
 const ForecastDashboard = () => {
   const { day, date, month, year, time } = useCurrentTimestamp();
@@ -42,7 +45,7 @@ const ForecastDashboard = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
+  const [registerToken] = useState(Math.random().toString(36).substring(2, 9));
 
   const [dataMingguan, setDataMingguan] = useState(null);
 

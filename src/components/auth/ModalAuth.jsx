@@ -39,7 +39,7 @@ const Modal = React.memo(({ isOpen, onClose, isError, errorMessage, title, descr
       {isOpen && (
         <>
           <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] "
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999]"
             style={{ marginTop: "env(safe-area-inset-top)", marginBottom: "env(safe-area-inset-bottom)" }}
             initial="hidden"
             animate="visible"

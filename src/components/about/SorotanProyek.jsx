@@ -16,23 +16,26 @@ const SorotanProyek = () => {
         {
         [
           {
+            id: 1,
             title: "Akurasi Tinggi",
             description: "Hasil prediksi rekomendasi tanaman berdasarkan cuaca mendapatkan skor lebih dari 80%",
             date: "January 2025"
           },
           {
+            id: 2,
             title: "Teknologi AI dan GIS",
             description: "Penggunaan teknologi AI dan GIS untuk analisis data cuaca dan visualisasi geospasial",
             date: "Maret 2025"
           },
           {
+            id: 3,
             title: "Rekomendasi Tanaman",
             description: "Akurasi tinggi dalam pengenalan jenis tanah dan rekomendasi tanaman",
             date: "April 2025"
           }
         ].map((item) => (
           <div
-            key={item}
+            key={item.id}
             className="min-w-[300px] bg-white rounded-lg p-6 border border-gray-200"
           >
             <p className="text-gray-700 mb-4">
