@@ -3,6 +3,7 @@ import { API_URL } from "../../utils/Constants";
 import axiosInstance from "../../utils/axiosInstance";
 
 export const getDataForecast = async ({ location }) => {
+ console.log('Fetching weather data - attempt:', Date.now());
   const { latitude, longitude } = location;
   const token = localStorage.getItem("token");
 
@@ -17,6 +18,8 @@ export const getDataForecast = async ({ location }) => {
       const res = await axios.get(API_URL + `/api/cuaca/forecastNT`, {
         params: { latitude, longitude },
       });
+      console.log('Response status:', res.status);
+    console.log('Response headers:', [...res.headers.entries()]);
       return res.data;
     }
   } catch (error) {
