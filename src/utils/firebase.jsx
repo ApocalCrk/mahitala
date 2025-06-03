@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import axiosInstance from "./axiosInstance";
 import { API_URL } from "./Constants";
@@ -15,7 +14,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const messaging = getMessaging(app);
 
 export const requestPermissionAndRegisterToken = async () => {
