@@ -273,7 +273,7 @@ const ForecastDashboard = () => {
                 </div>
               </div>
             </motion.div>
-            <Footer />
+            <Footer modalLogin={toggleLoginModal} modalRegister={toggleRegisterModal} />
 
             <Modal
               isOpen={isLoginOpen}

@@ -9,7 +9,6 @@ import {
   useMapEvents,
   Polygon,
   Tooltip,
-  WMSTileLayer,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";

@@ -1,24 +1,38 @@
+import { useEffect } from "react";
 import logo from "../assets/Logo/Mahitala.png";
 import { NavLink } from "react-router-dom";
-import { FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import { useUser } from "../utils/userContext";
+import Swal from "sweetalert2";
+import { logoutAuth } from "../hooks/auth/Authentication";
 
-const Footer = () => {
+const Footer = ({modalLogin, modalRegister}) => {
+  const { isAuthenticated, setIsAuthenticated } = useUser();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("token");
+    if (storedUser) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   return (
     <footer className="bg-white border-t border-gray-200 mt-20">
       <div className="container mx-auto px-6 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex flex-col items-center lg:items-start">
-              <img 
-                src={logo} 
-                className="w-44 h-auto mb-4" 
-                alt="Mahitala Logo" 
+              <img
+                src={logo}
+                className="w-44 h-auto mb-4"
+                alt="Mahitala Logo"
               />
               <p className="text-gray-600 text-base leading-relaxed text-center lg:text-left max-w-sm">
-                Solusi terpercaya untuk membantu petani mengelola risiko terkait perubahan cuaca ekstrem.
+                Solusi terpercaya untuk membantu petani mengelola risiko terkait
+                perubahan cuaca ekstrem.
               </p>
             </div>
           </div>
@@ -56,34 +70,88 @@ const Footer = () => {
             </nav>
           </div>
 
+          {/* Authentication Section */}
+          <div className="lg:col-span-1">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center lg:text-left">
+              { isAuthenticated ? "Pengaturan" : "Authentikasi" }
+            </h3>
+            <div className="flex justify-center lg:justify-start">
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Konfirmasi Keluar",
+                      text: "Apakah Anda yakin ingin keluar?",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#6C7D41",
+                      confirmButtonText: "Ya, Keluar",
+                      cancelButtonText: "Batal",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        logoutAuth();
+                        setIsAuthenticated(false);
+                        Swal.fire({
+                          title: "Berhasil Keluar",
+                          text: "Anda telah berhasil keluar.",
+                          icon: "success",
+                          timer: 2000,
+                          showConfirmButton: false
+                        });
+                      }
+                    });
+                  }}
+                  className="text-gray-600 hover:text-[#6C7D41] font-medium transition-colors duration-300 text-center lg:text-left py-1"
+                >
+                  Keluar
+                </button>
+              ) : (
+                <div className="flex space-x-4">
+                  <button
+                    onClick={modalLogin}
+                    className="text-gray-600 hover:text-[#6C7D41] font-medium transition-colors duration-300 text-center lg:text-left py-1"
+                  >
+                    Masuk
+                  </button>
+                  <button
+                    onClick={modalRegister}
+                    className="text-gray-600 hover:text-[#6C7D41] font-medium transition-colors duration-300 text-center lg:text-left py-1"
+                  >
+                    Daftar
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Social Media Section */}
           <div className="lg:col-span-1">
             <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center lg:text-left">
               Ikuti Kami
             </h3>
             <div className="flex justify-center lg:justify-start space-x-5">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-gray-100 hover:bg-[#6C7D41] rounded-full flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 transform hover:scale-110"
                 aria-label="Facebook"
               >
                 <FaFacebookF size={18} />
               </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-gray-100 hover:bg-[#6C7D41] rounded-full flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 transform hover:scale-110"
                 aria-label="Twitter"
               >
                 <FaXTwitter size={18} />
               </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-gray-100 hover:bg-[#6C7D41] rounded-full flex items-center justify-center text-gray-600 hover:text-white transition-all duration-300 transform hover:scale-110"
                 aria-label="Instagram"
               >

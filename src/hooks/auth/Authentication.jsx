@@ -1,4 +1,6 @@
+import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
+import { API_URL } from "../../utils/Constants";
 
 
 export const checkUser = async () => {
@@ -23,7 +25,7 @@ export const loginAuth = async (data) => {
 
 export const registerAuth = async (data) => {
   try {
-    const res = await axiosInstance.post("/api/auth/register", data);
+    const res = await axios.post(API_URL + "/api/auth/register", data);
     const { token } = res.data;
     localStorage.setItem("token", token);
     return res;
