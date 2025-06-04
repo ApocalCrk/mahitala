@@ -2,12 +2,14 @@ import { API_URL } from "./Constants";
 
 const getLocation = async (latitude, longitude) => {
   if (!latitude || !longitude) {
+    console.error("Koordinat tidak valid:", latitude, longitude);
   throw new Error("Koordinat tidak valid");
 }
     const url = API_URL + `/api/reverse-geocode?lat=${latitude}&lon=${longitude}`;
   
     try {
       const response = await fetch(url);
+      console.log("Response dari API:", response);
       const data = await response.json();
       
       if (data && data.address) {
