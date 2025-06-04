@@ -7,7 +7,7 @@ const ItemCurrentTime = ({ timestamp, location, nearestData }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="font-medium">
-            {location.city}, {location.province}
+            {location.road}, {location.city}, {location.province}
           </h2>
           <p className="text-sm text-gray-600">
             {timestamp.day}, {timestamp.date} {timestamp.month} {timestamp.year}{" "}
