@@ -8,10 +8,11 @@ const getLocation = async (latitude, longitude) => {
       const data = await response.json();
       
       if (data && data.address) {
+        const road = data.address.road || "Jalan tidak ditemukan";
         const city = data.address.city || data.address.town || data.address.village || "Kota tidak ditemukan";
         const province = data.address.state || "Provinsi tidak ditemukan";
   
-        return { city, province };
+        return { road, city, province };
       } else {
         throw new Error('Data lokasi tidak ditemukan');
       }
