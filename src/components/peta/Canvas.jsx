@@ -1616,7 +1616,7 @@ useEffect(() => {
             />
 
             {!isAuthenticated ? isMobile && (
-              <div className="absolute bottom-14 rounded-lg shadow-md z-[9999] m-2">
+              <div className="absolute bottom-32 rounded-lg shadow-md z-[9999] m-2">
                 <div
                   className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
                   role="alert"
@@ -2252,7 +2252,7 @@ useEffect(() => {
           {/* floating context  */}
           {isMobile & isAuthenticated && (
             <div
-              className={`absolute bottom-10 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
+              className={`absolute bottom-28 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
             >
               <button
                 onClick={() => {
@@ -2291,7 +2291,7 @@ useEffect(() => {
           )}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-10 left-4 z-[999]">
+          <div className="absolute bottom-28 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
