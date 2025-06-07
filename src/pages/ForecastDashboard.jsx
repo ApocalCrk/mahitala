@@ -151,16 +151,19 @@ const ForecastDashboard = () => {
   }, []);
 
   useEffect(() => {
-    const fetchHargaKomoditas = async () => {
-      try {
-        const res = await getHargaKomoditas({ location });
-        setHargaKomoditas(res);
-      } catch (error) {
-        console.error("Error fetching harga komoditas:", error);
-      }
-    };
-    fetchHargaKomoditas();
-  }, []);
+    // Hanya jalankan jika location sudah ada isinya
+    if (location) {
+      const fetchHargaKomoditas = async () => {
+        try {
+          const res = await getHargaKomoditas({ location });
+          setHargaKomoditas(res);
+        } catch (error) {
+          console.error("Error fetching harga komoditas:", error);
+        }
+      };
+      fetchHargaKomoditas();
+    }
+  }, [location]); // <-- Tambahkan 'location' sebagai dependency
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

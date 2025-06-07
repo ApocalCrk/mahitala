@@ -7,9 +7,11 @@ export const getDataForecast = async ({ location }) => {
   const token = localStorage.getItem("token");
 
   try {
-    const res = await axiosInstance.post(`/api/cuaca/forecast`, {
-    latitude,
-    longitude,
+    const res = await axiosInstance.get(`/api/cuaca/forecast`, {
+      params: {
+        latitude,
+        longitude,
+      },
     });
     return res.data;
   } catch (error) {
