@@ -1624,7 +1624,7 @@ useEffect(() => {
             />
 
             {!isAuthenticated ? isMobile && (
-              <div className="absolute bottom-14 rounded-lg shadow-md z-[9999] m-2">
+              <div className="absolute bottom-28 rounded-lg shadow-md z-[9999] m-2">
                 <div
                   className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
                   role="alert"
