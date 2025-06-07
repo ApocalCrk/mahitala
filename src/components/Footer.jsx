@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 
 import { useUser } from "../utils/userContext";
 import { Modal, LoginForm, RegisterForm } from "../components/auth/ModalAuth";
-import { logoutAuth } from "../hooks/auth/Authentication";
+import { loginAuth, logoutAuth } from "../hooks/auth/Authentication";
 
 const Footer = () => {
   const { isAuthenticated, setIsAuthenticated } = useUser();
