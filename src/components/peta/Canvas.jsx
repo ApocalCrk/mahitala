@@ -2260,7 +2260,7 @@ useEffect(() => {
           {/* floating context  */}
           {isMobile & isAuthenticated && (
             <div
-              className={`absolute bottom-10 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
+              className={`absolute bottom-16 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
             >
               <button
                 onClick={() => {
@@ -2299,7 +2299,7 @@ useEffect(() => {
           )}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-10 left-4 z-[999]">
+          <div className="absolute bottom-16 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
