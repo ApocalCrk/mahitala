@@ -113,77 +113,57 @@ const ForecastDashboard = () => {
     }
   }, []);
 
-  // --- PERUBAHAN DIMULAI DI SINI ---
-
-  // Langkah 1: Buat fungsi terpusat untuk mengambil semua data berdasarkan lokasi.
-  // Ini mencegah duplikasi kode.
   const fetchDataForLocation = useCallback(async (locCoords) => {
     try {
-      // Dapatkan nama lokasi dari koordinat (reverse geocode)
       const loc = await getLocation(locCoords.latitude, locCoords.longitude);
       loc.latitude = locCoords.latitude;
       loc.longitude = locCoords.longitude;
       
-      // Ambil data prakiraan cuaca utama
       const res = await getDataForecast({ location: loc });
 
-      // Set state agar UI diperbarui
       setLocation(loc);
       setData(res);
     } catch (error) {
       console.error("Error fetching location/data:", error);
-      // Jika fetch dari cache gagal, tampilkan error
       setError("Gagal mengambil data dari cache. Pastikan Anda pernah online sebelumnya.");
     }
   }, []);
 
 
   useEffect(() => {
-    // Fungsi yang dijalankan jika berhasil mendapatkan lokasi dari browser
     const handleSuccess = (position) => {
       const currentLoc = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
-      
-      // Langkah 2: Simpan lokasi yang berhasil didapat ke localStorage
       localStorage.setItem('lastKnownLocation', JSON.stringify(currentLoc));
       
-      // Panggil fungsi terpusat untuk mengambil data
       fetchDataForLocation(currentLoc);
     };
 
-    // Fungsi yang dijalankan jika GAGAL mendapatkan lokasi dari browser
     const handleError = (error) => {
       console.error("Geolocation error:", error);
-
-      // Langkah 3: Coba ambil lokasi terakhir dari localStorage
       const savedLocString = localStorage.getItem('lastKnownLocation');
 
       if (savedLocString) {
         console.log("Geolocation gagal, menggunakan lokasi terakhir yang tersimpan.");
         const savedLoc = JSON.parse(savedLocString);
-        // Panggil fungsi terpusat dengan data dari localStorage
         fetchDataForLocation(savedLoc);
       } else {
-        // Jika tidak ada lokasi tersimpan, tampilkan pesan error yang jelas
         setError("Gagal mendapatkan lokasi. Harap aktifkan koneksi internet setidaknya sekali untuk menyimpan lokasi Anda.");
       }
     };
 
-    // Pemicu utama
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
     } else {
       console.error("Geolocation tidak didukung oleh browser ini.");
       setError("Geolocation tidak didukung oleh browser ini.");
     }
-  }, [fetchDataForLocation]); // Tambahkan fetchDataForLocation sebagai dependency
+  }, [fetchDataForLocation]);
 
-  // --- PERUBAHAN BERAKHIR DI SINI ---
 
   useEffect(() => {
-    // Hanya jalankan jika location sudah ada isinya
     if (location) {
       const fetchHargaKomoditas = async () => {
         try {
@@ -195,7 +175,7 @@ const ForecastDashboard = () => {
       };
       fetchHargaKomoditas();
     }
-  }, [location]); // <-- Tambahkan 'location' sebagai dependency
+  }, [location]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -222,7 +202,6 @@ const ForecastDashboard = () => {
   return (
     <>
       {location && data ? (
-        // Kode render tetap sama, tidak perlu diubah
         location.province
           .toLowerCase()
           .includes("Daerah Istimewa Yogyakarta") ? (
