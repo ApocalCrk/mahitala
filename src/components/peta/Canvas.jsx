@@ -8,7 +8,7 @@ import {
   Popup,
   useMapEvents,
   Polygon,
-  Tooltip,
+  Tooltip
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -71,7 +71,7 @@ L.Icon.Default.mergeOptions({
 const videoConstraints = {
   width: 224,
   height: 224,
-  facingMode: "user",
+  facingMode: "environment"
 };
 
 const Canvas = ({ location, data }) => {
@@ -152,11 +152,19 @@ const Canvas = ({ location, data }) => {
    * Initial Map and Location
    * =====================================================
    */
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     if (location && mapRef.current) {
       mapRef.current.setView([location.latitude, location.longitude], 18);
     }
-  }, [location]);
+  }, [mounted, location]);
   /* ==================================================== */
 
   /***
@@ -860,7 +868,7 @@ useEffect(() => {
       const jsonData = JSON.parse(data);
 
       try {
-        const res = await axios.post("http://localhost:8000/api/soil/analyze", {
+        const res = await axios.post(API_URL_CLF+"/api/soil/analyze", {
           ph: jsonData.ph,
           soil: jsonData.soil,
           organic_matter: jsonData.organic_matter,
@@ -2252,7 +2260,7 @@ useEffect(() => {
           {/* floating context  */}
           {isMobile & isAuthenticated && (
             <div
-              className={`absolute bottom-28 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
+              className={`absolute bottom-12 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
             >
               <button
                 onClick={() => {
@@ -2291,7 +2299,7 @@ useEffect(() => {
           )}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-28 left-4 z-[999]">
+          <div className="absolute bottom-12 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
@@ -2324,7 +2332,7 @@ useEffect(() => {
         {/* Info panel - Bottom sliding panel for mobile */}
         {isMobile && (
           <div
-            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[99999] rounded-t-3xl`}
+            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[1000] rounded-t-3xl`}
             style={{
               transform:
                 panelState === "collapsed"
@@ -2396,7 +2404,7 @@ useEffect(() => {
 
         {/* Camera Layout */}
         {open && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[9999]">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 z-[99999]">
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl relative">
               <button
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -2424,7 +2432,7 @@ useEffect(() => {
                     <Webcam
                       ref={webcamRef}
                       audio={false}
-                      mirrored={true}
+                      mirrored={false}
                       screenshotFormat="image/jpeg"
                       videoConstraints={videoConstraints}
                       className="rounded-xl border shadow-lg"
