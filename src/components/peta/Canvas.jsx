@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Header from "./Header";
 
 import {
@@ -9,8 +15,8 @@ import {
   useMapEvents,
   Polygon,
   Tooltip,
-  WMSTileLayer, 
-  LayersControl
+  WMSTileLayer,
+  LayersControl,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -28,6 +34,7 @@ import {
   capitalizeFirstLetter,
   calculateCentroid,
   API_URL_CLF,
+  API_URL,
 } from "../../utils/Constants";
 
 import {
@@ -71,7 +78,7 @@ L.Icon.Default.mergeOptions({
 const videoConstraints = {
   width: 224,
   height: 224,
-  facingMode: "environment"
+  facingMode: "environment",
 };
 
 const Canvas = ({ location, nowData }) => {
@@ -211,7 +218,7 @@ const Canvas = ({ location, nowData }) => {
   const togglePanel = () => {
     if (panelState === "collapsed") {
       setPanelState("peek");
-    } else if (panelState === "peek" & isAuthenticated) {
+    } else if ((panelState === "peek") & isAuthenticated) {
       setPanelState("expanded");
     } else {
       setPanelState("collapsed");
@@ -219,88 +226,94 @@ const Canvas = ({ location, nowData }) => {
   };
 
   const handleTouchStart = useCallback((e) => {
-  setIsDragging(true);
-  setStartY(e.touches[0].clientY);
-  setCurrentY(e.touches[0].clientY);
-}, []);
+    setIsDragging(true);
+    setStartY(e.touches[0].clientY);
+    setCurrentY(e.touches[0].clientY);
+  }, []);
 
-const handleTouchMove = useCallback((e) => {
-  if (!isDragging) return;
-  
-  e.preventDefault(); // Prevent scrolling
-  const deltaY = e.touches[0].clientY - startY;
-  const threshold = 50; // Minimum drag distance to trigger state change
-  
-  // Determine new panel state based on drag direction and current state
-  if (deltaY > threshold && panelState !== "collapsed") {
-    if (panelState === "expanded") {
-      setPanelState("peek");
-    } else if (panelState === "peek") {
-      setPanelState("collapsed");
-    }
-    setStartY(e.touches[0].clientY); // Reset start position
-  } else if (deltaY < -threshold && panelState !== "expanded") {
-    if (panelState === "collapsed") {
-      setPanelState("peek");
-    } else if (panelState === "peek" && isAuthenticated) {
-      setPanelState("expanded");
-    }
-    setStartY(e.touches[0].clientY); // Reset start position
-  }
-}, [isDragging, startY, panelState]);
+  const handleTouchMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
 
-const handleTouchEnd = useCallback(() => {
-  setIsDragging(false);
-  setStartY(0);
-}, []);
+      e.preventDefault(); // Prevent scrolling
+      const deltaY = e.touches[0].clientY - startY;
+      const threshold = 50; // Minimum drag distance to trigger state change
 
-// Mouse event handlers (for desktop compatibility)
-const handleMouseDown = useCallback((e) => {
-  setIsDragging(true);
-  setStartY(e.clientY);
-  setCurrentY(e.clientY);
-}, []);
+      // Determine new panel state based on drag direction and current state
+      if (deltaY > threshold && panelState !== "collapsed") {
+        if (panelState === "expanded") {
+          setPanelState("peek");
+        } else if (panelState === "peek") {
+          setPanelState("collapsed");
+        }
+        setStartY(e.touches[0].clientY); // Reset start position
+      } else if (deltaY < -threshold && panelState !== "expanded") {
+        if (panelState === "collapsed") {
+          setPanelState("peek");
+        } else if (panelState === "peek" && isAuthenticated) {
+          setPanelState("expanded");
+        }
+        setStartY(e.touches[0].clientY); // Reset start position
+      }
+    },
+    [isDragging, startY, panelState]
+  );
 
-const handleMouseMove = useCallback((e) => {
-  if (!isDragging) return;
-  
-  const deltaY = e.clientY - startY;
-  const threshold = 50;
-  
-  if (deltaY > threshold && panelState !== "collapsed") {
-    if (panelState === "expanded") {
-      setPanelState("peek");
-    } else if (panelState === "peek") {
-      setPanelState("collapsed");
-    }
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    setStartY(0);
+  }, []);
+
+  // Mouse event handlers (for desktop compatibility)
+  const handleMouseDown = useCallback((e) => {
+    setIsDragging(true);
     setStartY(e.clientY);
-  } else if (deltaY < -threshold && panelState !== "expanded") {
-    if (panelState === "collapsed") {
-      setPanelState("peek");
-    } else if (panelState === "peek" && isAuthenticated) {
-      setPanelState("expanded");
+    setCurrentY(e.clientY);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+
+      const deltaY = e.clientY - startY;
+      const threshold = 50;
+
+      if (deltaY > threshold && panelState !== "collapsed") {
+        if (panelState === "expanded") {
+          setPanelState("peek");
+        } else if (panelState === "peek") {
+          setPanelState("collapsed");
+        }
+        setStartY(e.clientY);
+      } else if (deltaY < -threshold && panelState !== "expanded") {
+        if (panelState === "collapsed") {
+          setPanelState("peek");
+        } else if (panelState === "peek" && isAuthenticated) {
+          setPanelState("expanded");
+        }
+        setStartY(e.clientY);
+      }
+    },
+    [isDragging, startY, panelState]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setStartY(0);
+  }, []);
+
+  // Prevent body scroll when panel is being dragged
+  useEffect(() => {
+    if (isDragging) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
     }
-    setStartY(e.clientY);
-  }
-}, [isDragging, startY, panelState]);
 
-const handleMouseUp = useCallback(() => {
-  setIsDragging(false);
-  setStartY(0);
-}, []);
-
-// Prevent body scroll when panel is being dragged
-useEffect(() => {
-  if (isDragging) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = 'unset';
-  }
-  
-  return () => {
-    document.body.style.overflow = 'unset';
-  };
-}, [isDragging]);
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isDragging]);
   /* ==================================================== */
 
   /***
@@ -328,22 +341,20 @@ useEffect(() => {
    * =====================================================
    */
   useEffect(() => {
-    if (isAuthenticated) {
-      getDataFieldByUserID().then((res) => {
-        if (res) {
-          const fieldData = res.map((field) => ({
-            id: field.id_field,
-            fieldName: field.nama_lahan,
-            soilType: field.jenis_tanah,
-            coords: JSON.parse(field.coords),
-            cropId: field.id_tanaman,
-            cropDate: field.tanggal_tanam,
-            estimated_time: field.estimasi_panen,
-          }));
-          setPolygons(fieldData);
-        }
-      });
-    }
+    getDataFieldByUserID().then((res) => {
+      if (res) {
+        const fieldData = res.map((field) => ({
+          id: field.id_field,
+          fieldName: field.nama_lahan,
+          soilType: field.jenis_tanah,
+          coords: JSON.parse(field.coords),
+          cropId: field.id_tanaman,
+          cropDate: field.tanggal_tanam,
+          estimated_time: field.estimasi_panen,
+        }));
+        setPolygons(fieldData);
+      }
+    });
   }, []);
 
   const recommendationData = async (lat, lng, plants) => {
@@ -869,7 +880,7 @@ useEffect(() => {
       const jsonData = JSON.parse(data);
 
       try {
-        const res = await axios.post(API_URL_CLF+"/api/soil/analyze", {
+        const res = await axios.post(API_URL_CLF + "/api/soil/analyze", {
           ph: jsonData.ph,
           soil: jsonData.soil,
           organic_matter: jsonData.organic_matter,
@@ -929,12 +940,7 @@ useEffect(() => {
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-[#6C7D41]">Cuaca Saat Ini</h2>
           <div className="text-3xl">
-            <img
-              src={nd?.image}
-              alt="Weather Icon"
-              height={50}
-              width={50}
-            />
+            <img src={nd?.image} alt="Weather Icon" height={50} width={50} />
           </div>
         </div>
 
@@ -1446,36 +1452,57 @@ useEffect(() => {
   };
   /* ==================================================== */
 
-
-  // --- BAGIAN DINAMIS UNTUK MENDAPATKAN LAYER TERBARU ---
-  // State untuk menyimpan nama layer radar terbaru
-  const [latestRadarLayer, setLatestRadarLayer] = useState('');
+  /***
+   * =====================================================
+   * Tile Layer Function BMKG
+   * =====================================================
+   */
+  const [latestRadarLayer, setLatestRadarLayer] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // URL API untuk mendapatkan informasi layer terbaru (seperti yang Anda temukan sebelumnya)
-    const apiUrl = 'https://signature.bmkg.go.id/dwt/asset/boot/new_getData.php?type=inderaja&code=radar';
+    axios
+      .get(API_URL + "/api/radar-info")
+      .then((response) => {
+        const data = response.data;
 
-    fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        // Ambil nama layer terbaru dari respons JSON
-        const layerName = data.wmts.latest.layer;
-        console.log('Layer Radar Terbaru:', layerName);
-        setLatestRadarLayer(layerName);
+        if (data && data.wmts && data.wmts.latest && data.wmts.latest.layer) {
+          const layerName = data.wmts.latest.layer;
+          setLatestRadarLayer(layerName);
+        } else {
+          throw new Error("Struktur data JSON dari API tidak sesuai.");
+        }
       })
-      .catch(error => console.error('Gagal mengambil data layer radar:', error));
-  }, []); // useEffect ini hanya berjalan satu kali saat komponen dimuat
+      .catch((err) => {
+        console.error("Gagal mengambil data layer radar:", err);
+        if (err.response) {
+          setError(
+            `Gagal terhubung ke BMKG. Server merespons dengan status ${err.response.status}`
+          );
+        } else if (err.request) {
+          setError(
+            "Tidak ada respons dari server backend. Pastikan server.py sudah berjalan."
+          );
+        } else {
+          setError(err.message);
+        }
+      });
+    // ---------------------------------------------
+  }, []);
 
-  // --- PENGATURAN PARAMETER WMS ---
   const wmsBaseUrl = "https://radar.bmkg.go.id/sidarmageoserver";
-  
-  const wmsParams = {
-    layers: latestRadarLayer, // Menggunakan nama layer dinamis dari state
-    format: 'image/png',
-    transparent: true,
-    styles: 'CMAX_dBZ', // Style yang Anda berikan
-    version: '1.1.0'
-  };
+
+  const wmsParams = useMemo(
+    () => ({
+      layers: latestRadarLayer,
+      format: "image/png",
+      transparent: true,
+      styles: "CMAX_dBZ",
+      version: "1.1.0",
+    }),
+    [latestRadarLayer]
+  );
+  /* ==================================================== */
 
   return (
     <>
@@ -1650,56 +1677,64 @@ useEffect(() => {
             ref={mapRef}
             zoomControl={false}
           >
-            
             <LayersControl position="topright">
-        {/* Peta Dasar */}
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-        </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer checked name="OpenStreetMap">
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+              </LayersControl.BaseLayer>
 
-        {/* Lapisan Overlay Radar BMKG */}
-        {/* Hanya tampilkan layer jika namanya sudah berhasil didapatkan */}
-        {latestRadarLayer && (
-          <LayersControl.Overlay checked name="Radar Cuaca BMKG">
-            <WMSTileLayer
-              url={wmsBaseUrl}
-              params={wmsParams}
-              opacity={0.7} // Atur transparansi agar peta dasar tetap terlihat
-            />
-          </LayersControl.Overlay>
-        )}
-      </LayersControl>
+              {latestRadarLayer && (
+                <LayersControl.Overlay
+                  checked
+                  name="Radar Cuaca BMKG (Terbaru)"
+                >
+                  <WMSTileLayer
+                    key={latestRadarLayer}
+                    url={wmsBaseUrl}
+                    params={wmsParams}
+                    opacity={0.5}
+                    attribution="BMKG"
+                    className="scale-100"
+                  />
+                </LayersControl.Overlay>
+              )}
+            </LayersControl>
 
-            {!isAuthenticated ? isMobile && (
-              <div className="absolute bottom-32 rounded-lg shadow-md z-[9999] m-2">
-                <div
-                  className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
-                  role="alert"
-                >
-                  <span className="block sm:inline">
-                    <strong className="font-bold">Peringatan!</strong> Akses
-                    data terbatas, silahkan masuk untuk mendapatkan akses penuh.
-                  </span>
-                </div>
-              </div>
-            ) : null}
-            
-            {!isAuthenticated ? !isMobile && (
-              <div className="absolute top-5 rounded-lg shadow-md z-[9999] m-2">
-                <div
-                  className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
-                  role="alert"
-                >
-                  <span className="block sm:inline">
-                    <strong className="font-bold">Peringatan!</strong> Akses
-                    data terbatas, silahkan masuk untuk mendapatkan akses penuh.
-                  </span>
-                </div>
-              </div>
-            ) : null}
+            {!isAuthenticated
+              ? isMobile && (
+                  <div className="absolute bottom-32 rounded-lg shadow-md z-[9999] m-2">
+                    <div
+                      className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
+                      role="alert"
+                    >
+                      <span className="block sm:inline">
+                        <strong className="font-bold">Peringatan!</strong> Akses
+                        data terbatas, silahkan masuk untuk mendapatkan akses
+                        penuh.
+                      </span>
+                    </div>
+                  </div>
+                )
+              : null}
+
+            {!isAuthenticated
+              ? !isMobile && (
+                  <div className="absolute top-5 rounded-lg shadow-md z-[9999] m-2">
+                    <div
+                      className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
+                      role="alert"
+                    >
+                      <span className="block sm:inline">
+                        <strong className="font-bold">Peringatan!</strong> Akses
+                        data terbatas, silahkan masuk untuk mendapatkan akses
+                        penuh.
+                      </span>
+                    </div>
+                  </div>
+                )
+              : null}
 
             {location && (
               <Marker
@@ -1732,7 +1767,7 @@ useEffect(() => {
               </Marker>
             )}
 
-            {isAuthenticated && !confirm && <MapClickHandler />}
+            {isAuthenticated ? !confirm && <MapClickHandler /> : null}
 
             {polygonPoints.length > 0 && (
               <Polygon
@@ -2259,25 +2294,80 @@ useEffect(() => {
 
                     <div>
                       <div className="text-sm font-semibold mb-3 text-gray-700">
-                        Legenda:
+                        Informasi BMKG Radar Cuaca:
                       </div>
-                      <div className="flex items-center text-sm mb-2">
-                        <div className="relative">
-                          <div className="relative z-10 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white shadow-md">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="white"
-                              width="16"
-                              height="16"
-                            >
-                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                            </svg>
+                      <div className="space-y-2">
+                        {/* Keterangan: Hujan Sangat Ringan */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#00BFFF" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold">15 - 25 dBZ:</span>{" "}
+                            Hujan Sangat Ringan
                           </div>
                         </div>
-                        <span className="ml-3 text-gray-700 font-medium">
-                          Lokasi Anda
-                        </span>
+
+                        {/* Keterangan: Hujan Ringan */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#008000" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold">25 - 35 dBZ:</span>{" "}
+                            Hujan Ringan
+                          </div>
+                        </div>
+
+                        {/* Keterangan: Hujan Sedang */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#FFFF00" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold">35 - 45 dBZ:</span>{" "}
+                            Hujan Sedang
+                          </div>
+                        </div>
+
+                        {/* Keterangan: Hujan Lebat */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#FFA500" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold">45 - 55 dBZ:</span>{" "}
+                            Hujan Lebat
+                          </div>
+                        </div>
+
+                        {/* Keterangan: Hujan Sangat Lebat */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#FF0000" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold">55 - 65 dBZ:</span>{" "}
+                            Hujan Sangat Lebat
+                          </div>
+                        </div>
+
+                        {/* Keterangan: Hujan Ekstrem / Hujan Es */}
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: "#FF00FF" }}
+                          ></div>
+                          <div className="ml-2 text-xs text-gray-600">
+                            <span className="font-bold"> 65 dBZ:</span> Hujan
+                            Ekstrem / Badai
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2308,45 +2398,47 @@ useEffect(() => {
           )}
 
           {/* floating context  */}
-          {isMobile & isAuthenticated && (
-            <div
-              className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[1000] ${panelState === "expanded" ? "hidden" : ""}`}
-            >
-              <button
-                onClick={() => {
-                  setPanelState(
-                    panelState === "collapsed" ? "peek" : "collapsed"
-                  );
-                  setActiveSection("summary");
-                }}
-                className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
-              >
-                <span className="text-xl">📊</span>
-              </button>
-              <button
-                onClick={() => {
-                  setPanelState(
-                    panelState === "collapsed" ? "peek" : "collapsed"
-                  );
-                  setActiveSection("field");
-                }}
-                className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
-              >
-                <span className="text-xl">🌱</span>
-              </button>
-              <button
-                onClick={() => {
-                  setPanelState(
-                    panelState === "collapsed" ? "peek" : "collapsed"
-                  );
-                  setActiveSection("weather");
-                }}
-                className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
-              >
-                <span className="text-xl">🌤️</span>
-              </button>
-            </div>
-          )}
+          {isMobile
+            ? isAuthenticated && (
+                <div
+                  className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[1000] ${panelState === "expanded" ? "hidden" : ""}`}
+                >
+                  <button
+                    onClick={() => {
+                      setPanelState(
+                        panelState === "collapsed" ? "peek" : "collapsed"
+                      );
+                      setActiveSection("summary");
+                    }}
+                    className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
+                  >
+                    <span className="text-xl">📊</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPanelState(
+                        panelState === "collapsed" ? "peek" : "collapsed"
+                      );
+                      setActiveSection("field");
+                    }}
+                    className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
+                  >
+                    <span className="text-xl">🌱</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPanelState(
+                        panelState === "collapsed" ? "peek" : "collapsed"
+                      );
+                      setActiveSection("weather");
+                    }}
+                    className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
+                  >
+                    <span className="text-xl">🌤️</span>
+                  </button>
+                </div>
+              )
+            : null}
 
           {/* floating button to direct to now location */}
           <div className="absolute bottom-12 left-4 z-[999]">
@@ -2390,7 +2482,8 @@ useEffect(() => {
                   : panelState === "peek"
                     ? "translateY(0)"
                     : "translateY(0)",
-              height: panelState === "expanded" & isAuthenticated ? "85vh" : "50vh",
+              height:
+                (panelState === "expanded") & isAuthenticated ? "85vh" : "50vh",
               touchAction: "none", // Prevent default touch behaviors
             }}
             onTouchStart={handleTouchStart}
