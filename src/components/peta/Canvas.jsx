@@ -1758,10 +1758,6 @@ const Canvas = ({ location, nowData }) => {
                 <Tooltip direction="top" offset={[0, -10]} opacity={1}>
                   <div className="text-center">
                     <div className="font-bold text-blue-800">Lokasi Anda</div>
-                    <div className="text-xs">
-                      {location.latitude.toFixed(6)},{" "}
-                      {location.longitude.toFixed(6)}
-                    </div>
                   </div>
                 </Tooltip>
               </Marker>
@@ -2293,7 +2289,7 @@ const Canvas = ({ location, nowData }) => {
                     )}
 
                     <div>
-                      <div className="text-sm font-semibold mb-3 text-gray-700">
+                      <div className="text-sm font-semibold mb-2 text-gray-700">
                         Informasi BMKG Radar Cuaca:
                       </div>
                       <div className="space-y-2">
@@ -2368,6 +2364,12 @@ const Canvas = ({ location, nowData }) => {
                             Ekstrem / Badai
                           </div>
                         </div>
+
+                        <small className="text-xs text-gray-500 mt-2 block">
+                        dBZ (decibel-Zeppelin) adalah satuan yang digunakan
+                        untuk mengukur intensitas refleksi sinyal radar dari
+                        partikel di atmosfer, seperti tetesan air atau es.
+                      </small>
                       </div>
                     </div>
                   </div>
@@ -2441,7 +2443,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-24 left-4 z-[999]">
+          <div className="absolute bottom-20 md:bottom-4 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
