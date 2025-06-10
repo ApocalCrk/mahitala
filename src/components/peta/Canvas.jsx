@@ -8,7 +8,9 @@ import {
   Popup,
   useMapEvents,
   Polygon,
-  Tooltip
+  Tooltip,
+  WMSTileLayer, 
+  LayersControl
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -1444,6 +1446,37 @@ useEffect(() => {
   };
   /* ==================================================== */
 
+
+  // --- BAGIAN DINAMIS UNTUK MENDAPATKAN LAYER TERBARU ---
+  // State untuk menyimpan nama layer radar terbaru
+  const [latestRadarLayer, setLatestRadarLayer] = useState('');
+
+  useEffect(() => {
+    // URL API untuk mendapatkan informasi layer terbaru (seperti yang Anda temukan sebelumnya)
+    const apiUrl = 'https://signature.bmkg.go.id/dwt/asset/boot/new_getData.php?type=inderaja&code=radar';
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Ambil nama layer terbaru dari respons JSON
+        const layerName = data.wmts.latest.layer;
+        console.log('Layer Radar Terbaru:', layerName);
+        setLatestRadarLayer(layerName);
+      })
+      .catch(error => console.error('Gagal mengambil data layer radar:', error));
+  }, []); // useEffect ini hanya berjalan satu kali saat komponen dimuat
+
+  // --- PENGATURAN PARAMETER WMS ---
+  const wmsBaseUrl = "https://radar.bmkg.go.id/sidarmageoserver";
+  
+  const wmsParams = {
+    layers: latestRadarLayer, // Menggunakan nama layer dinamis dari state
+    format: 'image/png',
+    transparent: true,
+    styles: 'CMAX_dBZ', // Style yang Anda berikan
+    version: '1.1.0'
+  };
+
   return (
     <>
       {/* Header on Mobile */}
@@ -1617,10 +1650,28 @@ useEffect(() => {
             ref={mapRef}
             zoomControl={false}
           >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
+            
+            <LayersControl position="topright">
+        {/* Peta Dasar */}
+        <LayersControl.BaseLayer checked name="OpenStreetMap">
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </LayersControl.BaseLayer>
+
+        {/* Lapisan Overlay Radar BMKG */}
+        {/* Hanya tampilkan layer jika namanya sudah berhasil didapatkan */}
+        {latestRadarLayer && (
+          <LayersControl.Overlay checked name="Radar Cuaca BMKG">
+            <WMSTileLayer
+              url={wmsBaseUrl}
+              params={wmsParams}
+              opacity={0.7} // Atur transparansi agar peta dasar tetap terlihat
             />
+          </LayersControl.Overlay>
+        )}
+      </LayersControl>
 
             {!isAuthenticated ? isMobile && (
               <div className="absolute bottom-32 rounded-lg shadow-md z-[9999] m-2">
