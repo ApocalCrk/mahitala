@@ -9,7 +9,6 @@ const getLocation = async (latitude, longitude) => {
   
     try {
       const response = await fetch(url);
-      console.log("Response dari API:", response);
       const data = await response.json();
       
       if (data && data.address) {
