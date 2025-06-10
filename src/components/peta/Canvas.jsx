@@ -22,7 +22,6 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import {
-  findNearestTimestamp,
   calculateArea,
   capitalizeFirstLetter,
   calculateCentroid,
@@ -47,7 +46,6 @@ import {
   Droplet,
   Home,
   Info,
-  Layers,
   Leaf,
   MapPin,
   Menu,
@@ -74,7 +72,7 @@ const videoConstraints = {
   facingMode: "environment"
 };
 
-const Canvas = ({ location, data }) => {
+const Canvas = ({ location, nowData }) => {
   const mapRef = useRef(null);
   const webcamRef = useRef(null);
   const dateNow = new Date().toLocaleDateString("id-ID", {
@@ -124,8 +122,7 @@ const Canvas = ({ location, data }) => {
 
   // set initial data
   const yogyakartaPosition = [-7.797068, 110.370529];
-  const firstStampWeatherData = data.weatherData[0];
-  const nearestData = findNearestTimestamp(firstStampWeatherData);
+  const nd = nowData.dataCuaca.weatherData;
 
   // camera
   const [open, setOpen] = useState(false);
@@ -929,7 +926,7 @@ useEffect(() => {
           <h2 className="text-xl font-bold text-[#6C7D41]">Cuaca Saat Ini</h2>
           <div className="text-3xl">
             <img
-              src={nearestData?.image}
+              src={nd?.image}
               alt="Weather Icon"
               height={50}
               width={50}
@@ -938,7 +935,7 @@ useEffect(() => {
         </div>
 
         <p className="text-base font-medium text-gray-700 mt-2">
-          {nearestData?.weather_desc || "Memuat..."}
+          {nd?.weather_desc || "Memuat..."}
         </p>
 
         <div className="mt-4 grid grid-cols-2 gap-4">
@@ -947,7 +944,7 @@ useEffect(() => {
               <span className="text-blue-400 mr-2">🌡️</span>
               <div>
                 <p className="text-xs text-gray-500">Suhu</p>
-                <p className="font-bold text-lg">{nearestData?.t || "-"}°C</p>
+                <p className="font-bold text-lg">{nd?.t || "-"}°C</p>
               </div>
             </div>
           </div>
@@ -956,7 +953,7 @@ useEffect(() => {
               <span className="text-blue-400 mr-2">💧</span>
               <div>
                 <p className="text-xs text-gray-500">Kelembaban</p>
-                <p className="font-bold text-lg">{nearestData?.hu || "-"}%</p>
+                <p className="font-bold text-lg">{nd?.hu || "-"}%</p>
               </div>
             </div>
           </div>
@@ -967,7 +964,7 @@ useEffect(() => {
                 <p className="text-xs text-gray-500">
                   Angin <sub>km/j</sub>
                 </p>
-                <p className="font-bold text-lg">{nearestData?.ws || "-"}</p>
+                <p className="font-bold text-lg">{nd?.ws || "-"}</p>
               </div>
             </div>
           </div>
@@ -976,7 +973,7 @@ useEffect(() => {
               <span className="text-blue-400 mr-2">🧭</span>
               <div>
                 <p className="text-xs text-gray-500">Arah</p>
-                <p className="font-bold text-lg">{nearestData?.wd || "-"}</p>
+                <p className="font-bold text-lg">{nd?.wd || "-"}</p>
               </div>
             </div>
           </div>

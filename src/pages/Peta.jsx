@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import getLocation from "../utils/getLocationAccess";
 
 import Canvas from "../components/peta/Canvas";
-import { getDataForecast } from "../hooks/forecast/getDataForecast";
+import { getDataForecast, getNowForecast } from "../hooks/forecast/getDataForecast";
 import useCurrentTimestamp from "../utils/getCurrentTimestamp";
 import { OctagonAlert } from "lucide-react";
 
@@ -22,6 +22,7 @@ const Peta = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [nowData, setNowData] = useState(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -35,8 +36,11 @@ const Peta = () => {
             loc.latitude = latitude;
             loc.longitude = longitude;
             const res = await getDataForecast({ location: loc });
+            const nowRes = await getNowForecast({ location: loc });
+
             setData(res);
             setLocation(loc);
+            setNowData(nowRes);
           } catch (error) {
             setError(error.message);
           }
@@ -75,7 +79,7 @@ const Peta = () => {
             </div>
           </div>
         ) : (
-          <Canvas location={location} timestamp={timestamp} data={data} />
+          <Canvas location={location} timestamp={timestamp} nowData={nowData} />
         )
       ) : error ? (
         <div className="flex items-center justify-center h-64">
