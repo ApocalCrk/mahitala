@@ -1677,7 +1677,7 @@ const Canvas = ({ location, nowData }) => {
             ref={mapRef}
             zoomControl={false}
           >
-            <LayersControl position="topright">
+            <LayersControl position={!isMobile ? "topright" : "bottomleft"}>
               <LayersControl.BaseLayer checked name="OpenStreetMap">
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -2441,7 +2441,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-12 left-4 z-[999]">
+          <div className="absolute bottom-24 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
@@ -2484,7 +2484,7 @@ const Canvas = ({ location, nowData }) => {
                     : "translateY(0)",
               height:
                 (panelState === "expanded") & isAuthenticated ? "85vh" : "50vh",
-              touchAction: "none", // Prevent default touch behaviors
+              touchAction: "none",
             }}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
