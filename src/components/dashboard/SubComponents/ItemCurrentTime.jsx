@@ -1,7 +1,7 @@
 import React from "react";
-import { Wind, Droplets, TrendingUpDown } from "lucide-react";
+import { Wind, Droplets, CloudFog } from "lucide-react";
 
-const ItemCurrentTime = ({ timestamp, location, nearestData }) => {
+const ItemCurrentTime = ({ timestamp, location, nowData }) => {
   return (
     <>
       <div className="flex justify-between items-center">
@@ -23,22 +23,22 @@ const ItemCurrentTime = ({ timestamp, location, nearestData }) => {
       <div className="flex flex-col  items-center gap-12">
         <div className="text-center">
           <h1 className="text-8xl font-light text-[#6C7D41]">
-            {nearestData.t}°
+            {nowData.t}°
           </h1>
-          <p className="mt-2 text-gray-600">{nearestData.weather_desc}</p>
+          <p className="mt-2 text-gray-600">{nowData.weather_desc}</p>
         </div>
         <div className="flex flex-row gap-4">
           <div className="flex items-center gap-2" title="Pengendapan Hujan">
-            <TrendingUpDown className="w-6 h-6 text-[#6C7D41]" />
-            <span className="text-sm text-gray-600">{nearestData.tp}%</span>
+            <CloudFog className="w-6 h-6 text-[#6C7D41]" />
+            <span className="text-sm text-gray-600">{nowData.tcc}%</span>
           </div>
           <div className="flex items-center gap-2" title="Kelambaban">
             <Droplets className="w-6 h-6 text-[#6C7D41]" />
-            <span className="text-sm text-gray-600">{nearestData.hu}%</span>
+            <span className="text-sm text-gray-600">{nowData.hu}%</span>
           </div>
           <div className="flex items-center gap-2" title="Kecepatan Angin">
             <Wind className="w-6 h-6 text-[#6C7D41]" />
-            <span className="text-sm text-gray-600">{nearestData.ws}km/j</span>
+            <span className="text-sm text-gray-600">{nowData.ws}km/j</span>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import RekomendasiAI from "../components/dashboard/RekomendasiAI";
 import ForecastKedepan from "../components/dashboard/ForecastKedepan";
 
 import getLocation from "../utils/getLocationAccess";
-import { getDataForecast } from "../hooks/forecast/getDataForecast";
+import { getDataForecast, getNowForecast } from "../hooks/forecast/getDataForecast";
 import { getHargaKomoditas } from "../hooks/forum/getHargaKomoditas";
 import { LogIn, OctagonAlert, UserPlus2Icon } from "lucide-react";
 
@@ -38,6 +38,7 @@ const ForecastDashboard = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [nowData, setNowData] = useState(null);
   const [hargaKomoditas, setHargaKomoditas] = useState(null);
   const { isAuthenticated, setIsAuthenticated } = useUser();
 
@@ -120,9 +121,11 @@ const ForecastDashboard = () => {
       loc.longitude = locCoords.longitude;
       
       const res = await getDataForecast({ location: loc });
+      const nowRes = await getNowForecast({ location: loc });
 
       setLocation(loc);
       setData(res);
+      setNowData(nowRes);
     } catch (error) {
       console.error("Error fetching location/data:", error);
       setError("Gagal mengambil data dari cache. Pastikan Anda pernah online sebelumnya.");
@@ -272,6 +275,7 @@ const ForecastDashboard = () => {
                     timestamp={timestamp}
                     location={location}
                     data={data}
+                    nowData={nowData}
                     dataMingguan={dataMingguan}
                   />
 

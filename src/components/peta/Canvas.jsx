@@ -2260,7 +2260,7 @@ useEffect(() => {
           {/* floating context  */}
           {isMobile & isAuthenticated && (
             <div
-              className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[99999] ${panelState === "expanded" ? "hidden" : ""}`}
+              className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[1000] ${panelState === "expanded" ? "hidden" : ""}`}
             >
               <button
                 onClick={() => {
@@ -2299,7 +2299,7 @@ useEffect(() => {
           )}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-20 left-4 z-[999]">
+          <div className="absolute bottom-12 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
@@ -2332,7 +2332,7 @@ useEffect(() => {
         {/* Info panel - Bottom sliding panel for mobile */}
         {isMobile && (
           <div
-            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[99999] rounded-t-3xl`}
+            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[1000] rounded-t-3xl`}
             style={{
               transform:
                 panelState === "collapsed"

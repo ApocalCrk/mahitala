@@ -13,9 +13,9 @@ import {
 import { Cloud, Droplets, ThermometerSun, Wind } from "lucide-react";
 import ItemForecastMingguanMobile from "./SubComponents/ItemForecastMingguanMobile";
 
-const ForecastHariIni = ({ timestamp, location, data, dataMingguan }) => {
+const ForecastHariIni = ({ timestamp, location, data, nowData, dataMingguan }) => {
+  const nd = nowData.dataCuaca.weatherData;
   const firstStampWeatherData = data.weatherData[0];
-
   const nearestData = findNearestTimestamp(firstStampWeatherData);
 
   return (
@@ -29,7 +29,7 @@ const ForecastHariIni = ({ timestamp, location, data, dataMingguan }) => {
             <ItemCurrentTime
               timestamp={timestamp}
               location={location}
-              nearestData={nearestData}
+              nowData={nd}
             />
 
             <div className="flex-1 bg-gray-50 rounded-2xl p-6 w-full">
@@ -91,12 +91,12 @@ const ForecastHariIni = ({ timestamp, location, data, dataMingguan }) => {
           format="km/j"
         />
         <ItemStatusForecast
-          key="Pengendapan Hujan"
-          title="Pengendapan Hujan"
+          key="Jumlah Curah Hujan"
+          title="Jumlah Curah Hujan"
           description={rainRecommendation(nearestData.tp)}
           metric={nearestData.tp}
           Icon={Cloud}
-          format="%"
+          format=" mm"
         />
       </div>
     </>
