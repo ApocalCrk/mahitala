@@ -326,20 +326,22 @@ useEffect(() => {
    * =====================================================
    */
   useEffect(() => {
-    getDataFieldByUserID().then((res) => {
-      if (res) {
-        const fieldData = res.map((field) => ({
-          id: field.id_field,
-          fieldName: field.nama_lahan,
-          soilType: field.jenis_tanah,
-          coords: JSON.parse(field.coords),
-          cropId: field.id_tanaman,
-          cropDate: field.tanggal_tanam,
-          estimated_time: field.estimasi_panen,
-        }));
-        setPolygons(fieldData);
-      }
-    });
+    if (isAuthenticated) {
+      getDataFieldByUserID().then((res) => {
+        if (res) {
+          const fieldData = res.map((field) => ({
+            id: field.id_field,
+            fieldName: field.nama_lahan,
+            soilType: field.jenis_tanah,
+            coords: JSON.parse(field.coords),
+            cropId: field.id_tanaman,
+            cropDate: field.tanggal_tanam,
+            estimated_time: field.estimasi_panen,
+          }));
+          setPolygons(fieldData);
+        }
+      });
+    }
   }, []);
 
   const recommendationData = async (lat, lng, plants) => {
