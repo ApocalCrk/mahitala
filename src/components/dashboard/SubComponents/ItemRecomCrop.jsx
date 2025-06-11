@@ -1,9 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { capitalizeEachWord, capitalizeFirstLetter, cropIdealDescription } from '../../../utils/Constants';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function PredictionCarousel({ prediction }) {
-  const items = prediction.predicted || [];
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (!prediction || !prediction.predicted) return;
+    let data = prediction.predicted.replace(/'/g, '"');
+    data = JSON.parse(data);
+    setItems(data);
+  }, [prediction]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -35,7 +43,7 @@ export default function PredictionCarousel({ prediction }) {
       prev();
     }
   };
-
+  
   return (
     <div>
       <p className="text-sm text-gray-600">

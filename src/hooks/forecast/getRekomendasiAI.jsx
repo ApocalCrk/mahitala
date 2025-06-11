@@ -9,7 +9,6 @@ export const getRekomendasiAI = async ({ location }) => {
         longitude,
       },
     });
-
     return res.data;
   } catch (error) {
     console.error(error);
