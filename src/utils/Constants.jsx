@@ -1,6 +1,6 @@
-export const API_URL = "https://mahitala.noturmine.my.id";
+export const API_URL = "http://localhost:3000";
 export const API_URL_CLF = "https://mahitala-clf.noturmine.my.id";
-export const API_STATIC = "https://mahitala.noturmine.my.id/static/";
+export const API_STATIC = "http://localhost:3000/static/";
 import { Cloud, CloudRain, Sun, Wind } from "lucide-react";
 
 export const Icon = ({ icon, className }) => {
@@ -187,14 +187,14 @@ export const rainfallRecommendation = (rain) => {
   }
 };
 
-export const cropIdealDescription = (kategori) => {
-  if (kategori === "Sangat Ideal") {
-    return "Kondisi tanaman sangat ideal untuk pertumbuhan dan produktivitas optimal.";
-  } else if (kategori === "Mendekati Ideal") {
-    return "Kondisi tanaman mendekati ideal, tetapi ada beberapa faktor yang perlu diperhatikan.";
-  } else {
-    return "Kondisi tanaman cukup ideal, tetapi ada beberapa faktor yang perlu diperhatikan.";
-  }
+export const cropIdealDescription = (kategori, catatan) => {
+  const descriptions = {
+    "sangat ideal": "Tanaman ini sangat cocok untuk kondisi saat ini. Pertumbuhan dan hasil optimal diharapkan.",
+    "mendekati ideal": "Tanaman ini hampir cocok untuk kondisi saat ini. Pertumbuhan yang baik diharapkan dengan sedikit perhatian tambahan.",
+    "cukup ideal": "Tanaman ini tidak cocok untuk kondisi saat ini. Pertumbuhan dan hasil mungkin terpengaruh secara signifikan.",
+  };
+  const description = descriptions[kategori] || "Kondisi tanaman tidak diketahui.";
+  return catatan != undefined ? `${description} Catatan: ${catatan}` : description;
 };
 
 export function capitalizeEachWord(text) {

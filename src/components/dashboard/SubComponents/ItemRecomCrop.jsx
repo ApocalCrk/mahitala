@@ -2,17 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { capitalizeEachWord, capitalizeFirstLetter, cropIdealDescription } from '../../../utils/Constants';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function PredictionCarousel({ prediction }) {
-  const [items, setItems] = useState([]);
+export default function PredictionCarousel({ prediction, currentIndex, setCurrentIndex }) {
+  const items = prediction.rekomendasi_final_json ? JSON.parse(prediction.rekomendasi_final_json) : [];
 
-  useEffect(() => {
-    if (!prediction || !prediction.predicted) return;
-    let data = prediction.predicted.replace(/'/g, '"');
-    data = JSON.parse(data);
-    setItems(data);
-  }, [prediction]);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
@@ -66,7 +58,7 @@ export default function PredictionCarousel({ prediction }) {
                 </span>
               </div>
               <p className="text-xs text-gray-600 mt-1">
-                {cropIdealDescription(items[currentIndex]?.kategori)}
+                {cropIdealDescription(items[currentIndex]?.kategori, items[currentIndex]?.catatan)}
               </p>
             </div>
           </div>

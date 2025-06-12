@@ -19,23 +19,24 @@ import PredictionCarousel from "./SubComponents/ItemRecomCrop";
 const RekomendasiAI = ({ location }) => {
   const [prediction, setPrediction] = useState({});
   const [cropRecommendation, setCropRecommendation] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     getRekomendasiAI({ location }).then((res) => {
-      res[0].predicted = JSON.parse(res[0].predicted);
       setPrediction(res[0]);
     });
   }, [location]);
 
   useEffect(() => {
-    if (prediction.predicted) {
-      getRekomendasiTanaman({ label: prediction.predicted[0].nama }).then(
+    if (prediction.rekomendasi_final_json) {
+      const data = JSON.parse(prediction.rekomendasi_final_json);
+      getRekomendasiTanaman({ label: data[currentIndex].nama }).then(
         (res) => {
           setCropRecommendation(res[0]);
         }
       );
     }
-  }, [prediction]);
+  }, [prediction, currentIndex]);
 
   return (
     <>
@@ -44,25 +45,25 @@ const RekomendasiAI = ({ location }) => {
           <h2 className="text-lg font-medium text-[#6C7D41]">Rekomendasi AI</h2>
         </div>
         <div className="p-6">
-          <PredictionCarousel prediction={prediction} />
+          <PredictionCarousel prediction={prediction} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
           <h4 className="text-sm font-medium mt-6">
             Rata-rata 3 Bulan Kedepan
           </h4>
           <div className="flex items-center mt-4 p-4 bg-gray-50 rounded-xl">
             <ThermometerSun
-              className={`w-14 h-14 ${colorRecommendation(prediction.temperature, cropRecommendation.min_range_temperature, cropRecommendation.max_range_temperature)}`}
+              className={`w-14 h-14 ${colorRecommendation(prediction.temperature, cropRecommendation.temperature_min, cropRecommendation.temperature_max)}`}
             />
             <div className="ml-4">
               <div className="flex items-center gap-2">
                 <h4 className="font-medium">Suhu</h4>
               </div>
               <p
-                className={`text-sm font-medium ${colorRecommendation(prediction.temperature, cropRecommendation.min_range_temperature, cropRecommendation.max_range_temperature)}`}
+                className={`text-sm font-medium ${colorRecommendation(prediction.temperature, cropRecommendation.temperature_min, cropRecommendation.temperature_max)}`}
               >
                 {checkIdeal(
                   prediction.temperature,
-                  cropRecommendation.min_range_temperature,
-                  cropRecommendation.max_range_temperature
+                  cropRecommendation.temperature_min,
+                  cropRecommendation.temperature_max
                 )}
               </p>
               <p className="text-xs text-gray-600 mt-1">
@@ -75,19 +76,19 @@ const RekomendasiAI = ({ location }) => {
           </div>
           <div className="flex items-center mt-4 p-4 bg-gray-50 rounded-xl grid-cols-2">
             <Droplets
-              className={`w-14 h-14 ${colorRecommendation(prediction.humidity, cropRecommendation.min_range_humidity, cropRecommendation.max_range_humidity)}`}
+              className={`w-14 h-14 ${colorRecommendation(prediction.humidity, cropRecommendation.humidity_min, cropRecommendation.humidity_max)}`}
             />
             <div className="ml-4">
               <div className="flex items-center gap-2">
                 <h4 className="font-medium">Kelembaban</h4>
               </div>
               <p
-                className={`text-sm font-medium ${colorRecommendation(prediction.humidity, cropRecommendation.min_range_humidity, cropRecommendation.max_range_humidity)}`}
+                className={`text-sm font-medium ${colorRecommendation(prediction.humidity, cropRecommendation.humidity_min, cropRecommendation.humidity_max)}`}
               >
                 {checkIdeal(
                   prediction.humidity,
-                  cropRecommendation.min_range_humidity,
-                  cropRecommendation.max_range_humidity
+                  cropRecommendation.humidity_min,
+                  cropRecommendation.humidity_max
                 )}
               </p>
               <p className="text-xs text-gray-600 mt-1">
@@ -100,19 +101,19 @@ const RekomendasiAI = ({ location }) => {
           </div>
           <div className="flex items-center mt-4 p-4 bg-gray-50 rounded-xl">
             <Cloud
-              className={`w-14 h-14 ${colorRecommendation(prediction.rainfall, cropRecommendation.min_range_rainfall, 500)}`}
+              className={`w-14 h-14 ${colorRecommendation(prediction.rainfall, cropRecommendation.rainfall_min, cropRecommendation.rainfall_max)}`}
             />
             <div className="ml-4">
               <div className="flex items-center gap-2">
                 <h4 className="font-medium">Curah Hujan</h4>
               </div>
               <p
-                className={`text-sm font-medium ${colorRecommendation(prediction.rainfall, cropRecommendation.min_range_rainfall, 500)}`}
+                className={`text-sm font-medium ${colorRecommendation(prediction.rainfall, cropRecommendation.rainfall_min, cropRecommendation.rainfall_max)}`}
               >
                 {checkIdeal(
                   prediction.rainfall,
-                  cropRecommendation.min_range_rainfall,
-                  500
+                  cropRecommendation.rainfall_min,
+                  cropRecommendation.rainfall_max
                 )}
               </p>
               <p className="text-xs text-gray-600 mt-1">
