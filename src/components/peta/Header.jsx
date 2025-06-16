@@ -3,8 +3,6 @@ import { NavLink } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-import logo from "../../assets/Logo/Mahitala.png";
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -15,75 +13,16 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`absolute top-0 left-0 w-full transition duration-300 ease-in-out bg-[#f9f9f93f]`}
-        style={{ zIndex: 999999 }}
+        className={`absolute top-2.5 left-2 transition duration-300 ease-in-out]`}
+        style={{ zIndex: 99999 }}
       >
-        <div className="flex container justify-between mx-auto px-5 py-4">
-          <span className="flex items-center">
-            <a href="/" className="flex items-center">
-              <img src={logo} alt="Mahitala" className="w-36" />
-            </a>
-          </span>
-
           <button
             type="button"
-            className="md:hidden text-gray-500 hover:text-[#6C7D41] focus:outline-none"
+            className="md:hidden bg-white p-3 text-gray-400 hover:text-[#6C7D41] focus:outline-none border border-gray-300 rounded-md"
             onClick={toggleMenu}
           >
             <FaBars size={20} />
           </button>
-
-          <div className="hidden md:flex space-x-6">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
-                  isActive
-                    ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
-                }`
-              }
-            >
-              Halaman Utama
-            </NavLink>
-            <NavLink
-              to="/peta"
-              className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
-                  isActive
-                    ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
-                }`
-              }
-            >
-              Peta Interaktif
-            </NavLink>
-            <NavLink
-              to="/forum"
-              className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
-                  isActive
-                    ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
-                }`
-              }
-            >
-              Forum Diskusi
-            </NavLink>
-            <NavLink
-              to="/tentang-kami"
-              className={({ isActive }) =>
-                `text-lg font-semibold px-5 py-3 rounded-md ${
-                  isActive
-                    ? "text-white bg-[#6C7D41]"
-                    : "text-[#6C7D41] hover:bg-[#f9f9f9ab]"
-                }`
-              }
-            >
-              Tentang Kami
-            </NavLink>
-          </div>
-        </div>
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div

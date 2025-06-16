@@ -15,7 +15,10 @@ import WaspadaCuaca from "../components/dashboard/WaspadaCuaca";
 
 // Import hooks and utils
 import getLocation from "../utils/getLocationAccess";
-import { getDataForecast, getNowForecast } from "../hooks/forecast/getDataForecast";
+import {
+  getDataForecast,
+  getNowForecast,
+} from "../hooks/forecast/getDataForecast";
 import { getHargaKomoditas } from "../hooks/forum/getHargaKomoditas";
 import useCurrentTimestamp from "../utils/getCurrentTimestamp";
 import { loginAuth, registerAuth } from "../hooks/auth/Authentication";
@@ -27,7 +30,7 @@ const ForecastDashboard = () => {
   const timestamp = { day, date, month, year, time };
 
   // State untuk data dan UI
-  const [viewState, setViewState] = useState('loading');
+  const [viewState, setViewState] = useState("loading");
   const [location, setLocation] = useState(null);
   const [data, setData] = useState(null);
   const [nowData, setNowData] = useState(null);
@@ -46,25 +49,27 @@ const ForecastDashboard = () => {
   useEffect(() => {
     const fetchAllData = async (coords) => {
       try {
-        const locationDetails = await getLocation(coords.latitude, coords.longitude);
+        const locationDetails = await getLocation(
+          coords.latitude,
+          coords.longitude
+        );
         locationDetails.latitude = coords.latitude;
         locationDetails.longitude = coords.longitude;
 
-        if (locationDetails.province.toLowerCase().includes("Daerah Istimewa Yogyakarta")) {
-           setViewState('restricted');
-           return;
+        if (
+          !locationDetails.province
+            .toLowerCase()
+            .includes("daerah istimewa yogyakarta")
+        ) {
+          setViewState("restricted");
+          return;
         }
         setLocation(locationDetails);
-        const [
-          forecastRes,
-          nowRes,
-          hargaRes,
-          mingguanRes
-        ] = await Promise.all([
+        const [forecastRes, nowRes, hargaRes, mingguanRes] = await Promise.all([
           getDataForecast({ location: locationDetails }),
           getNowForecast({ location: locationDetails }),
           getHargaKomoditas({ location: locationDetails }),
-          getForecastMingguan({ location: locationDetails })
+          getForecastMingguan({ location: locationDetails }),
         ]);
 
         setData(forecastRes);
@@ -72,11 +77,13 @@ const ForecastDashboard = () => {
         setHargaKomoditas(hargaRes);
         setDataMingguan(mingguanRes);
 
-        setViewState('loaded');
+        setViewState("loaded");
       } catch (error) {
         console.error("Error fetching data in parallel:", error);
-        setErrorMessage("Gagal memuat data. Periksa koneksi Anda dan coba lagi.");
-        setViewState('error');
+        setErrorMessage(
+          "Gagal memuat data. Periksa koneksi Anda dan coba lagi."
+        );
+        setViewState("error");
       }
     };
 
@@ -85,18 +92,20 @@ const ForecastDashboard = () => {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
-      localStorage.setItem('lastKnownLocation', JSON.stringify(currentLoc));
+      localStorage.setItem("lastKnownLocation", JSON.stringify(currentLoc));
       fetchAllData(currentLoc);
     };
 
     const handleError = () => {
-      const savedLocString = localStorage.getItem('lastKnownLocation');
+      const savedLocString = localStorage.getItem("lastKnownLocation");
       if (savedLocString) {
         const savedLoc = JSON.parse(savedLocString);
         fetchAllData(savedLoc);
       } else {
-        setErrorMessage("Gagal mendapatkan lokasi. Aktifkan izin lokasi di browser Anda.");
-        setViewState('error');
+        setErrorMessage(
+          "Gagal mendapatkan lokasi. Aktifkan izin lokasi di browser Anda."
+        );
+        setViewState("error");
       }
     };
 
@@ -104,7 +113,7 @@ const ForecastDashboard = () => {
       navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
     } else {
       setErrorMessage("Geolocation tidak didukung oleh browser ini.");
-      setViewState('error');
+      setViewState("error");
     }
   }, []);
 
@@ -115,7 +124,6 @@ const ForecastDashboard = () => {
       setIsAuthenticated(true);
     }
   }, []);
-
 
   // --- Auth Modal Handlers (Tetap sama, sudah bagus) ---
   const toggleLoginModal = useCallback(() => {
@@ -174,10 +182,9 @@ const ForecastDashboard = () => {
       setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
     }
   }, []);
-  
 
   // --- Render Logic berdasarkan viewState ---
-  if (viewState === 'loading') {
+  if (viewState === "loading") {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -198,24 +205,33 @@ const ForecastDashboard = () => {
     );
   }
 
-  if (viewState === 'error') {
+  if (viewState === "error") {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-gray-500 text-lg">{errorMessage}</p>
       </div>
     );
   }
-  
-  if (viewState === 'restricted') {
+
+  if (viewState === "restricted") {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="grid grid-cols-1 gap-4 text-center">
           <OctagonAlert className="w-16 h-16 text-red-500 animate-pulse flex items-center justify-center mx-auto" />
           <p className="text-gray-500 text-lg">
-            Maaf, layanan ini belum tersedia untuk wilayah Anda.
+            Maaf, layanan ini hanya tersedia untuk wilayah Daerah Istimewa
+            Yogyakarta
           </p>
           <span className="text-[#6C7D41] text-lg font-medium">
-            Butuh bantuan? Hubungi kami.
+            Butuh bantuan? Hubungi kami di{" "}
+            <a
+              href="https://wa.me/081234567890"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#6C7D41] underline"
+            >
+              081234567890
+            </a>
           </span>
         </div>
       </div>
@@ -233,25 +249,35 @@ const ForecastDashboard = () => {
         className="container mx-auto min-h-screen bg-white p-6"
       >
         {!isAuthenticated && (
-            <div className="md:flex justify-between md:space-x-4">
-              <div className="flex justify-between bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded relative mb-4 w-full" role="alert">
-                <span className="block sm:inline">
-                  <strong className="font-bold">Peringatan!</strong> Akses data terbatas, silahkan masuk untuk mendapatkan akses penuh.
-                </span>
-                <OctagonAlert className="w-6 h-6 text-red-500 hidden sm:block" />
-              </div>
-              <div className="flex space-x-4">
-                <button onClick={toggleLoginModal} className="flex px-8 py-2 mb-4 text-md font-semibold items-center justify-center text-[#6C7D41] bg-transparent border border-[#6C7D41] rounded-lg hover:bg-[#6C7D41] hover:text-white transition-all duration-300 w-full md:w-auto">
-                  <LogIn className="w-5 h-5 mr-2" />
-                  Masuk
-                </button>
-                <button onClick={toggleRegisterModal} className="flex px-8 py-2 mb-4 text-md font-semibold items-center justify-center text-[#6C7D41] bg-transparent border border-[#6C7D41] rounded-lg hover:bg-[#6C7D41] hover:text-white transition-all duration-300 w-full md:w-auto">
-                  <UserPlus2Icon className="w-5 h-5 mr-2" />
-                  Daftar
-                </button>
-              </div>
+          <div className="md:flex justify-between md:space-x-4">
+            <div
+              className="flex justify-between bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded relative mb-4 w-full"
+              role="alert"
+            >
+              <span className="block sm:inline">
+                <strong className="font-bold">Peringatan!</strong> Akses data
+                terbatas, silahkan masuk untuk mendapatkan akses penuh.
+              </span>
+              <OctagonAlert className="w-6 h-6 text-red-500 hidden sm:block" />
             </div>
-          )}
+            <div className="flex space-x-4">
+              <button
+                onClick={toggleLoginModal}
+                className="flex px-8 py-2 mb-4 text-md font-semibold items-center justify-center text-[#6C7D41] bg-transparent border border-[#6C7D41] rounded-lg hover:bg-[#6C7D41] hover:text-white transition-all duration-300 w-full md:w-auto"
+              >
+                <LogIn className="w-5 h-5 mr-2" />
+                Masuk
+              </button>
+              <button
+                onClick={toggleRegisterModal}
+                className="flex px-8 py-2 mb-4 text-md font-semibold items-center justify-center text-[#6C7D41] bg-transparent border border-[#6C7D41] rounded-lg hover:bg-[#6C7D41] hover:text-white transition-all duration-300 w-full md:w-auto"
+              >
+                <UserPlus2Icon className="w-5 h-5 mr-2" />
+                Daftar
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex flex-col lg:flex-row gap-6 mx-auto">
           <div className="w-full lg:w-3/5 space-y-6">
             <ForecastHariIni
@@ -271,13 +297,30 @@ const ForecastDashboard = () => {
           </div>
         </div>
       </motion.div>
-      <Footer modalLogin={toggleLoginModal} modalRegister={toggleRegisterModal} />
-      
+      <Footer
+        modalLogin={toggleLoginModal}
+        modalRegister={toggleRegisterModal}
+      />
+
       {/* --- Modals --- */}
-      <Modal isOpen={isLoginOpen} onClose={toggleLoginModal} isError={isAuthError} errorMessage={errorMessage} title="Selamat Datang" description="Silahkan masuk untuk mengakses fitur dan data yang lebih lengkap">
+      <Modal
+        isOpen={isLoginOpen}
+        onClose={toggleLoginModal}
+        isError={isAuthError}
+        errorMessage={errorMessage}
+        title="Selamat Datang"
+        description="Silahkan masuk untuk mengakses fitur dan data yang lebih lengkap"
+      >
         <LoginForm onSubmit={handleLogin} />
       </Modal>
-      <Modal isOpen={isRegisterOpen} onClose={toggleRegisterModal} isError={isAuthError} errorMessage={errorMessage} title="Buat Akun" description="Silahkan buat akun untuk mendapatkan fitur dan data yang lebih lengkap">
+      <Modal
+        isOpen={isRegisterOpen}
+        onClose={toggleRegisterModal}
+        isError={isAuthError}
+        errorMessage={errorMessage}
+        title="Buat Akun"
+        description="Silahkan buat akun untuk mendapatkan fitur dan data yang lebih lengkap"
+      >
         <RegisterForm onSubmit={handleRegister} initialToken={registerToken} />
       </Modal>
     </>

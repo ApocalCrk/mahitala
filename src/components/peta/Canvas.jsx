@@ -97,6 +97,7 @@ const Canvas = ({ location, nowData }) => {
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [cropData, setCropData] = useState([]);
   const [initialWeatherLoaded, setInitialWeatherLoaded] = useState(false);
+  const OWM_API_KEY = "f2b661c062dcb138e07d884fadb00e33";
 
   // data user
   const [weatherCache, setWeatherCache] = useState({});
@@ -849,12 +850,7 @@ const Canvas = ({ location, nowData }) => {
 
   const formatArea = (area) => {
     if (!area) return "Menghitung...";
-    return (
-      <>
-        {area.hectares.toFixed(4)} hektar
-        <br />({area.squareMeters.toFixed(2)} m²)
-      </>
-    );
+    return <>{area.hectares.toFixed(4)} hektar</>;
   };
 
   useEffect(() => {
@@ -1352,7 +1348,8 @@ const Canvas = ({ location, nowData }) => {
               <option value="" key="disable" disabled>
                 Pilih Tanaman
               </option>
-              {confirm && soilType &&
+              {confirm &&
+                soilType &&
                 cropData.map((crop) => (
                   <option key={crop.id} value={crop.id}>
                     {capitalizeFirstLetter(crop.label)}
@@ -1734,16 +1731,66 @@ const Canvas = ({ location, nowData }) => {
             ref={mapRef}
             zoomControl={false}
           >
-            <LayersControl position={!isMobile ? "topright" : "bottomleft"}>
+            <LayersControl position="topright">
+              {/* --- BASE LAYERS --- */}
               <LayersControl.BaseLayer checked name="OpenStreetMap">
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 />
               </LayersControl.BaseLayer>
 
+              <LayersControl.BaseLayer name="Peta Satelit (Esri)">
+                <TileLayer
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  attribution='&copy; <a href="https://www.esri.com/">Esri</a>, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                />
+              </LayersControl.BaseLayer>
+
+              <LayersControl.BaseLayer name="Peta Outdoor (Stadia)">
+                <TileLayer
+                  url="https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
+                />
+              </LayersControl.BaseLayer>
+
+              <LayersControl.BaseLayer name="Mode Gelap (Stadia)">
+                <TileLayer
+                  url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
+                />
+              </LayersControl.BaseLayer>
+
+              {/* --- OVERLAYS (LAPISAN) --- */}
+              <LayersControl.Overlay name="Lapisan Curah Hujan">
+                <TileLayer
+                  url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                  opacity={0.9}
+                />
+              </LayersControl.Overlay>
+
+              <LayersControl.Overlay name="Lapisan Suhu Udara">
+                <TileLayer
+                  url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                  opacity={0.9}
+                />
+              </LayersControl.Overlay>
+
+              <LayersControl.Overlay name="Lapisan Awan">
+                <TileLayer
+                  url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                  opacity={1}
+                />
+              </LayersControl.Overlay>
+
               {latestRadarLayer && (
-                <LayersControl.Overlay name="Radar Cuaca BMKG (Terbaru)">
+                <LayersControl.Overlay
+                  name="Radar Cuaca BMKG (Terbaru)"
+                  checked
+                >
                   <WMSTileLayer
                     key={latestRadarLayer}
                     url={wmsBaseUrl}
@@ -2326,15 +2373,13 @@ const Canvas = ({ location, nowData }) => {
                           <span className="text-sm text-gray-600 font-medium">
                             Total Lahan:
                           </span>
-                          <span className="text-sm font-bold">
-                            {polygons.length}
-                          </span>
+                          <span className="text-sm">{polygons.length}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600 font-medium">
                             Total Luas:
                           </span>
-                          <span className="text-sm font-bold">
+                          <span className="text-sm">
                             {formatArea(
                               polygons.reduce(
                                 (acc, poly) => {
@@ -2353,88 +2398,75 @@ const Canvas = ({ location, nowData }) => {
                       </div>
                     )}
 
-                    <div>
-                      <div className="text-sm font-semibold mb-2 text-gray-700">
-                        Informasi BMKG Radar Cuaca:
-                      </div>
-                      <div className="space-y-2">
-                        {/* Keterangan: Hujan Sangat Ringan */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#00BFFF" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold">15 - 25 dBZ:</span>{" "}
-                            Hujan Sangat Ringan
-                          </div>
-                        </div>
+                    <span className="text-sm font-semibold text-gray-700">
+                      Legenda Peta
+                    </span>
 
-                        {/* Keterangan: Hujan Ringan */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#008000" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold">25 - 35 dBZ:</span>{" "}
-                            Hujan Ringan
-                          </div>
-                        </div>
-
-                        {/* Keterangan: Hujan Sedang */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#FFFF00" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold">35 - 45 dBZ:</span>{" "}
-                            Hujan Sedang
-                          </div>
-                        </div>
-
-                        {/* Keterangan: Hujan Lebat */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#FFA500" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold">45 - 55 dBZ:</span>{" "}
-                            Hujan Lebat
-                          </div>
-                        </div>
-
-                        {/* Keterangan: Hujan Sangat Lebat */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#FF0000" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold">55 - 65 dBZ:</span>{" "}
+                    <div className="space-y-4 mt-2">
+                      <div>
+                        <span className="text-xs font-semibold text-gray-600 block mb-1">
+                          Radar Cuaca BMKG
+                        </span>
+                        <div
+                          className="w-full h-3 rounded-full"
+                          style={{
+                            background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                          }}
+                        />
+                        <div className="flex justify-between mt-1">
+                          <span className="text-xs text-gray-500">
+                            Tidak Ada Hujan
+                          </span>
+                          <span className="text-xs text-gray-500">
                             Hujan Sangat Lebat
-                          </div>
+                          </span>
                         </div>
+                      </div>
 
-                        {/* Keterangan: Hujan Ekstrem / Hujan Es */}
-                        <div className="flex items-center">
-                          <div
-                            className="w-4 h-4 rounded"
-                            style={{ backgroundColor: "#FF00FF" }}
-                          ></div>
-                          <div className="ml-2 text-xs text-gray-600">
-                            <span className="font-bold"> 65 dBZ:</span> Hujan
-                            Ekstrem / Badai
-                          </div>
+                      <div>
+                        <span className="text-xs font-semibold text-gray-600 block mb-1">
+                          Curah Hujan
+                        </span>
+                        <div
+                          className="w-full h-3 rounded-full"
+                          style={{
+                            background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                          }}
+                        />
+                        <div className="flex justify-between mt-1">
+                          <span className="text-xs text-gray-500">Rendah</span>
+                          <span className="text-xs text-gray-500">Tinggi</span>
                         </div>
-
-                        <small className="text-xs text-gray-500 mt-2 block">
-                          dBZ (decibel-Zeppelin) adalah satuan yang digunakan
-                          untuk mengukur intensitas refleksi sinyal radar dari
-                          partikel di atmosfer, seperti tetesan air atau es.
-                        </small>
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-gray-600 block mb-1">
+                          Suhu Udara
+                        </span>
+                        <div
+                          className="w-full h-3 rounded-full"
+                          style={{
+                            background: `linear-gradient(to right, #00ffff, #00ff00, #ffff00, #ff0000)`,
+                          }}
+                        />
+                        <div className="flex justify-between mt-1">
+                          <span className="text-xs text-gray-500">Dingin</span>
+                          <span className="text-xs text-gray-500">Panas</span>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-gray-600 block mb-1">
+                          Tingkat Kekeruhan Awan
+                        </span>
+                        <div
+                          className="w-full h-3 rounded-full"
+                          style={{
+                            background: `linear-gradient(to right, #e0e0e0, #a0a0a0, #606060)`,
+                          }}
+                        />
+                        <div className="flex justify-between mt-1">
+                          <span className="text-xs text-gray-500">Cerah</span>
+                          <span className="text-xs text-gray-500">Mendung</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2464,8 +2496,7 @@ const Canvas = ({ location, nowData }) => {
             </div>
           )}
 
-          {/* floating context  */}
-          {isMobile
+          {isMobile && panelState !== "peek"
             ? isAuthenticated && (
                 <div
                   className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[1000] ${panelState === "expanded" ? "hidden" : ""}`}
@@ -2604,8 +2635,85 @@ const Canvas = ({ location, nowData }) => {
               )}
             </div>
 
-            <div className="overflow-y-auto pb-safe h-[calc(100vh-250px)]">
+            <div
+              className={`overflow-y-auto pb-safe h-[calc(100vh-${panelState === "expanded" ? "150px" : "350px"})]`}
+            >
               {activeSection === "weather" && renderWeatherSection()}
+              {isMobile && activeSection === "weather" && (
+                <div className="p-4">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Legenda Peta
+                  </span>
+
+                  <div className="space-y-4 mt-2">
+                    <div>
+                      <span className="text-xs font-semibold text-gray-600 block mb-1">
+                        Radar Cuaca BMKG
+                      </span>
+                      <div
+                        className="w-full h-3 rounded-full"
+                        style={{
+                          background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                        }}
+                      />
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-gray-500">
+                          Tidak Ada Hujan
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          Hujan Sangat Lebat
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-xs font-semibold text-gray-600 block mb-1">
+                        Curah Hujan
+                      </span>
+                      <div
+                        className="w-full h-3 rounded-full"
+                        style={{
+                          background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                        }}
+                      />
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-gray-500">Rendah</span>
+                        <span className="text-xs text-gray-500">Tinggi</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-gray-600 block mb-1">
+                        Suhu Udara
+                      </span>
+                      <div
+                        className="w-full h-3 rounded-full"
+                        style={{
+                          background: `linear-gradient(to right, #00ffff, #00ff00, #ffff00, #ff0000)`,
+                        }}
+                      />
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-gray-500">Dingin</span>
+                        <span className="text-xs text-gray-500">Panas</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-gray-600 block mb-1">
+                        Tingkat Kekeruhan Awan
+                      </span>
+                      <div
+                        className="w-full h-3 rounded-full"
+                        style={{
+                          background: `linear-gradient(to right, #e0e0e0, #a0a0a0, #606060)`,
+                        }}
+                      />
+                      <div className="flex justify-between mt-1">
+                        <span className="text-xs text-gray-500">Cerah</span>
+                        <span className="text-xs text-gray-500">Mendung</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               {activeSection === "field" && renderFieldSection()}
               {activeSection === "summary" && renderSummarySection()}
             </div>
