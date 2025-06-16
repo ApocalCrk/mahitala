@@ -97,7 +97,8 @@ const Canvas = ({ location, nowData }) => {
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [cropData, setCropData] = useState([]);
   const [initialWeatherLoaded, setInitialWeatherLoaded] = useState(false);
-  const OWM_API_KEY = "f2b661c062dcb138e07d884fadb00e33";
+
+  const OWM_API_KEY = import.meta.env.VITE_OWM_API_KEY;
 
   // data user
   const [weatherCache, setWeatherCache] = useState({});
