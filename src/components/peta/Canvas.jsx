@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import Header from "./Header";
-
 import {
   MapContainer,
   TileLayer,
@@ -42,7 +41,7 @@ import {
   createDataField,
   deleteDataField,
   updateDataField,
-} from "../../hooks/field_user/getDataField";
+} from "../../hooks/field_user/dataField";
 
 import { getCropData } from "../../hooks/crop/getCropData";
 
@@ -52,6 +51,8 @@ import { useUser } from "../../utils/userContext";
 import {
   ArrowLeft,
   ArrowRight,
+  BarChart2,
+  Cloud,
   Droplet,
   Home,
   Info,
@@ -59,6 +60,7 @@ import {
   MapPin,
   Menu,
   Sparkles,
+  Sprout,
   Trash,
   TrashIcon,
   Users2,
@@ -76,8 +78,8 @@ L.Icon.Default.mergeOptions({
 });
 
 const videoConstraints = {
-  width: 224,
-  height: 224,
+  width: 500,
+  height: 320,
   facingMode: "environment",
 };
 
@@ -119,8 +121,9 @@ const Canvas = ({ location, nowData }) => {
   const [confirm, setConfirm] = useState(false);
 
   const [type, setType] = useState("add");
-  const [isLoading, setIsLoading] = useState(false);
-  const [recommendationResult, setRecommendationResult] = useState(null);
+
+  // handle crop prediction data
+  const [predictionData, setPredictionData] = useState([]);
 
   // For responsive design
   const [isMobile, setIsMobile] = useState(false);
@@ -144,6 +147,7 @@ const Canvas = ({ location, nowData }) => {
   // Handle Soil Data
   const [resultData, setResultData] = useState(null);
   const [tempData, setTempData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // context menu
   const [contextMenu, setContextMenu] = useState({
@@ -235,25 +239,24 @@ const Canvas = ({ location, nowData }) => {
     (e) => {
       if (!isDragging) return;
 
-      e.preventDefault(); // Prevent scrolling
+      e.preventDefault();
       const deltaY = e.touches[0].clientY - startY;
-      const threshold = 50; // Minimum drag distance to trigger state change
+      const threshold = 50;
 
-      // Determine new panel state based on drag direction and current state
       if (deltaY > threshold && panelState !== "collapsed") {
         if (panelState === "expanded") {
           setPanelState("peek");
         } else if (panelState === "peek") {
           setPanelState("collapsed");
         }
-        setStartY(e.touches[0].clientY); // Reset start position
+        setStartY(e.touches[0].clientY);
       } else if (deltaY < -threshold && panelState !== "expanded") {
         if (panelState === "collapsed") {
           setPanelState("peek");
         } else if (panelState === "peek" && isAuthenticated) {
           setPanelState("expanded");
         }
-        setStartY(e.touches[0].clientY); // Reset start position
+        setStartY(e.touches[0].clientY);
       }
     },
     [isDragging, startY, panelState]
@@ -264,7 +267,6 @@ const Canvas = ({ location, nowData }) => {
     setStartY(0);
   }, []);
 
-  // Mouse event handlers (for desktop compatibility)
   const handleMouseDown = useCallback((e) => {
     setIsDragging(true);
     setStartY(e.clientY);
@@ -302,7 +304,6 @@ const Canvas = ({ location, nowData }) => {
     setStartY(0);
   }, []);
 
-  // Prevent body scroll when panel is being dragged
   useEffect(() => {
     if (isDragging) {
       document.body.style.overflow = "hidden";
@@ -314,6 +315,31 @@ const Canvas = ({ location, nowData }) => {
       document.body.style.overflow = "unset";
     };
   }, [isDragging]);
+
+  const getParameterColor = (type, value) => {
+    const colors = {
+      ph: value >= 6.5 && value <= 7.5 ? "text-green-600" : "text-amber-600",
+      carbon: value >= 2 ? "text-green-600" : "text-amber-600",
+      nitrogen: value >= 0.1 ? "text-green-600" : "text-amber-600",
+      cec: value >= 15 ? "text-green-600" : "text-amber-600",
+    };
+    return colors[type] || "text-gray-600 bg-gray-50";
+  };
+
+  const getParameterStatus = (type, value) => {
+    const status = {
+      ph:
+        value >= 6.5 && value <= 7.5
+          ? "Optimal"
+          : value < 6.5
+            ? "Asam"
+            : "Basa",
+      carbon: value >= 2 ? "Baik" : "Rendah",
+      nitrogen: value >= 0.1 ? "Cukup" : "Kurang",
+      cec: value >= 15 ? "Tinggi" : "Sedang",
+    };
+    return status[type] || "Normal";
+  };
   /* ==================================================== */
 
   /***
@@ -325,7 +351,7 @@ const Canvas = ({ location, nowData }) => {
     getCropData().then((res) => {
       if (res) {
         const crops = res.map((crop) => ({
-          id: crop.id_crop,
+          id: crop.id,
           label: crop.label,
           estimated_time: crop.estimated_time,
         }));
@@ -357,37 +383,16 @@ const Canvas = ({ location, nowData }) => {
     });
   }, []);
 
-  const recommendationData = async (lat, lng, plants) => {
-    setIsLoading(true);
-    const [temperature, humidity, rainfall, rainfalltype] =
-      await getRekomendasiAI({
-        location: {
-          latitude: lat,
-          longitude: lng,
-        },
-      }).then((res) => {
-        return [
-          res[0].temperature,
-          res[0].humidity,
-          res[0].rainfall,
-          res[0].sifat_hujan_rata,
-        ];
-      });
-
-    const res = await axios.post(API_URL_CLF + "/api/soil/recommendation", {
-      plants: plants,
-      averageTemperature: temperature,
-      averageHumidity: humidity,
-      averageRainfall: rainfall,
-      averageRainfallType: rainfalltype,
+  const recommendationData = async (lat, lng) => {
+    await getRekomendasiAI({
+      location: {
+        latitude: lat,
+        longitude: lng,
+      },
+    }).then((res) => {
+      res[0].rekomendasi_final_json = JSON.parse(res[0].rekomendasi_final_json);
+      setPredictionData(res[0]);
     });
-
-    if (res) {
-      setRecommendationResult(res.data);
-      setIsLoading(false);
-    }
-
-    setIsLoading(false);
   };
 
   const handleDeleteLahan = (id) => {
@@ -543,61 +548,81 @@ const Canvas = ({ location, nowData }) => {
     fetchSoilDataOnPolygonChange();
   }, [confirm]);
 
+  const fetchWithTimeout = (url, timeout = 10000) => {
+    return Promise.race([
+      fetch(url).then((res) => {
+        if (!res.ok) throw new Error("Fetch failed");
+        return res.json();
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Timeout exceeded")), timeout)
+      ),
+    ]);
+  };
+
   const fetchSoilData = async (lat, lng) => {
+    setLoading(true);
+
+    const propertyBaseUrl =
+      "https://rest.isric.org/soilgrids/v2.0/properties/query";
+    const classificationUrl = `https://rest.isric.org/soilgrids/v2.0/classification/query?lon=${lng}&lat=${lat}&number_classes=1`;
+
+    const fetchProperty = async (property) => {
+      const url = `${propertyBaseUrl}?lon=${lng}&lat=${lat}&property=${property}&depth=0-5cm`;
+      try {
+        const data = await fetchWithTimeout(url);
+        return data?.properties?.layers?.[0]?.depths?.[0]?.values?.mean ?? 0;
+      } catch (e) {
+        console.warn(`Fetch for ${property} failed or timed out:`, e.message);
+        return 0;
+      }
+    };
+
+    let soilName = "Unknown";
+
     try {
-      const [wrb, ph, soc, cfvo] = await Promise.all([
-        fetch(
-          `https://rest.isric.org/soilgrids/v2.0/classification/query?lon=${lng}&lat=${lat}&number_classes=1`
-        ),
-        fetch(
-          `https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lng}&lat=${lat}&property=phh2o&depth=0-5cm`
-        ),
-        fetch(
-          `https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lng}&lat=${lat}&property=soc&depth=0-5cm`
-        ),
-        fetch(
-          `https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lng}&lat=${lat}&property=cfvo&depth=0-5cm`
-        ),
-      ]);
-
-      if (!wrb.ok || !ph.ok || !soc.ok || !cfvo.ok)
-        throw new Error("Gagal mengambil data tanah");
-
-      const [wrbData, phData, socData, cfvoData] = await Promise.all([
-        wrb.json(),
-        ph.json(),
-        soc.json(),
-        cfvo.json(),
-      ]);
-
-      const newLayerData = {
-        jenis_tanah: wrbData,
-        ph_tanah: phData,
-        kandungan_organik: socData,
-        ketersedian_air: cfvoData,
-      };
-
-      const data = {
-        ph:
-          newLayerData?.ph_tanah?.properties.layers[0].depths[0].values.mean /
-          10,
-        soil: newLayerData?.jenis_tanah?.wrb_class_name,
-        organic_matter:
-          newLayerData?.kandungan_organik?.properties.layers[0].depths[0].values
-            .mean / 10,
-        water_content:
-          newLayerData?.ketersedian_air?.properties.layers[0].depths[0].values
-            .mean / 10,
-      };
-
-      await handleAnalyze(JSON.stringify(data));
-      setTempData(data);
-
-      return newLayerData;
-    } catch (err) {
-      console.error("Error fetching soil data:", err);
-      return null;
+      const wrbData = await fetchWithTimeout(classificationUrl);
+      soilName = wrbData?.wrb_class_name ?? "Unknown";
+    } catch (e) {
+      console.warn("Classification fetch failed or timed out:", e.message);
     }
+
+    const phMean = await fetchProperty("phh2o");
+    const socMean = await fetchProperty("soc");
+    const nitrogenMean = await fetchProperty("nitrogen");
+    const cecMean = await fetchProperty("cec");
+
+    let data = {
+      ph: phMean / 10,
+      soil: soilName,
+      carbon: socMean / 100,
+      nitrogen: nitrogenMean / 100,
+      cec: cecMean / 10,
+    };
+
+    try {
+      await getRekomendasiAI({
+        location: {
+          latitude: lat,
+          longitude: lng,
+        },
+      }).then((res) => {
+        res[0].rekomendasi_final_json = JSON.parse(
+          res[0].rekomendasi_final_json
+        );
+        data = {
+          ...data,
+          data: res[0],
+        };
+      });
+      await handleAnalyze(JSON.stringify(data));
+    } catch (err) {
+      console.error("Error in handleAnalyze:", err);
+    }
+
+    setTempData(data);
+    setLoading(false);
+    return data;
   };
 
   const handleAddPolygon = () => {
@@ -669,7 +694,6 @@ const Canvas = ({ location, nowData }) => {
    * =====================================================
    */
   const processWeatherData = (rawData) => {
-    // Check if we have weather data array
     if (
       !rawData.data ||
       !rawData.data[0] ||
@@ -679,41 +703,34 @@ const Canvas = ({ location, nowData }) => {
       return null;
     }
 
-    // Get the first set of hourly forecasts (typically current day)
     const hourlyForecasts = rawData.data[0].cuaca[0];
 
     if (!hourlyForecasts || hourlyForecasts.length === 0) {
       return null;
     }
 
-    // Calculate averages
     let totalTemp = 0;
     let totalHumidity = 0;
     let totalWindSpeed = 0;
     let totalWeatherCode = 0;
     let count = 0;
 
-    // Direction counts for most common wind direction
     const windDirections = {};
     let currentForecast = null;
 
-    // Get the latest forecast (closest to current time)
     const now = new Date();
     let closestTimeDiff = Infinity;
 
     hourlyForecasts.forEach((forecast) => {
-      // Calculate averages
       totalTemp += forecast.t;
       totalHumidity += forecast.hu;
       totalWindSpeed += forecast.ws;
       totalWeatherCode += forecast.weather;
       count++;
 
-      // Count wind directions
       const windDirection = forecast.wd;
       windDirections[windDirection] = (windDirections[windDirection] || 0) + 1;
 
-      // Find the closest forecast to current time
       if (forecast.local_datetime) {
         const forecastDate = new Date(forecast.local_datetime);
         const timeDiff = Math.abs(forecastDate - now);
@@ -724,7 +741,6 @@ const Canvas = ({ location, nowData }) => {
       }
     });
 
-    // Find most common wind direction
     let mostCommonDirection = "";
     let maxCount = 0;
     Object.entries(windDirections).forEach(([direction, dirCount]) => {
@@ -734,7 +750,6 @@ const Canvas = ({ location, nowData }) => {
       }
     });
 
-    // Create processed data structure that matches what the component expects
     return {
       lokasi: rawData.lokasi,
       params: {
@@ -883,8 +898,9 @@ const Canvas = ({ location, nowData }) => {
         const res = await axios.post(API_URL_CLF + "/api/soil/analyze", {
           ph: jsonData.ph,
           soil: jsonData.soil,
-          organic_matter: jsonData.organic_matter,
-          water_content: jsonData.water_content,
+          carbon: jsonData.carbon,
+          nitrogen: jsonData.nitrogen,
+          cec: jsonData.cec,
         });
 
         setResultData(res.data);
@@ -892,24 +908,6 @@ const Canvas = ({ location, nowData }) => {
         console.error(err);
       }
     }
-  };
-
-  const combinedPlants = () => {
-    const plants = [];
-
-    if (resultData && resultData.recommended_plants) {
-      plants.push(...resultData.recommended_plants);
-    }
-
-    if (
-      result &&
-      result.recommendation &&
-      result.recommendation.suitable_crops
-    ) {
-      plants.push(...result.recommendation.suitable_crops);
-    }
-
-    return [...new Set(plants)];
   };
 
   const captureFromCamera = useCallback(async () => {
@@ -1015,6 +1013,11 @@ const Canvas = ({ location, nowData }) => {
               onClick={() => {
                 setPolygonPoints([]);
                 setConfirm(false);
+                setLoading(false);
+                setResultData(null);
+                setResult(null);
+                setSoilType("");
+                setPreview(null);
                 setPanelState("collapsed");
               }}
               className="text-xs bg-red-100 text-red-600 py-1 px-3 rounded-full"
@@ -1072,155 +1075,250 @@ const Canvas = ({ location, nowData }) => {
               onClick={() => setOpen(true)}
             />
             <button
-              onClick={() => setOpen(true)}
+              onClick={() => confirm && setOpen(true)}
               className="bg-gray-500 text-white px-4 py-2 rounded-lg text-sm shadow-md w-full"
             >
               Ambil Gambar
             </button>
           </div>
+          {resultData && result && !loading && soilType && (
+            <div className="max-w-[500px] mx-auto">
+              <div className="space-y-4">
+                {resultData.soil_parameters && (
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <h3 className="text-base font-semibold text-gray-900">
+                        Klasifikasi Tanah
+                      </h3>
+                    </div>
 
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-1">Jenis Tanah</p>
+                      <p className="text-lg font-medium text-gray-900">
+                        {resultData.soil_parameters.soil}
+                      </p>
+                      {predictionData?.jenis_lahan && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Tipe Lahan:{" "}
+                          <span className="font-medium">
+                            {predictionData.jenis_lahan}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Soil Parameters Grid */}
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div
+                        className={`p-3 rounded-lg border-2 border-dashed ${getParameterColor("ph", resultData.soil_parameters.ph).includes("green") ? "border-green-200" : "border-amber-200"}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              pH
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-gray-900">
+                          {resultData.soil_parameters.ph}
+                          <small
+                            className={`text-xs ${getParameterColor("ph", resultData.soil_parameters.ph)}`}
+                          >
+                            {" "}
+                            {getParameterStatus(
+                              "ph",
+                              resultData.soil_parameters.ph
+                            )}
+                          </small>
+                        </p>
+                      </div>
+
+                      <div
+                        className={`p-3 rounded-lg border-2 border-dashed ${getParameterColor("carbon", resultData.soil_parameters.carbon).includes("green") ? "border-green-200" : "border-amber-200"}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Leaf className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              Karbon
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-gray-900">
+                          {resultData.soil_parameters.carbon}%
+                          <small
+                            className={`text-xs ${getParameterColor("carbon", resultData.soil_parameters.carbon)}`}
+                          >
+                            {" "}
+                            {getParameterStatus(
+                              "carbon",
+                              resultData.soil_parameters.carbon
+                            )}
+                          </small>
+                        </p>
+                      </div>
+
+                      <div
+                        className={`p-3 rounded-lg border-2 border-dashed ${getParameterColor("nitrogen", resultData.soil_parameters.nitrogen).includes("green") ? "border-green-200" : "border-amber-200"}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Droplet className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              Nitrogen
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-gray-900">
+                          {resultData.soil_parameters.nitrogen}%
+                          <small
+                            className={`text-xs ${getParameterColor("nitrogen", resultData.soil_parameters.nitrogen)}`}
+                          >
+                            {" "}
+                            {getParameterStatus(
+                              "nitrogen",
+                              resultData.soil_parameters.nitrogen
+                            )}
+                          </small>
+                        </p>
+                      </div>
+
+                      <div
+                        className={`p-3 rounded-lg border-2 border-dashed ${getParameterColor("cec", resultData.soil_parameters.cec).includes("green") ? "border-green-200" : "border-amber-200"}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <BarChart2 className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              CEC
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-gray-900">
+                          {resultData.soil_parameters.cec}
+                          <small
+                            className={`text-xs ${getParameterColor("cec", resultData.soil_parameters.cec)}`}
+                          >
+                            {" "}
+                            {getParameterStatus(
+                              "cec",
+                              resultData.soil_parameters.cec
+                            )}
+                          </small>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-600 flex items-start gap-2">
+                        <span>
+                          Jika nilai parameter menunjukkan 0, data mungkin tidak
+                          tersedia untuk area tersebut atau lahan sudah beralih
+                          fungsi menjadi pemukiman.
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sprout className="w-4 h-4 text-gray-700" />
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      Rekomendasi Tanaman
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    {/* Scientific Classification */}
+                    {resultData &&
+                      resultData.plants_by_condition &&
+                      resultData.plants_by_condition.length != 0 && (
+                        <div className="border-l-4 border-purple-400 pl-2">
+                          <div className="flex items-center gap-1 mb-1">
+                            <Leaf className="w-3 h-3 text-purple-600" />
+                            <span className="text-xs font-medium text-purple-700">
+                              Klasifikasi Ilmiah
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {resultData.plants_by_condition.map(
+                              (crop, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs"
+                                >
+                                  {capitalizeFirstLetter(crop)}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Weather Prediction */}
+                    {predictionData &&
+                      predictionData.rekomendasi_final_json && (
+                        <div className="border-l-4 border-blue-400 pl-2">
+                          <div className="flex items-center gap-1 mb-1">
+                            <Cloud className="w-3 h-3 text-blue-600" />
+                            <span className="text-xs font-medium text-blue-700">
+                              Prediksi Cuaca
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {predictionData.rekomendasi_final_json.map(
+                              (crop, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
+                                >
+                                  {capitalizeFirstLetter(crop.nama)}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Soil-based */}
+                    {result && result.recommendation && (
+                      <div className="border-l-4 border-green-400 pl-2">
+                        <div className="flex items-center gap-1 mb-1">
+                          <BarChart2 className="w-3 h-3 text-green-600" />
+                          <span className="text-xs font-medium text-green-700">
+                            Parameter Tanah
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {result.recommendation.suitable_crops.map(
+                            (crop, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                              >
+                                {capitalizeFirstLetter(crop)}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Tanaman
             </label>
-            <div className="w-full max-w-md mx-auto">
-              {resultData && result && soilType && (
-                <div className="mb-4 bg-blue-50 p-4 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <div className="w-full">
-                      {resultData.soil_parameters && (
-                        <>
-                          <div className="flex items-center justify-between mb-3">
-                            <p className="text-sm font-medium text-blue-600">
-                              Karakteristik Tanah
-                            </p>
-                            <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
-                              {result.label}
-                            </span>
-                          </div>
 
-                          <div className="bg-white p-3 rounded shadow-sm mb-3">
-                            <p className="text-xs text-gray-700 font-medium mb-2">
-                              Klasifikasi Ilmiah:{" "}
-                              {resultData.soil_parameters.soil_class}
-                            </p>
-                            <div className="grid grid-cols-3 gap-2 mb-2">
-                              <div className="flex flex-col items-center bg-blue-50 p-2 rounded">
-                                <div className="flex items-center mb-1">
-                                  <Sparkles
-                                    size={14}
-                                    className="text-blue-600 mr-1"
-                                  />
-                                  <span className="text-xs text-gray-600">
-                                    pH
-                                  </span>
-                                </div>
-                                <p className="text-sm font-bold text-blue-600">
-                                  {resultData.soil_parameters.ph}
-                                </p>
-                              </div>
-                              <div className="flex flex-col items-center bg-blue-50 p-2 rounded">
-                                <div className="flex items-center mb-1">
-                                  <Leaf
-                                    size={14}
-                                    className="text-blue-600 mr-1"
-                                  />
-                                  <span className="text-xs text-gray-600">
-                                    Organik
-                                  </span>
-                                </div>
-                                <p className="text-sm font-bold text-blue-600">
-                                  {resultData.soil_parameters.organic_matter}%
-                                </p>
-                              </div>
-                              <div className="flex flex-col items-center bg-blue-50 p-2 rounded">
-                                <div className="flex items-center mb-1">
-                                  <Droplet
-                                    size={14}
-                                    className="text-blue-600 mr-1"
-                                  />
-                                  <span className="text-xs text-gray-600">
-                                    Air
-                                  </span>
-                                </div>
-                                <p className="text-sm font-bold text-blue-600">
-                                  {resultData.soil_parameters.water_content}%
-                                </p>
-                              </div>
-                            </div>
-                            <small className="text-xs text-gray-500 italic">
-                              Jika data pH, Kandungan Organik, dan Ketersedian
-                              Air memiliki nilai 0 maka data tidak tersedia di
-                              area tersebut
-                            </small>
-                          </div>
-                        </>
-                      )}
-
-                      {/* Combined Recommendations Section */}
-                      {(resultData?.recommended_plants ||
-                        (result?.recommendation?.suitable_crops &&
-                          result?.soilType)) && (
-                        <div className="bg-white p-3 rounded shadow-sm mb-3">
-                          {(resultData?.recommended_plants ||
-                            result?.recommendation?.suitable_crops) && (
-                            <>
-                              <div className="mb-2 flex items-center justify-between gap-1">
-                                <p className="text-xs font-medium text-gray-600">
-                                  Tanaman yang direkomendasikan
-                                </p>
-                                <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
-                                  {combinedPlants().length}
-                                </span>
-                              </div>
-
-                              <div className="flex flex-wrap gap-1">
-                                {combinedPlants().map((plant, index) => (
-                                  <span
-                                    key={index}
-                                    className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full"
-                                  >
-                                    {capitalizeFirstLetter(plant)}
-                                  </span>
-                                ))}
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      )}
-                      <div className="bg-white p-3 rounded shadow-sm mb-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Info size={16} className="text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">
-                            Umpan Balik Tanaman Berdasarkan Cuaca{" "}
-                            {isLoading && "(Mohon Tunggu)"}
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          {isLoading ? (
-                            <div className="animate-pulse">
-                              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                              <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            </div>
-                          ) : (
-                            <p
-                              className="text-xs text-gray-500"
-                              dangerouslySetInnerHTML={{
-                                __html: recommendationResult.response,
-                              }}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
             <select
               className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none"
               value={cropId}
+              key="crop-select"
               onClick={(e) => {
                 e.stopPropagation();
                 if (!confirm) {
@@ -1235,67 +1333,26 @@ const Canvas = ({ location, nowData }) => {
               }}
               onChange={(e) => {
                 const selectedValue = e.target.value;
-                const selectedCropLabel = cropData.find(
-                  (crop) => crop.id == selectedValue
-                )?.label;
-
-                if (
-                  resultData &&
-                  result &&
-                  result.recommendation &&
-                  !combinedPlants().includes(selectedCropLabel)
-                ) {
-                  Swal.fire({
-                    title: "Peringatan",
-                    text: "Tanaman yang dipilih tidak sesuai dengan rekomendasi. Apakah Anda yakin ingin melanjutkan?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Ya, lanjutkan",
-                    cancelButtonText: "Tidak",
-                  }).then((swalResult) => {
-                    if (swalResult.isConfirmed) {
-                      setCropId(selectedValue);
-                      const selectedCrop = cropData.find(
-                        (crop) => crop.id === parseInt(selectedValue)
-                      );
-                      if (selectedCrop && cropDate) {
-                        const estimatedDate = new Date(cropDate);
-                        estimatedDate.setDate(
-                          estimatedDate.getDate() +
-                            parseInt(selectedCrop.estimated_time)
-                        );
-                        setEstimatedTime(
-                          estimatedDate.toISOString().split("T")[0]
-                        );
-                      } else {
-                        setEstimatedTime("");
-                      }
-                    } else {
-                      setCropId("");
-                    }
-                  });
-                } else {
-                  setCropId(selectedValue);
-                  const selectedCrop = cropData.find(
-                    (crop) => crop.id === parseInt(selectedValue)
+                setCropId(selectedValue);
+                const selectedCrop = cropData.find(
+                  (crop) => crop.id === parseInt(selectedValue)
+                );
+                if (selectedCrop && cropDate) {
+                  const estimatedDate = new Date(cropDate);
+                  estimatedDate.setDate(
+                    estimatedDate.getDate() +
+                      parseInt(selectedCrop.estimated_time)
                   );
-                  if (selectedCrop && cropDate) {
-                    const estimatedDate = new Date(cropDate);
-                    estimatedDate.setDate(
-                      estimatedDate.getDate() +
-                        parseInt(selectedCrop.estimated_time)
-                    );
-                    setEstimatedTime(estimatedDate.toISOString().split("T")[0]);
-                  } else {
-                    setEstimatedTime("");
-                  }
+                  setEstimatedTime(estimatedDate.toISOString().split("T")[0]);
+                } else {
+                  setEstimatedTime("");
                 }
               }}
             >
-              <option value="" disabled>
+              <option value="" key="disable" disabled>
                 Pilih Tanaman
               </option>
-              {confirm &&
+              {confirm && soilType &&
                 cropData.map((crop) => (
                   <option key={crop.id} value={crop.id}>
                     {capitalizeFirstLetter(crop.label)}
@@ -1427,6 +1484,7 @@ const Canvas = ({ location, nowData }) => {
       </div>
     </div>
   );
+
   /* ==================================================== */
 
   /***
@@ -1459,6 +1517,7 @@ const Canvas = ({ location, nowData }) => {
    */
   const [latestRadarLayer, setLatestRadarLayer] = useState("");
   const [error, setError] = useState(null);
+  const wmsBaseUrl = "https://radar.bmkg.go.id/sidarmageoserver";
 
   useEffect(() => {
     axios
@@ -1489,8 +1548,6 @@ const Canvas = ({ location, nowData }) => {
       });
     // ---------------------------------------------
   }, []);
-
-  const wmsBaseUrl = "https://radar.bmkg.go.id/sidarmageoserver";
 
   const wmsParams = useMemo(
     () => ({
@@ -1686,10 +1743,7 @@ const Canvas = ({ location, nowData }) => {
               </LayersControl.BaseLayer>
 
               {latestRadarLayer && (
-                <LayersControl.Overlay
-                  checked
-                  name="Radar Cuaca BMKG (Terbaru)"
-                >
+                <LayersControl.Overlay name="Radar Cuaca BMKG (Terbaru)">
                   <WMSTileLayer
                     key={latestRadarLayer}
                     url={wmsBaseUrl}
@@ -1853,18 +1907,31 @@ const Canvas = ({ location, nowData }) => {
                       }));
                     }}
                   >
-                    <div className="text-sm max-w-xs">
+                    <div className="text-sm w-[240px]">
                       {/* Header */}
-                      <div className="mb-3">
+                      <div className="mb-2 flex items-center justify-between">
                         <h3 className="text-base font-semibold text-blue-800">
                           {poly.fieldName}
                         </h3>
-                        <div className="w-12 h-0.5 bg-blue-500 mt-1"></div>
+                        <button
+                          className="text-gray-500 hover:text-gray-700"
+                          onClick={() => {
+                            setType("edit");
+                            setFieldName(poly.fieldName);
+                            setSoilType(poly.soilType);
+                            setCropId(poly.cropId);
+                            setCropDate(poly.cropDate);
+                            setEstimatedTime(poly.estimatedTime);
+                            setPolygonPoints(poly.coords);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
                       </div>
 
                       {/* Weather */}
                       <div className="mb-4 bg-white rounded-md border border-blue-100 shadow-sm">
-                        <div className="bg-blue-50 px-2 py-1.5 border-b border-blue-100">
+                        <div className="bg-blue-50 px-2 py-1.5 border-b border-blue-100 flex items-center justify-between">
                           <div className="flex items-center text-xs font-medium text-blue-700">
                             <svg
                               className="w-3.5 h-3.5 mr-1"
@@ -1881,127 +1948,95 @@ const Canvas = ({ location, nowData }) => {
                             </svg>
                             Cuaca
                           </div>
+                          <span className="text-xs text-blue-600">
+                            {weatherData?.params?.weather?.value[0]?.text ||
+                              "-"}
+                          </span>
                         </div>
 
-                        <div className="p-2">
-                          {isLoading ? (
-                            <div className="flex justify-center items-center py-3">
-                              <div className="animate-spin h-3 w-3 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
-                              <span className="ml-2 text-gray-500 text-xs">
-                                Memuat...
-                              </span>
-                            </div>
-                          ) : error ? (
-                            <div className="text-center text-red-500 py-2 text-xs">
-                              Gagal memuat data cuaca
-                            </div>
-                          ) : weatherData ? (
-                            <>
-                              <div className="text-center mb-2">
+                        {isLoading ? (
+                          <div className="flex justify-center items-center py-3 m-2">
+                            <div className="animate-spin h-3 w-3 border-t-2 border-b-2 border-blue-500 rounded-full"></div>
+                            <span className="ml-2 text-gray-500 text-xs">
+                              Memuat...
+                            </span>
+                          </div>
+                        ) : error ? (
+                          <div className="text-center text-red-500 py-2 text-xs m-2">
+                            Gagal memuat data cuaca
+                          </div>
+                        ) : weatherData ? (
+                          <>
+                            <div className="grid grid-cols-2 gap-2 text-xs p-2">
+                              <div className="text-center mb-1">
                                 <div className="text-2xl font-bold text-blue-700">
                                   {weatherData?.params?.t?.value[0]?.value ||
                                     "-"}
                                   °
                                 </div>
                                 <div className="text-xs text-gray-600">
-                                  {weatherData?.params?.weather?.value[0]
-                                    ?.text || "-"}
+                                  Suhu dalam °C
                                 </div>
                               </div>
-
-                              <div className="grid grid-cols-2 gap-4 text-xs">
-                                <div className="flex items-center space-x-2 rounded p-1.5">
-                                  <div className="bg-blue-100 p-1 rounded">
-                                    <svg
-                                      className="w-3.5 h-3.5 text-blue-600"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"
-                                      />
-                                    </svg>
-                                  </div>
-                                  <div>
-                                    <div className="text-gray-500">
-                                      Kelembaban
-                                    </div>
-                                    <div className="font-semibold text-gray-700">
-                                      {weatherData?.params?.hu?.value[0]
-                                        ?.value || "-"}
-                                      %
-                                    </div>
-                                  </div>
+                              <div className="text-center mb-1">
+                                <div className="text-2xl font-bold text-blue-700">
+                                  {weatherData?.params?.hu?.value[0]?.value ||
+                                    "-"}
+                                  %
                                 </div>
-
-                                <div className="flex items-center space-x-2 rounded p-1.5">
-                                  <div className="bg-blue-100 p-1 rounded">
-                                    <svg
-                                      className="w-3.5 h-3.5 text-blue-600"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M9 16h.01M15 16h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                      />
-                                    </svg>
-                                  </div>
-                                  <div>
-                                    <div className="text-gray-500">Angin</div>
-                                    <div className="font-semibold text-gray-700">
-                                      {weatherData?.params?.ws?.value[0]
-                                        ?.value || "-"}{" "}
-                                      km/j
-                                    </div>
-                                  </div>
+                                <div className="text-xs text-gray-600">
+                                  Kelembapan
                                 </div>
                               </div>
-
-                              <div className="text-right text-xs text-gray-400 mt-1">
-                                Diperbarui: {dateNow}
-                              </div>
-                            </>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                fetchWeatherData(centroidPosition, cacheKey)
-                              }
-                              className="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-xs font-medium"
-                            >
-                              Muat Data
-                            </button>
-                          )}
-                        </div>
+                            </div>
+                            <div className="text-center text-xs text-gray-400">
+                              Diperbarui: {dateNow}
+                            </div>
+                            <div className="bg-blue-50 px-2 py-1 border-t border-blue-100 text-xs text-blue-700 mt-2">
+                              Data cuaca merupakan data cuaca 1 minggu kedepan
+                              dengan menggunakan rata-rata harian.
+                            </div>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              fetchWeatherData(centroidPosition, cacheKey)
+                            }
+                            className="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-xs font-medium"
+                          >
+                            Muat Data
+                          </button>
+                        )}
                       </div>
 
                       {/* Soil Section */}
-                      <div className="mb-4 bg-white rounded-md border border-amber-100 shadow-sm">
+                      <div className="bg-white rounded-md border border-amber-100 shadow-sm">
                         <div className="bg-amber-50 px-2 py-1.5 border-b border-amber-100">
-                          <div className="flex items-center text-xs font-medium text-amber-700">
-                            <svg
-                              className="w-3.5 h-3.5 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            Tanah
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-xs font-medium text-amber-700">
+                              <svg
+                                className="w-3.5 h-3.5 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                              Tanah
+                            </div>
+                            {tempData?.data.jenis_lahan && (
+                              <span className="text-xs text-amber-600">
+                                {tempData.data.jenis_lahan}
+                              </span>
+                            )}
                           </div>
                         </div>
+
                         <div className="p-2 grid grid-cols-2 gap-2 text-xs">
                           <div className="flex items-center space-x-2 rounded p-1.5">
                             <div className="bg-amber-100 p-1 rounded">
@@ -2046,10 +2081,11 @@ const Canvas = ({ location, nowData }) => {
                             <div>
                               <div className="text-gray-500">Organik</div>
                               <div className="font-semibold text-gray-700">
-                                {tempData?.organic_matter?.toFixed(1) || "-"}%
+                                {tempData?.carbon?.toFixed(1) || "-"}%
                               </div>
                             </div>
                           </div>
+
                           <div className="flex items-center space-x-2 rounded p-1.5">
                             <div className="bg-amber-100 p-1 rounded">
                               <svg
@@ -2067,12 +2103,41 @@ const Canvas = ({ location, nowData }) => {
                               </svg>
                             </div>
                             <div>
-                              <div className="text-gray-500">Kadar Air</div>
+                              <div className="text-gray-500">Nitrogen</div>
                               <div className="font-semibold text-gray-700">
-                                {tempData?.water_content?.toFixed(1) || "-"}%
+                                {tempData?.nitrogen?.toFixed(1) || "-"}%
                               </div>
                             </div>
                           </div>
+
+                          <div className="flex items-center space-x-2 rounded p-1.5">
+                            <div className="bg-amber-100 p-1 rounded">
+                              <svg
+                                className="w-3.5 h-3.5 text-amber-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-gray-500">CEC</div>
+                              <div className="font-semibold text-gray-700">
+                                {tempData?.cec?.toFixed(1) || "-"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-amber-50 px-2 py-1 border-t border-amber-100 text-xs text-amber-700">
+                          Nilai 0 menunjukkan data tidak tersedia atau lahan
+                          sudah beralih fungsi
                         </div>
                       </div>
 
@@ -2366,10 +2431,10 @@ const Canvas = ({ location, nowData }) => {
                         </div>
 
                         <small className="text-xs text-gray-500 mt-2 block">
-                        dBZ (decibel-Zeppelin) adalah satuan yang digunakan
-                        untuk mengukur intensitas refleksi sinyal radar dari
-                        partikel di atmosfer, seperti tetesan air atau es.
-                      </small>
+                          dBZ (decibel-Zeppelin) adalah satuan yang digunakan
+                          untuk mengukur intensitas refleksi sinyal radar dari
+                          partikel di atmosfer, seperti tetesan air atau es.
+                        </small>
                       </div>
                     </div>
                   </div>
@@ -2569,7 +2634,7 @@ const Canvas = ({ location, nowData }) => {
                       <img
                         src={preview}
                         alt="Preview"
-                        className="w-full h-40 object-cover rounded-xl border shadow-lg"
+                        className={`w-full ${result ? "h-40" : "h-60"} object-cover rounded-xl border shadow-lg`}
                       />
                     </div>
                   )}
@@ -2658,8 +2723,7 @@ const Canvas = ({ location, nowData }) => {
                           calculateCentroid(polygonPoints);
                         recommendationData(
                           centroidPosition[0],
-                          centroidPosition[1],
-                          combinedPlants()
+                          centroidPosition[1]
                         );
                         setOpen(false);
                       }}

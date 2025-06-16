@@ -28,11 +28,11 @@ const ItemCurrentTime = ({ timestamp, location, nowData }) => {
           <p className="mt-2 text-gray-600">{nowData.weather_desc}</p>
         </div>
         <div className="flex flex-row gap-4">
-          <div className="flex items-center gap-2" title="Pengendapan Hujan">
+          <div className="flex items-center gap-2" title="Tutupan Awan">
             <CloudFog className="w-6 h-6 text-[#6C7D41]" />
             <span className="text-sm text-gray-600">{nowData.tcc}%</span>
           </div>
-          <div className="flex items-center gap-2" title="Kelambaban">
+          <div className="flex items-center gap-2" title="Kelembaban">
             <Droplets className="w-6 h-6 text-[#6C7D41]" />
             <span className="text-sm text-gray-600">{nowData.hu}%</span>
           </div>

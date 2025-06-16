@@ -152,6 +152,10 @@ export const checkIdeal = (prediction, min, max) => {
   ) {
     return "Mendekati Ideal";
   } else {
+    if (min === 0 && max === 0) {
+      return "Tidak Ada Rekomendasi Tanaman";
+    }
+
     return "Tidak Ideal";
   }
 };
@@ -165,6 +169,9 @@ export const colorRecommendation = (prediction, min, max) => {
   ) {
     return "text-yellow-600";
   } else {
+    if (min === 0 && max === 0) {
+      return "text-gray-500";
+    }
     return "text-red-600";
   }
 };
@@ -190,11 +197,11 @@ export const rainfallRecommendation = (rain) => {
 export const cropIdealDescription = (kategori, catatan) => {
   const descriptions = {
     "sangat ideal": "Tanaman ini sangat cocok untuk kondisi saat ini. Pertumbuhan dan hasil optimal diharapkan.",
-    "mendekati ideal": "Tanaman ini hampir cocok untuk kondisi saat ini. Pertumbuhan yang baik diharapkan dengan sedikit perhatian tambahan.",
-    "cukup ideal": "Tanaman ini tidak cocok untuk kondisi saat ini. Pertumbuhan dan hasil mungkin terpengaruh secara signifikan.",
+    "mendekati ideal": "Tanaman memiliki potensi yang baik untuk kondisi saat ini, meskipun ada beberapa faktor yang perlu diperhatikan.",
+    "cukup ideal": "Tanaman ini cukup cocok untuk kondisi saat ini. Pertumbuhan yang baik mungkin memerlukan perhatian ekstra.",
   };
-  const description = descriptions[kategori] || "Kondisi tanaman tidak diketahui.";
-  return catatan != undefined ? `${description} Catatan: ${catatan}` : description;
+  const description = descriptions[kategori] || "Tidak ada deskripsi yang tersedia untuk kategori ini.";
+  return catatan != undefined ? `${description} ${catatan}` : description;
 };
 
 export function capitalizeEachWord(text) {

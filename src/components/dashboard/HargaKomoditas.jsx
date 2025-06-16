@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatCurrency, formatNumber } from "../../utils/Constants";
 import { Loader2Icon } from "lucide-react";
-import { data } from "autoprefixer";
 
 const HargaKomoditas = ({ dataHargaKomoditas }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,13 +87,11 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Main carousel container */}
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {/* Create slides based on itemsPerView */}
             {Array.from({ length: totalSlides }).map((_, slideIndex) => (
               <div
                 key={slideIndex}
@@ -117,7 +114,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                       (slideIndex + 1) * itemsPerView
                     )
                     .map((item, i) => {
-                      // Determine color scheme based on price change
                       const isPositive =
                         item.gap_color === "green" || item.gap_change === "↑";
                       const isNeutral =
@@ -152,7 +148,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                           key={`${slideIndex}-${i}`}
                           className="bg-white rounded-lg border-2 p-3 transition-shadow duration-200"
                         >
-                          {/* Top Section - Image and Name */}
                           <div className="flex items-center gap-2 mb-3">
                             <div className="flex-1">
                               <h3
@@ -167,7 +162,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                             </div>
                           </div>
 
-                          {/* Price Section with Color Accent */}
                           <div className={`rounded-lg ${bgAccent} p-2 mb-2`}>
                             <div className="flex items-center justify-between">
                               <div>
@@ -184,7 +178,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                                 </p>
                               </div>
 
-                              {/* Change Badge */}
                               <div
                                 className={`${badgeBg} text-white rounded-full p-2`}
                               >
@@ -248,7 +241,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                               </div>
                             </div>
 
-                            {/* Percentage Change */}
                             <div className="mt-1">
                               <span
                                 className={`text-xs font-bold ${textAccent}`}
@@ -262,7 +254,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                             </div>
                           </div>
 
-                          {/* Bottom Info */}
                           <div className="grid grid-cols-2 gap-1 text-xs">
                             <div className="bg-gray-50 rounded p-1.5">
                               <p className="text-gray-500 text-xs">Kemarin</p>
@@ -276,8 +267,7 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                             <div className={`${bgAccent} rounded p-1.5`}>
                               <p className="text-gray-500 text-xs">Selisih</p>
                               <p className={`font-semibold ${textAccent}`}>
-                                {item.gap > 0 ? "+" : ""}
-                                {formatNumber(item.gap)}
+                                Rp. {item.gap > 0 ? "+" : ""} {formatNumber(item.gap)}
                               </p>
                             </div>
                           </div>
@@ -290,7 +280,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
           </div>
         </div>
 
-        {/* Navigation arrows - only show if there are multiple slides */}
         {totalSlides > 1 && (
           <>
             <button
@@ -335,7 +324,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
           </>
         )}
 
-        {/* Dots indicator - only show if there are multiple slides */}
         {totalSlides > 1 && (
           <div className="flex justify-center gap-2 pb-4">
             {Array.from({ length: totalSlides }).map((_, i) => (

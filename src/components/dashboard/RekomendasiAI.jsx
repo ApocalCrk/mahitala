@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Cloud,
-  Droplets,
-  ThermometerSun,
-} from "lucide-react";
+import { Cloud, Droplets, ThermometerSun } from "lucide-react";
 
 import {
   checkIdeal,
   colorRecommendation,
-  rainfallRecommendation
+  rainfallRecommendation,
 } from "../../utils/Constants";
 
 import { getRekomendasiAI } from "../../hooks/forecast/getRekomendasiAI";
@@ -30,13 +26,11 @@ const RekomendasiAI = ({ location }) => {
   useEffect(() => {
     if (prediction.rekomendasi_final_json) {
       const data = JSON.parse(prediction.rekomendasi_final_json);
-      getRekomendasiTanaman({ label: data[currentIndex].nama }).then(
-        (res) => {
-          setCropRecommendation(res[0]);
-        }
-      );
+      getRekomendasiTanaman({ label: data[currentIndex].nama }).then((res) => {
+        setCropRecommendation(res[0]);
+      });
     }
-  }, [prediction, currentIndex]);
+  }, [prediction.rekomendasi_final_json, currentIndex]);
 
   return (
     <>
@@ -45,7 +39,11 @@ const RekomendasiAI = ({ location }) => {
           <h2 className="text-lg font-medium text-[#6C7D41]">Rekomendasi AI</h2>
         </div>
         <div className="p-6">
-          <PredictionCarousel prediction={prediction} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+          <PredictionCarousel
+            prediction={prediction}
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
+          />
           <h4 className="text-sm font-medium mt-6">
             Rata-rata 3 Bulan Kedepan
           </h4>
