@@ -19,7 +19,7 @@ const CategoryDiscussionsPage = () => {
 
   useEffect(() => {
     getKategoriById(id).then((data) => {
-      setCategory(data[0]);
+      setCategory(data);
     });
   }, []);
 

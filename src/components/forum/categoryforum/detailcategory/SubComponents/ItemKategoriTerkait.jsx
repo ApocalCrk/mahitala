@@ -10,7 +10,7 @@ const ItemKategoriTerkait = ({ discussion }) => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-500">
-              Oleh {discussion.user.username}
+              Oleh {discussion.username}
             </span>
             <span className="text-sm text-gray-500">
               {checkWaktu(discussion.tgl_dibuat)}

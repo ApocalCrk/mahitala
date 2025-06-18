@@ -129,10 +129,6 @@ const Canvas = ({ location, nowData }) => {
 
   // For responsive design
   const [isMobile, setIsMobile] = useState(false);
-  const [mapHeight, setMapHeight] = useState("100%");
-  const [isDragging, setIsDragging] = useState(false);
-  const [startY, setStartY] = useState(0);
-  const [currentY, setCurrentY] = useState(0);
 
   // set initial data
   const yogyakartaPosition = [-7.797068, 110.370529];
@@ -202,121 +198,6 @@ const Canvas = ({ location, nowData }) => {
 
     return () => window.removeEventListener("resize", checkMobile);
   }, [panelState]);
-
-  useEffect(() => {
-    if (isMobile) {
-      switch (panelState) {
-        case "expanded":
-          setMapHeight("30vh");
-          break;
-        case "peek":
-          setMapHeight("50vh");
-          break;
-        case "collapsed":
-          setMapHeight("98vh");
-          break;
-        default:
-          setMapHeight("70vh");
-      }
-    }
-  }, [panelState, isMobile]);
-
-  const togglePanel = () => {
-    if (panelState === "collapsed") {
-      setPanelState("peek");
-    } else if ((panelState === "peek") & isAuthenticated) {
-      setPanelState("expanded");
-    } else {
-      setPanelState("collapsed");
-    }
-  };
-
-  const handleTouchStart = useCallback((e) => {
-    setIsDragging(true);
-    setStartY(e.touches[0].clientY);
-    setCurrentY(e.touches[0].clientY);
-  }, []);
-
-  const handleTouchMove = useCallback(
-    (e) => {
-      if (!isDragging) return;
-
-      e.preventDefault();
-      const deltaY = e.touches[0].clientY - startY;
-      const threshold = 50;
-
-      if (deltaY > threshold && panelState !== "collapsed") {
-        if (panelState === "expanded") {
-          setPanelState("peek");
-        } else if (panelState === "peek") {
-          setPanelState("collapsed");
-        }
-        setStartY(e.touches[0].clientY);
-      } else if (deltaY < -threshold && panelState !== "expanded") {
-        if (panelState === "collapsed") {
-          setPanelState("peek");
-        } else if (panelState === "peek" && isAuthenticated) {
-          setPanelState("expanded");
-        }
-        setStartY(e.touches[0].clientY);
-      }
-    },
-    [isDragging, startY, panelState]
-  );
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-    setStartY(0);
-  }, []);
-
-  const handleMouseDown = useCallback((e) => {
-    setIsDragging(true);
-    setStartY(e.clientY);
-    setCurrentY(e.clientY);
-  }, []);
-
-  const handleMouseMove = useCallback(
-    (e) => {
-      if (!isDragging) return;
-
-      const deltaY = e.clientY - startY;
-      const threshold = 50;
-
-      if (deltaY > threshold && panelState !== "collapsed") {
-        if (panelState === "expanded") {
-          setPanelState("peek");
-        } else if (panelState === "peek") {
-          setPanelState("collapsed");
-        }
-        setStartY(e.clientY);
-      } else if (deltaY < -threshold && panelState !== "expanded") {
-        if (panelState === "collapsed") {
-          setPanelState("peek");
-        } else if (panelState === "peek" && isAuthenticated) {
-          setPanelState("expanded");
-        }
-        setStartY(e.clientY);
-      }
-    },
-    [isDragging, startY, panelState]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    setStartY(0);
-  }, []);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isDragging]);
 
   const getParameterColor = (type, value) => {
     const colors = {
@@ -439,11 +320,11 @@ const Canvas = ({ location, nowData }) => {
     setEstimatedTime(selectedPolygon.estimated_time.split("T")[0]);
     setPolygonPoints(selectedPolygon.coords);
     setType("edit");
-    setPanelState("peek");
+    setPanelState("popup");
     setActiveSection("field");
     setPanelDesktop("expanded");
     if (isMobile && panelState !== "expanded") {
-      setPanelState("peek");
+      setPanelState("popup");
       setActiveSection("field");
     }
   };
@@ -530,8 +411,7 @@ const Canvas = ({ location, nowData }) => {
         setPolygonPoints((prev) => [...prev, [e.latlng.lat, e.latlng.lng]]);
         setPanelDesktop("expanded");
         setActiveSection("field");
-        if (isMobile && panelState !== "expanded") {
-          setPanelState("peek");
+        if (isMobile && panelState !== "popup") {
           setActiveSection("field");
         }
       },
@@ -635,16 +515,6 @@ const Canvas = ({ location, nowData }) => {
       cropId.trim() &&
       cropDate
     ) {
-      setPolygons([
-        ...polygons,
-        {
-          fieldName: fieldName,
-          soilType: soilType,
-          coords: polygonPoints,
-          cropId: cropId,
-          estimated_time: estimated_time,
-        },
-      ]);
       let data = {
         nama_lahan: fieldName,
         jenis_tanah: soilType,
@@ -654,7 +524,22 @@ const Canvas = ({ location, nowData }) => {
         tanggal_tanam: cropDate,
         estimasi_panen: estimated_time,
       };
-      createDataField(data);
+      let id = null;
+      createDataField(data).then((res) => {
+        if (res) {
+          setPolygons([
+            ...polygons,
+            {
+              id: res.c_id,
+              fieldName: fieldName,
+              soilType: soilType,
+              coords: polygonPoints,
+              cropId: cropId,
+              estimated_time: estimated_time,
+            },
+          ]);
+        }
+      });
       setPolygonPoints([]);
       setFieldName("");
       setSoilType("");
@@ -992,7 +877,7 @@ const Canvas = ({ location, nowData }) => {
   );
 
   const renderFieldSection = () => (
-    <div className="p-4 md:p-2 pt-4 overflow-y-auto">
+    <div className="md:p-2 overflow-y-auto">
       {polygonPoints.length > 0 && (
         <div className="bg-[#6C7D4110] backdrop-blur-sm rounded-lg p-3 shadow-sm mb-2">
           <div className="flex justify-between gap-2">
@@ -1026,7 +911,6 @@ const Canvas = ({ location, nowData }) => {
                 onClick={async () => {
                   if (polygonPoints.length > 2) {
                     setConfirm(true);
-                    setPanelState("expanded");
                   } else {
                     Swal.fire({
                       icon: "error",
@@ -1045,7 +929,7 @@ const Canvas = ({ location, nowData }) => {
           </div>
         </div>
       )}
-      <div className="bg-white rounded-xl">
+      <div className="rounded-xl">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1410,8 +1294,10 @@ const Canvas = ({ location, nowData }) => {
           <button
             onClick={() => {
               if (type === "add") {
+                setPanelState("collapsed");
                 handleAddPolygon();
               } else if (type === "edit") {
+                setPanelState("collapsed");
                 handleEditLahan(contextMenu.polygonIndex);
               }
             }}
@@ -1440,9 +1326,11 @@ const Canvas = ({ location, nowData }) => {
   );
 
   const renderSummarySection = () => (
-    <div className="p-4 md:p-2 pt-4">
-      <div className="rounded-xl shadow-sm">
-        <h2 className="text-xl font-bold text-[#6C7D41] mb-3">Lahan Saya</h2>
+    <div className="md:p-2">
+      <div className="md:rounded-xl md:shadow-sm">
+        {!isMobile && (
+          <h2 className="text-xl font-bold text-[#6C7D41] mb-3">Lahan Saya</h2>
+        )}
 
         {polygons.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
@@ -1459,6 +1347,7 @@ const Canvas = ({ location, nowData }) => {
                     animate: true,
                     duration: 0.5,
                   });
+                  setPanelState("collapsed");
                 }}
                 onContextMenu={(e) => handleContextMenu(e, index)}
               >
@@ -1475,6 +1364,29 @@ const Canvas = ({ location, nowData }) => {
                   </div>
                   <div>Luas: {formatArea(calculateArea(poly.coords))}</div>
                 </div>
+                {isMobile && (
+                  <div className="flex justify-end mt-2">
+                    <button
+                      className="text-xs bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setType("edit");
+                        EditLahan(index);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-xs bg-red-100 text-red-600 py-1 px-3 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteLahan(poly.id);
+                      }}
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -1722,10 +1634,7 @@ const Canvas = ({ location, nowData }) => {
         )}
 
         {/* Map Container */}
-        <div
-          className="relative w-full transition-all duration-300 ease-in-out"
-          style={{ height: isMobile ? mapHeight : "100%" }}
-        >
+        <div className="relative w-full transition-all duration-300 ease-in-out">
           <MapContainer
             center={yogyakartaPosition}
             style={{ height: "100%", width: "100%" }}
@@ -1745,20 +1654,6 @@ const Canvas = ({ location, nowData }) => {
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; <a href="https://www.esri.com/">Esri</a>, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-                />
-              </LayersControl.BaseLayer>
-
-              <LayersControl.BaseLayer name="Peta Outdoor (Stadia)">
-                <TileLayer
-                  url="https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
-                />
-              </LayersControl.BaseLayer>
-
-              <LayersControl.BaseLayer name="Mode Gelap (Stadia)">
-                <TileLayer
-                  url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
                 />
               </LayersControl.BaseLayer>
 
@@ -1788,10 +1683,7 @@ const Canvas = ({ location, nowData }) => {
               </LayersControl.Overlay>
 
               {latestRadarLayer && (
-                <LayersControl.Overlay
-                  name="Radar Cuaca BMKG (Terbaru)"
-                  checked
-                >
+                <LayersControl.Overlay name="Radar Cuaca BMKG (Terbaru)">
                   <WMSTileLayer
                     key={latestRadarLayer}
                     url={wmsBaseUrl}
@@ -2483,15 +2375,15 @@ const Canvas = ({ location, nowData }) => {
             </div>
           )}
 
-          {isMobile && panelState !== "peek"
+          {isMobile
             ? isAuthenticated && (
                 <div
-                  className={`absolute bottom-20 right-4 flex flex-col gap-2 z-[1000] ${panelState === "expanded" ? "hidden" : ""}`}
+                  className={`absolute bottom-5 right-4 flex flex-col gap-2 z-[1000]`}
                 >
                   <button
                     onClick={() => {
                       setPanelState(
-                        panelState === "collapsed" ? "peek" : "collapsed"
+                        panelState === "collapsed" ? "popup" : "collapsed"
                       );
                       setActiveSection("summary");
                     }}
@@ -2502,7 +2394,7 @@ const Canvas = ({ location, nowData }) => {
                   <button
                     onClick={() => {
                       setPanelState(
-                        panelState === "collapsed" ? "peek" : "collapsed"
+                        panelState === "collapsed" ? "popup" : "collapsed"
                       );
                       setActiveSection("field");
                     }}
@@ -2513,7 +2405,7 @@ const Canvas = ({ location, nowData }) => {
                   <button
                     onClick={() => {
                       setPanelState(
-                        panelState === "collapsed" ? "peek" : "collapsed"
+                        panelState === "collapsed" ? "popup" : "collapsed"
                       );
                       setActiveSection("weather");
                     }}
@@ -2526,7 +2418,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-20 md:bottom-4 left-4 z-[999]">
+          <div className="absolute bottom-5 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
@@ -2554,79 +2446,93 @@ const Canvas = ({ location, nowData }) => {
               </div>
             </button>
           </div>
+
+          {/* confirmation for polygons add in center bottom screen */}
+          {polygonPoints.length > 0 && (
+            <m.div
+              initial={{ opacity: 0, transform: "translate(-50%, 20px)" }}
+              animate={{ opacity: 1, transform: "translate(-50%, 0)" }}
+              exit={{ opacity: 0, transform: "translate(-50%, 20px)" }}
+              transition={{ duration: 0.3 }}
+              className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[999] bg-white px-4 py-2 rounded-full shadow-md border border-gray-200 flex items-center space-x-3"
+            >
+              {polygonPoints.length > 2 && (
+                <button
+                  className="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded-full transition duration-200"
+                  onClick={() => {
+                    setConfirm(true);
+                    setPanelState("popup");
+                    setActiveSection("field");
+                  }}
+                >
+                  Konfirmasi
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setPolygonPoints([]);
+                  setPanelState("collapsed");
+                  setConfirm(false);
+                }}
+                className="bg-red-400 hover:bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full transition duration-200"
+              >
+                Batal
+              </button>
+            </m.div>
+          )}
         </div>
 
-        {/* Info panel - Bottom sliding panel for mobile */}
-        {isMobile && (
-          <div
-            className={`fixed bottom-4 left-0 right-0 bg-white  transition-transform duration-300 ease-in-out z-[1000] rounded-t-3xl`}
-            style={{
-              transform:
-                panelState === "collapsed"
-                  ? "translateY(95%)"
-                  : panelState === "peek"
-                    ? "translateY(0)"
-                    : "translateY(0)",
-              height:
-                (panelState === "expanded") & isAuthenticated ? "85vh" : "50vh",
-              touchAction: "none",
-            }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+        {isMobile && panelState !== "collapsed" && (
+          <m.div
+            key="mobile-panel"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="fixed inset-0 z-[1001] bg-white bg-opacity-80 backdrop-blur-sm overflow-y-auto"
           >
-            {/* Drag handle */}
-            <div
-              className="h-8 w-full flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
-              onClick={togglePanel}
-            >
-              <div className="w-12 h-1 bg-gray-300 rounded-full transition-colors duration-200 hover:bg-gray-400"></div>
-            </div>
+            <div className="p-4 min-h-screen">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {activeSection === "summary"
+                      ? "Ringkasan Lahan"
+                      : activeSection === "field"
+                        ? "Detail Lahan"
+                        : "Cuaca"}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {activeSection === "summary"
+                      ? "Lihat ringkasan informasi lahan Anda."
+                      : activeSection === "field"
+                        ? "Detail informasi lahan yang telah Anda pilih."
+                        : "Informasi cuaca terkini untuk lahan Anda."}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setPanelState("collapsed");
+                    setType("add");
+                    setFieldName("");
+                    setSoilType("");
+                    setCropId("");
+                    setCropDate("");
+                    setEstimatedTime("");
+                    setPolygonPoints([]);
+                  }}
+                  className="text-gray-500 hover:text-gray-700"
+                  aria-label="Close Panel"
+                  title="Tutup Panel"
+                >
+                  <XIcon className="w-6 h-6" />
+                </button>
+              </div>
 
-            {/* Section tabs */}
-            <div className="flex px-2 border-b border-gray-100">
-              <button
-                className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "weather" ? "text-[#6C7D41]" : "text-gray-400"}`}
-                onClick={() => setActiveSection("weather")}
-              >
-                <span>Cuaca</span>
-                {activeSection === "weather" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
-                )}
-              </button>
-              {isAuthenticated && (
-                <>
-                  <button
-                    className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "field" ? "text-[#6C7D41]" : "text-gray-400"}`}
-                    onClick={() => setActiveSection("field")}
-                  >
-                    <span>Tambah Lahan</span>
-                    {activeSection === "field" && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
-                    )}
-                  </button>
-                  <button
-                    className={`flex-1 py-2 text-center text-sm font-medium relative ${activeSection === "summary" ? "text-[#6C7D41]" : "text-gray-400"}`}
-                    onClick={() => setActiveSection("summary")}
-                  >
-                    <span>Lahan Saya</span>
-                    {activeSection === "summary" && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6C7D41]"></span>
-                    )}
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div
-              className={`overflow-y-auto pb-safe h-[calc(100vh-${panelState === "expanded" ? "150px" : "350px"})]`}
-            >
+              {activeSection === "field" && renderFieldSection()}
+              {activeSection === "summary" && renderSummarySection()}
               {activeSection === "weather" && renderWeatherSection()}
-              {isMobile && activeSection === "weather" && (
+              {activeSection === "weather" && (
                 <div className="p-4">
                   <span className="text-sm font-semibold text-gray-700">
                     Legenda Peta
@@ -2701,10 +2607,8 @@ const Canvas = ({ location, nowData }) => {
                   </div>
                 </div>
               )}
-              {activeSection === "field" && renderFieldSection()}
-              {activeSection === "summary" && renderSummarySection()}
             </div>
-          </div>
+          </m.div>
         )}
 
         {/* Camera Layout */}
@@ -2718,13 +2622,13 @@ const Canvas = ({ location, nowData }) => {
                 <XIcon className="w-6 h-6" />
               </button>
 
-              <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 md:mb-6">
                 Deteksi Tipe Tanah & Rekomendasi Tanaman
               </h2>
 
-              <div className="flex flex-col lg:flex-row gap-6 justify-center items-start">
+              <div className="flex flex-col lg:flex-row gap-3 md:gap-6 justify-center items-start">
                 <div className="flex flex-col items-center gap-4 w-full lg:w-2/3">
-                  {preview && (
+                  {preview && !isMobile && (
                     <div className="flex flex-col items-center w-full">
                       <img
                         src={preview}
@@ -2743,35 +2647,72 @@ const Canvas = ({ location, nowData }) => {
                       className="rounded-xl border shadow-lg"
                     />
                   )}
+      
+                  {!isMobile && (
+                    <>
+                      {!preview ? (
+                        <button
+                          onClick={captureFromCamera}
+                          className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                        >
+                          📸 Ambil Gambar
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setPreview(null)}
+                          className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                        >
+                          <span className="flex justify-center">
+                            <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
+                            Gambar
+                          </span>
+                        </button>
+                      )}
 
-                  {!preview ? (
-                    <button
-                      onClick={captureFromCamera}
-                      className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
-                    >
-                      📸 Ambil Gambar
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setPreview(null)}
-                      className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
-                    >
-                      <span className="flex justify-center">
-                        <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
-                        Gambar
-                      </span>
-                    </button>
+                      <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
+                        📁 Unggah Gambar
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                    </>
                   )}
 
-                  <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
-                    📁 Unggah Gambar
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                  </label>
+                  {isMobile && !preview && (
+                    <>
+                        {!preview ? (
+                          <button
+                            onClick={captureFromCamera}
+                            className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                          >
+                            📸 Ambil Gambar
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setPreview(null)}
+                            className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                          >
+                            <span className="flex justify-center">
+                              <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
+                              Gambar
+                            </span>
+                          </button>
+                        )}
+
+                        <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
+                          📁 Unggah Gambar
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFileChange}
+                          />
+                        </label>
+                      </>
+                  )}
                 </div>
 
                 {result && (
@@ -2826,6 +2767,32 @@ const Canvas = ({ location, nowData }) => {
                       Simpan Hasil
                     </button>
                   </div>
+                )}
+
+                {isMobile && preview && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setPreview(null);
+                        setResult(null);
+                      }}
+                      className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                    >
+                      <span className="flex justify-center">
+                        <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
+                        Gambar
+                      </span>
+                    </button>
+                    <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
+                      📁 Unggah Gambar
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </>
                 )}
               </div>
             </div>

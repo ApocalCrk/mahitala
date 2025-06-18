@@ -50,7 +50,7 @@ const DiskusiTerakhir = () => {
   const handlePageChange = (page) => setCurrentPage(page);
 
   return (
-    <>
+    <main className="container px-6 mx-auto my-8">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center md:w-1/3 px-4 py-2 transition-all duration-300 rounded-lg bg-gray-200 focus-within:bg-gray-300">
           <FaSearch className="text-gray-500" />
@@ -129,7 +129,7 @@ const DiskusiTerakhir = () => {
           </Link>
         </div>
       )}
-    </>
+    </main>
   );
 };
 

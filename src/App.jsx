@@ -21,6 +21,7 @@ import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
 import { requestPermissionAndRegisterToken, onMessageListener } from "./utils/firebase";
 import PwaHandler from "./PwaHandler";
+import DiskusiTerakhir from "./components/forum/lastdiscussion/DiskusiTerakhir";
 
 const routesMeta = {
   "/": {
@@ -151,6 +152,7 @@ function App() {
               <Route path="/tentang-kami" element={<PageWrapper routePath="/tentang-kami"><About /></PageWrapper>} />
               <Route path="/forum" element={<PageWrapper routePath="/forum"><ForumDiskusi /></PageWrapper>} />
               <Route path="/forum/buat-diskusi" element={<ProtectedRoute><BuatDiskusi /></ProtectedRoute>} />
+              <Route path="/forum/diskusi-terakhir" element={<ProtectedRoute><DiskusiTerakhir /></ProtectedRoute>} />
               <Route path="/forum/diskusi/:id" element={<DetailDiskusi />} />
               <Route path="/forum/kategori" element={<KategoriDiskusi />} />
               <Route path="/forum/kategori/:id" element={<DetailKategori />} />

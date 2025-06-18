@@ -23,7 +23,7 @@ const DetailDiskusi = () => {
       setDiscussion(data);
       const mainReplies = data.main_replies.map((reply) => ({
         id: reply.id_interact,
-        user: reply.user.username,
+        user: reply.username,
         time: checkWaktu(reply.tanggal),
         content: reply.isi,
         parentId: null,
@@ -31,7 +31,7 @@ const DetailDiskusi = () => {
       const subReplies = data.main_replies.map((reply) =>
         reply.sub_replies.map((subReply) => ({
           id: subReply.id_reply,
-          user: subReply.user.username,
+          user: subReply.username,
           time: checkWaktu(subReply.tanggal), 
           content: subReply.isi,
           parentId: reply.id_interact
@@ -122,7 +122,7 @@ const DetailDiskusi = () => {
           {discussion.judul}
         </button>
         <p className="text-gray-500 mb-4">
-          Oleh {discussion.user.username} • {checkWaktu(discussion.tgl_dibuat)}
+          Oleh {discussion.username} • {checkWaktu(discussion.tgl_dibuat)}
         </p>
         {discussion.gambar && (
           <img src={discussion.gambar} alt="gambar diskusi" className="w-full md:w-80 rounded-lg mb-6" />

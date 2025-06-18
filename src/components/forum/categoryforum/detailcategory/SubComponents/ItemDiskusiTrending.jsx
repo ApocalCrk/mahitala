@@ -8,6 +8,16 @@ const ItemDiskusiTrending = ({ discussion }) => {
         <h4 className="text-[#6C7D41] font-semibold mb-2">
           {discussion.judul}
         </h4>
+        <p className="text-gray-500 text-sm mb-2">
+          Oleh {discussion.username} • {new Date(discussion.tgl_dibuat).toLocaleDateString(
+            "id-ID",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }
+          )}
+        </p>
         <div className="flex gap-4 text-sm">
           <span className="text-gray-600">👀 {discussion.jumlah_pembaca} Pembaca</span>
           <span className="text-gray-600">💬 {discussion.jumlah_replies} Balasan</span>

@@ -34,7 +34,7 @@ export const deleteDiskusi = async (id) => {
 export const getDetailDiskusi = async (id) => {
   try {
     const res = await axiosInstance.get(`${API_URL}/api/forum/diskusi/${id}`);
-    const data = res.data[0];
+    const data = res.data;
     const dateObj = new Date(data.tgl_dibuat);
     const options = { day: "2-digit", month: "long", year: "numeric" };
     data.tanggal = new Intl.DateTimeFormat("id-ID", options).format(dateObj);
