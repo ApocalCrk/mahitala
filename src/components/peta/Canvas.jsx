@@ -2655,7 +2655,7 @@ const Canvas = ({ location, nowData }) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed inset-0 z-[99999] bg-white bg-opacity-80 backdrop-blur-sm overflow-y-auto"
+            className="fixed inset-0 z-[99999] bg-white bg-opacity-90 backdrop-blur-sm overflow-y-auto"
           >
             <div className="p-4 min-h-screen">
               <div className="flex justify-between items-center mb-4">
@@ -2685,6 +2685,9 @@ const Canvas = ({ location, nowData }) => {
                     setCropDate("");
                     setEstimatedTime("");
                     setPolygonPoints([]);
+                    setPreview(null);
+                    setResult(null);
+                    setTempData(null);
                     setConfirm(false);
                   }}
                   className="text-gray-500 hover:text-gray-700"
