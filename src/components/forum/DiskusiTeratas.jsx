@@ -22,6 +22,13 @@ const DiskusiTeratas = () => {
   const totalPages = Math.ceil(discussions.length / itemsPerPage);
 
   useEffect(() => {
+    if (discussions.length === 0) {
+      setCurrentPage(0);
+      setIsPaginated(false);
+    }
+  }, [discussions, currentPage, totalPages]);
+
+  useEffect(() => {
     if (isPaginated && topRef.current) {
       const offsetTop = topRef.current.getBoundingClientRect().top + window.scrollY - 100;
       window.scrollTo({ top: offsetTop, behavior: "smooth" });
@@ -66,7 +73,7 @@ const DiskusiTeratas = () => {
       <div className="flex justify-between items-center mt-6">
         <button
           className={`px-4 py-2 text-sm rounded-lg transition-all duration-200 ease-in-out ${
-            currentPage === 1
+            currentPage === 1 || totalPages === 0
               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
               : "bg-[#6C7D41] text-white hover:bg-[#5b6936]"
           } shadow-sm`}

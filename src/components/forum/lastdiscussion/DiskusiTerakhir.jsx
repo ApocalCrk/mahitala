@@ -83,11 +83,11 @@ const DiskusiTerakhir = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center mt-12 text-gray-600">
+        <div className="flex flex-col items-center mt-32 text-gray-600">
           <p className="text-lg font-semibold">
             Tidak ada diskusi yang ditemukan!
           </p>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-4 text-center">
             Mulailah diskusi baru dan bagikan pemikiran Anda.
           </p>
           <Link

@@ -156,7 +156,7 @@ const FormBuatDiskusi = () => {
           >
             {kategori.map((item) => (
               <option key={item.id_kategori} value={item.id_kategori}>
-                {item.nama}
+                {item.nama_kategori}
               </option>
             ))}
           </select>

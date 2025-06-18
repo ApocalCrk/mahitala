@@ -16,6 +16,7 @@ import {
   Tooltip,
   WMSTileLayer,
   LayersControl,
+  GeoJSON,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -54,9 +55,11 @@ import {
   BarChart2,
   Cloud,
   Droplet,
+  HelpCircle,
   Home,
   Info,
   Leaf,
+  Lightbulb,
   MapPin,
   Menu,
   Sparkles,
@@ -83,6 +86,62 @@ const videoConstraints = {
   facingMode: "environment",
 };
 
+const NdiviTutorialModal = ({ onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999999] p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center animate-fade-in-up">
+        <Lightbulb className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Memantau Kesehatan Tanaman (NDVI)
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Fitur ini menggunakan data satelit untuk membuat "peta kesehatan"
+          lahan Anda. Gunakan ini untuk menemukan masalah lebih dini.
+        </p>
+
+        <div className="space-y-4 text-left mb-6">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 rounded-full bg-green-500 flex-shrink-0"></div>
+            <div>
+              <h3 className="font-semibold text-gray-700">Hijau Terang</h3>
+              <p className="text-sm text-gray-500">
+                Pertanda sangat baik. Tanaman Anda lebat, subur, dan sehat.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 rounded-full bg-yellow-400 flex-shrink-0"></div>
+            <div>
+              <h3 className="font-semibold text-gray-700">Kuning</h3>
+              <p className="text-sm text-gray-500">
+                Peringatan. Tanaman mungkin stres karena kurang air atau
+                nutrisi.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 rounded-full bg-red-500 flex-shrink-0"></div>
+            <div>
+              <h3 className="font-semibold text-gray-700">Merah / Coklat</h3>
+              <p className="text-sm text-gray-500">
+                Tanda bahaya. Area ini kemungkinan besar memiliki masalah serius
+                seperti hama atau penyakit.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="w-full bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity"
+        >
+          Saya Mengerti
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Canvas = ({ location, nowData }) => {
   const mapRef = useRef(null);
   const webcamRef = useRef(null);
@@ -99,6 +158,8 @@ const Canvas = ({ location, nowData }) => {
   const [initialWeatherLoaded, setInitialWeatherLoaded] = useState(false);
 
   const OWM_API_KEY = import.meta.env.VITE_VERCEL_OWM_API_KEY;
+  const SENTINEL_HUB_INSTANCE = import.meta.env
+    .VITE_VERCEL_SENTINEL_HUB_INSTANCE;
 
   // data user
   const [weatherCache, setWeatherCache] = useState({});
@@ -109,8 +170,8 @@ const Canvas = ({ location, nowData }) => {
 
   const [panelDesktop, setPanelDesktop] = useState("expanded");
 
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const [information, setInformation] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [information, setInformation] = useState(true);
 
   // field data
   const [polygons, setPolygons] = useState([]);
@@ -173,6 +234,17 @@ const Canvas = ({ location, nowData }) => {
       mapRef.current.setView([location.latitude, location.longitude], 18);
     }
   }, [mounted, location]);
+
+  const [showNdiviTutorial, setShowNdiviTutorial] = useState(false);
+
+  useEffect(() => {
+    setShowNdiviTutorial(!localStorage.getItem("ndiviTutorialShown"));
+  }, []);
+
+  const closeTutorial = () => {
+    setShowNdiviTutorial(false);
+    localStorage.setItem("ndiviTutorialShown", "true");
+  };
   /* ==================================================== */
 
   /***
@@ -250,6 +322,7 @@ const Canvas = ({ location, nowData }) => {
    * =====================================================
    */
   useEffect(() => {
+    if (!isAuthenticated) return;
     getDataFieldByUserID().then((res) => {
       if (res) {
         const fieldData = res.map((field) => ({
@@ -1327,7 +1400,7 @@ const Canvas = ({ location, nowData }) => {
   );
 
   const renderSummarySection = () => (
-    <div className="md:p-2">
+    <>
       <div className="md:rounded-xl md:shadow-sm">
         {!isMobile && (
           <h2 className="text-xl font-bold text-[#6C7D41] mb-3">Lahan Saya</h2>
@@ -1338,7 +1411,7 @@ const Canvas = ({ location, nowData }) => {
             <p>Anda belum memiliki lahan</p>
           </div>
         ) : (
-          <div className="space-y-3 h-[300px]">
+          <div className="space-y-3">
             {polygons.map((poly, index) => (
               <div
                 key={index}
@@ -1393,7 +1466,7 @@ const Canvas = ({ location, nowData }) => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 
   /* ==================================================== */
@@ -1428,6 +1501,7 @@ const Canvas = ({ location, nowData }) => {
    */
   const [latestRadarLayer, setLatestRadarLayer] = useState("");
   const [error, setError] = useState(null);
+  const [isNdiviOverlayActive, setIsNdiviOverlayActive] = useState(false);
   const wmsBaseUrl = "https://radar.bmkg.go.id/sidarmageoserver";
 
   useEffect(() => {
@@ -1470,6 +1544,50 @@ const Canvas = ({ location, nowData }) => {
     }),
     [latestRadarLayer]
   );
+
+  const createMaskGeoJson = (lands) => {
+    const worldPolygon = [
+      [180, 90],
+      [-180, 90],
+      [-180, -90],
+      [180, -90],
+      [180, 90],
+    ];
+
+    const landHoles = lands.map((land) => {
+      const closedBounds = [...land.coords, land.coords[0]];
+      return closedBounds.map((coord) => [coord[1], coord[0]]);
+    });
+
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [worldPolygon, ...landHoles],
+      },
+    };
+  };
+
+  const maskGeoJson = useMemo(() => {
+    if (polygons.length === 0) return null;
+    return createMaskGeoJson(polygons);
+  }, [polygons]);
+
+  const MaskingHandler = ({ setNdiviActive }) => {
+    useMapEvents({
+      overlayadd(e) {
+        if (e.name === "Kesehatan Lahan Saya (NDVI)") {
+          setNdiviActive(true);
+        }
+      },
+      overlayremove(e) {
+        if (e.name === "Kesehatan Lahan Saya (NDVI)") {
+          setNdiviActive(false);
+        }
+      },
+    });
+    return null;
+  };
   /* ==================================================== */
 
   return (
@@ -1478,6 +1596,7 @@ const Canvas = ({ location, nowData }) => {
       {isMobile && <Header />}
 
       <div className="h-screen relative flex" onClick={handleClickOutside}>
+        {showNdiviTutorial && <NdiviTutorialModal onClose={closeTutorial} />}
         {/* Desktop sidebar */}
         {!isMobile && panelDesktop === "expanded" && (
           <m.div
@@ -1642,6 +1761,10 @@ const Canvas = ({ location, nowData }) => {
             ref={mapRef}
             zoomControl={false}
           >
+            {isAuthenticated && (
+              <MaskingHandler setNdiviActive={setIsNdiviOverlayActive} />
+            )}
+
             <LayersControl position="topright">
               {/* --- BASE LAYERS --- */}
               <LayersControl.BaseLayer checked name="OpenStreetMap">
@@ -1654,36 +1777,68 @@ const Canvas = ({ location, nowData }) => {
               <LayersControl.BaseLayer name="Peta Satelit (Esri)">
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                  attribution='&copy; <a href="https://www.esri.com/">Esri</a>, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                  attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
                 />
               </LayersControl.BaseLayer>
 
               {/* --- OVERLAYS (LAPISAN) --- */}
-              <LayersControl.Overlay name="Lapisan Curah Hujan">
-                <TileLayer
-                  url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
-                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-                  opacity={0.9}
-                />
-              </LayersControl.Overlay>
+              {isAuthenticated && (
+                <LayersControl.Overlay name="Lapisan Curah Hujan">
+                  <TileLayer
+                    url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    opacity={0.9}
+                  />
+                </LayersControl.Overlay>
+              )}
 
-              <LayersControl.Overlay name="Lapisan Suhu Udara">
-                <TileLayer
-                  url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
-                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-                  opacity={0.9}
-                />
-              </LayersControl.Overlay>
+              {isAuthenticated && (
+                <LayersControl.Overlay name="Lapisan Suhu Udara">
+                  <TileLayer
+                    url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    opacity={0.9}
+                  />
+                </LayersControl.Overlay>
+              )}
 
-              <LayersControl.Overlay name="Lapisan Awan">
-                <TileLayer
-                  url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
-                  attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
-                  opacity={1}
-                />
-              </LayersControl.Overlay>
+              {isAuthenticated && (
+                <LayersControl.Overlay name="Lapisan Awan">
+                  <TileLayer
+                    url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                    opacity={1}
+                  />
+                </LayersControl.Overlay>
+              )}
 
-              {latestRadarLayer && (
+              {isAuthenticated && (
+                <LayersControl.Overlay name="Kesehatan Lahan Saya (NDVI)">
+                  <WMSTileLayer
+                    url={`https://services.sentinel-hub.com/ogc/wms/${SENTINEL_HUB_INSTANCE}/`}
+                    layers="VEGETATION_INDEX"
+                    format="image/png"
+                    transparent={true}
+                    attribution='&copy; <a href="https://www.sentinel-hub.com/">Sentinel Hub</a>'
+                    opacity={0.9}
+                  />
+                </LayersControl.Overlay>
+              )}
+
+              {isNdiviOverlayActive && (
+                <GeoJSON
+                  key={JSON.stringify(maskGeoJson)}
+                  data={maskGeoJson}
+                  style={{
+                    fillColor: "black",
+                    fillOpacity: 0.8,
+                    stroke: false,
+                    interactive: false,
+                  }}
+                />
+              )}
+
+              {isAuthenticated && latestRadarLayer && (
                 <LayersControl.Overlay name="Radar Cuaca BMKG (Terbaru)">
                   <WMSTileLayer
                     key={latestRadarLayer}
@@ -1807,16 +1962,15 @@ const Canvas = ({ location, nowData }) => {
               const weatherData = cachedData?.data || null;
               const isLoading = cachedData?.isLoading || false;
               const error = cachedData?.error || null;
-
               return (
                 <Polygon
                   key={index}
                   positions={poly.coords}
                   pathOptions={{
                     color: "#6C7D41",
-                    fillOpacity: 0.15,
-                    weight: 2,
-                    opacity: 0.8,
+                    fillOpacity: 0.1,
+                    weight: 3,
+                    opacity: 1,
                     fillPattern: {
                       patternShape: { shape: "diamond", width: 4, height: 4 },
                       patternFillColor: "#6C7D41",
@@ -2419,7 +2573,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="fixed bottom-5 left-4 z-[999]">
+          <div className="fixed flex bottom-5 z-[999] md:ml-5 md:left-auto left-5 space-x-2">
             <button
               onClick={() => {
                 if (location) {
@@ -2446,10 +2600,19 @@ const Canvas = ({ location, nowData }) => {
                 </svg>
               </div>
             </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => setShowNdiviTutorial(true)}
+                className="bg-white rounded-full shadow-lg text-gray-600 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center w-12 h-12"
+                title="Tampilkan Petunjuk NDVI"
+              >
+                <HelpCircle size={24} />
+              </button>
+            )}
           </div>
 
           {/* confirmation for polygons add in center bottom screen */}
-          {polygonPoints.length > 0 && (
+          {isMobile && polygonPoints.length > 0 && (
             <m.div
               initial={{ opacity: 0, transform: "translate(-50%, 20px)" }}
               animate={{ opacity: 1, transform: "translate(-50%, 0)" }}
@@ -2648,7 +2811,7 @@ const Canvas = ({ location, nowData }) => {
                       className="rounded-xl border shadow-lg"
                     />
                   )}
-      
+
                   {!isMobile && (
                     <>
                       {!preview ? (
@@ -2684,35 +2847,35 @@ const Canvas = ({ location, nowData }) => {
 
                   {isMobile && !preview && (
                     <>
-                        {!preview ? (
-                          <button
-                            onClick={captureFromCamera}
-                            className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
-                          >
-                            📸 Ambil Gambar
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => setPreview(null)}
-                            className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
-                          >
-                            <span className="flex justify-center">
-                              <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
-                              Gambar
-                            </span>
-                          </button>
-                        )}
+                      {!preview ? (
+                        <button
+                          onClick={captureFromCamera}
+                          className="bg-[#6C7D41] text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                        >
+                          📸 Ambil Gambar
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setPreview(null)}
+                          className="bg-red-400 text-white font-semibold w-full py-2 px-5 rounded-lg shadow transition"
+                        >
+                          <span className="flex justify-center">
+                            <TrashIcon className="w-5 h-5 mr-2" /> Ambil Ulang
+                            Gambar
+                          </span>
+                        </button>
+                      )}
 
-                        <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
-                          📁 Unggah Gambar
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleFileChange}
-                          />
-                        </label>
-                      </>
+                      <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium w-full px-4 py-2 rounded-lg border cursor-pointer transition justify-center flex">
+                        📁 Unggah Gambar
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                    </>
                   )}
                 </div>
 

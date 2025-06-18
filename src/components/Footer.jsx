@@ -149,7 +149,7 @@ const Footer = () => {
                         text: "Apakah Anda yakin ingin keluar?",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: "#6C7D41",
+                        confirmButtonColor: "#ff6565",
                         confirmButtonText: "Ya, Keluar",
                         cancelButtonText: "Batal",
                       }).then((result) => {
