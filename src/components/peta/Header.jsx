@@ -14,7 +14,7 @@ const Header = () => {
     <>
       <nav
         className={`absolute top-2.5 left-2 transition duration-300 ease-in-out]`}
-        style={{ zIndex: 1000 }}
+        style={{ zIndex: 99999 }}
       >
           <button
             type="button"
@@ -26,7 +26,7 @@ const Header = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="fixed inset-0 bg-white z-[99999] flex flex-col items-center justify-center"
+              className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

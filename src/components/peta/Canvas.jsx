@@ -535,6 +535,7 @@ const Canvas = ({ location, nowData }) => {
               soilType: soilType,
               coords: polygonPoints,
               cropId: cropId,
+              cropDate: cropDate,
               estimated_time: estimated_time,
             },
           ]);
@@ -2533,7 +2534,7 @@ const Canvas = ({ location, nowData }) => {
               {activeSection === "summary" && renderSummarySection()}
               {activeSection === "weather" && renderWeatherSection()}
               {activeSection === "weather" && (
-                <div className="p-4">
+                <>
                   <span className="text-sm font-semibold text-gray-700">
                     Legenda Peta
                   </span>
@@ -2605,7 +2606,7 @@ const Canvas = ({ location, nowData }) => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </m.div>
