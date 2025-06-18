@@ -2573,7 +2573,8 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="fixed flex bottom-5 z-[999] md:ml-5 md:left-auto left-5 space-x-2">
+          {/* make vertical in mobile and horizontal in dekstop */}
+          <div className="fixed bottom-5 z-[999] md:ml-5 md:left-auto left-5 flex flex-col md:flex-row gap-2">
             <button
               onClick={() => {
                 if (location) {
@@ -2684,6 +2685,7 @@ const Canvas = ({ location, nowData }) => {
                     setCropDate("");
                     setEstimatedTime("");
                     setPolygonPoints([]);
+                    setConfirm(false);
                   }}
                   className="text-gray-500 hover:text-gray-700"
                   aria-label="Close Panel"
