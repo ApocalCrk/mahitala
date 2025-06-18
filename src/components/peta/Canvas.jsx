@@ -815,7 +815,7 @@ const Canvas = ({ location, nowData }) => {
    * =====================================================
    */
   const renderWeatherSection = () => (
-    <div className="p-4 md:pt-2 pt-4">
+    <div className="md:pt-2">
       <div>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-[#6C7D41]">Cuaca Saat Ini</h2>
@@ -877,7 +877,7 @@ const Canvas = ({ location, nowData }) => {
   );
 
   const renderFieldSection = () => (
-    <div className="md:p-2 overflow-y-auto">
+    <div className="md:p-2">
       {polygonPoints.length > 0 && (
         <div className="bg-[#6C7D4110] backdrop-blur-sm rounded-lg p-3 shadow-sm mb-2">
           <div className="flex justify-between gap-2">
@@ -1337,7 +1337,7 @@ const Canvas = ({ location, nowData }) => {
             <p>Anda belum memiliki lahan</p>
           </div>
         ) : (
-          <div className="space-y-3 h-[300px] overflow-y-auto">
+          <div className="space-y-3 h-[300px]">
             {polygons.map((poly, index) => (
               <div
                 key={index}
@@ -1480,7 +1480,7 @@ const Canvas = ({ location, nowData }) => {
         {/* Desktop sidebar */}
         {!isMobile && panelDesktop === "expanded" && (
           <m.div
-            className="z-[999] bg-white p-5 rounded-xl shadow-md w-[500px] border border-gray-200 h-screen overflow-y-auto"
+            className="z-[999] bg-white p-5 rounded-xl shadow-md w-[500px] border border-gray-200 h-screen"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
@@ -2378,7 +2378,7 @@ const Canvas = ({ location, nowData }) => {
           {isMobile
             ? isAuthenticated && (
                 <div
-                  className={`absolute bottom-16 right-4 flex flex-col gap-2 z-[1000]`}
+                  className={`fixed bottom-5 right-4 flex flex-col gap-2 z-[1000]`}
                 >
                   <button
                     onClick={() => {
@@ -2418,7 +2418,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-16 left-4 z-[999]">
+          <div className="fixed bottom-5 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
