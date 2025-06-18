@@ -2378,7 +2378,7 @@ const Canvas = ({ location, nowData }) => {
           {isMobile
             ? isAuthenticated && (
                 <div
-                  className={`absolute bottom-5 right-4 flex flex-col gap-2 z-[1000]`}
+                  className={`absolute bottom-16 right-4 flex flex-col gap-2 z-[1000]`}
                 >
                   <button
                     onClick={() => {
@@ -2418,7 +2418,7 @@ const Canvas = ({ location, nowData }) => {
             : null}
 
           {/* floating button to direct to now location */}
-          <div className="absolute bottom-5 left-4 z-[999]">
+          <div className="absolute bottom-16 left-4 z-[999]">
             <button
               onClick={() => {
                 if (location) {
