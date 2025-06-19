@@ -2625,7 +2625,7 @@ const Canvas = ({ location, nowData }) => {
             {isAuthenticated && (
               <button
                 onClick={() => setShowNdiviTutorial(true)}
-                className="bg-white rounded-full shadow-lg text-gray-600 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center w-12 h-12"
+                className="bg-white rounded-full shadow-lg text-gray-600 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center w-12 h-12 ml-2"
                 title="Tampilkan Petunjuk NDVI"
               >
                 <HelpCircle size={24} />
