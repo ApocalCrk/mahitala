@@ -2437,25 +2437,27 @@ const Canvas = ({ location, nowData }) => {
                     </span>
 
                     <div className="space-y-4 mt-2">
-                      <div>
-                        <span className="text-xs font-semibold text-gray-600 block mb-1">
-                          Radar Cuaca BMKG
-                        </span>
-                        <div
-                          className="w-full h-3 rounded-full"
-                          style={{
-                            background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
-                          }}
-                        />
-                        <div className="flex justify-between mt-1">
-                          <span className="text-xs text-gray-500">
-                            Tidak Ada Hujan
+                      { latestRadarLayer && (
+                        <div>
+                          <span className="text-xs font-semibold text-gray-600 block mb-1">
+                            Radar Cuaca BMKG
                           </span>
-                          <span className="text-xs text-gray-500">
-                            Hujan Sangat Lebat
-                          </span>
+                          <div
+                            className="w-full h-3 rounded-full"
+                            style={{
+                              background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                            }}
+                          />
+                          <div className="flex justify-between mt-1">
+                            <span className="text-xs text-gray-500">
+                              Tidak Ada Hujan
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              Hujan Sangat Lebat
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div>
                         <span className="text-xs font-semibold text-gray-600 block mb-1">
@@ -2708,25 +2710,27 @@ const Canvas = ({ location, nowData }) => {
                   </span>
 
                   <div className="space-y-4 mt-2">
-                    <div>
-                      <span className="text-xs font-semibold text-gray-600 block mb-1">
-                        Radar Cuaca BMKG
-                      </span>
-                      <div
-                        className="w-full h-3 rounded-full"
-                        style={{
-                          background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
-                        }}
-                      />
-                      <div className="flex justify-between mt-1">
-                        <span className="text-xs text-gray-500">
-                          Tidak Ada Hujan
+                    { latestRadarLayer && (
+                      <div>
+                        <span className="text-xs font-semibold text-gray-600 block mb-1">
+                          Radar Cuaca BMKG
                         </span>
-                        <span className="text-xs text-gray-500">
-                          Hujan Sangat Lebat
-                        </span>
+                        <div
+                          className="w-full h-3 rounded-full"
+                          style={{
+                            background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                          }}
+                        />
+                        <div className="flex justify-between mt-1">
+                          <span className="text-xs text-gray-500">
+                            Tidak Ada Hujan
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            Hujan Sangat Lebat
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div>
                       <span className="text-xs font-semibold text-gray-600 block mb-1">
