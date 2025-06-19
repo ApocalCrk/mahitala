@@ -1596,7 +1596,9 @@ const Canvas = ({ location, nowData }) => {
       {isMobile && <Header />}
 
       <div className="h-screen relative flex" onClick={handleClickOutside}>
-        {showNdiviTutorial && <NdiviTutorialModal onClose={closeTutorial} />}
+        {showNdiviTutorial && isAuthenticated && (
+          <NdiviTutorialModal onClose={closeTutorial} />
+        )}
         {/* Desktop sidebar */}
         {!isMobile && panelDesktop === "expanded" && (
           <m.div
@@ -1785,7 +1787,7 @@ const Canvas = ({ location, nowData }) => {
               {isAuthenticated && (
                 <LayersControl.Overlay name="Lapisan Curah Hujan">
                   <TileLayer
-                    url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    url={`${API_URL}/api/proxy/weather-tile/precipitation_new/{z}/{x}/{y}.png`}
                     attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
                     opacity={0.9}
                   />
@@ -1795,7 +1797,7 @@ const Canvas = ({ location, nowData }) => {
               {isAuthenticated && (
                 <LayersControl.Overlay name="Lapisan Suhu Udara">
                   <TileLayer
-                    url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    url={`${API_URL}/api/proxy/weather-tile/temp_new/{z}/{x}/{y}.png`}
                     attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
                     opacity={0.9}
                   />
@@ -1805,7 +1807,7 @@ const Canvas = ({ location, nowData }) => {
               {isAuthenticated && (
                 <LayersControl.Overlay name="Lapisan Awan">
                   <TileLayer
-                    url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_API_KEY}`}
+                    url={`${API_URL}/api/proxy/weather-tile/clouds_new/{z}/{x}/{y}.png`}
                     attribution='&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>'
                     opacity={1}
                   />
@@ -1815,7 +1817,7 @@ const Canvas = ({ location, nowData }) => {
               {isAuthenticated && (
                 <LayersControl.Overlay name="Kesehatan Lahan Saya (NDVI)">
                   <WMSTileLayer
-                    url={`https://services.sentinel-hub.com/ogc/wms/${SENTINEL_HUB_INSTANCE}/`}
+                    url={`${API_URL}/api/proxy/sentinel-hub`}
                     layers="VEGETATION_INDEX"
                     format="image/png"
                     transparent={true}
@@ -1851,40 +1853,6 @@ const Canvas = ({ location, nowData }) => {
                 </LayersControl.Overlay>
               )}
             </LayersControl>
-
-            {!isAuthenticated
-              ? isMobile && (
-                  <div className="absolute bottom-32 rounded-lg shadow-md z-[9999] m-2">
-                    <div
-                      className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
-                      role="alert"
-                    >
-                      <span className="block sm:inline">
-                        <strong className="font-bold">Peringatan!</strong> Akses
-                        data terbatas, silahkan masuk untuk mendapatkan akses
-                        penuh.
-                      </span>
-                    </div>
-                  </div>
-                )
-              : null}
-
-            {!isAuthenticated
-              ? !isMobile && (
-                  <div className="absolute top-5 rounded-lg shadow-md z-[9999] m-2">
-                    <div
-                      className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative"
-                      role="alert"
-                    >
-                      <span className="block sm:inline">
-                        <strong className="font-bold">Peringatan!</strong> Akses
-                        data terbatas, silahkan masuk untuk mendapatkan akses
-                        penuh.
-                      </span>
-                    </div>
-                  </div>
-                )
-              : null}
 
             {location && (
               <Marker
@@ -2302,7 +2270,7 @@ const Canvas = ({ location, nowData }) => {
           {!isMobile && (
             <div className="absolute bottom-6 md:right-2 space-y-2 z-[999]">
               {/* Navigation Header panel for Desktop */}
-              <div className="leaflet-control bg-white rounded-xl shadow-xl overflow-hidden w-[320px]">
+              <div className="leaflet-control rounded-xl shadow-xl overflow-hidden w-[320px]">
                 <div
                   className="bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white p-3 font-semibold text-sm flex justify-between items-center cursor-pointer"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -2317,7 +2285,7 @@ const Canvas = ({ location, nowData }) => {
                   </span>
                 </div>
                 {isMenuOpen && (
-                  <div className="p-4 flex flex-col gap-3">
+                  <div className="p-4 flex flex-col gap-3 bg-white">
                     <NavLink
                       to="/"
                       className={({ isActive }) =>
@@ -2373,74 +2341,94 @@ const Canvas = ({ location, nowData }) => {
                   </div>
                 )}
               </div>
-
-              <div className="leaflet-control bg-white rounded-xl shadow-xl overflow-hidden w-[320px]">
-                <div
-                  className="bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white p-3 font-semibold text-sm flex justify-between items-center cursor-pointer"
-                  onClick={() => setInformation(!information)}
-                >
-                  <span className="flex items-center">
-                    {information ? (
-                      <X className="h-4 w-4 mr-2" />
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-2"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                    Informasi Peta
-                  </span>
-                </div>
-                {information && (
-                  <div className="p-4">
-                    {isAuthenticated && (
-                      <div className="border-b border-gray-200 pb-3 mb-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-gray-600 font-medium">
-                            Total Lahan:
-                          </span>
-                          <span className="text-sm">{polygons.length}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600 font-medium">
-                            Total Luas:
-                          </span>
-                          <span className="text-sm">
-                            {formatArea(
-                              polygons.reduce(
-                                (acc, poly) => {
-                                  const area = calculateArea(poly.coords);
-                                  return {
-                                    hectares: acc.hectares + area.hectares,
-                                    squareMeters:
-                                      acc.squareMeters + area.squareMeters,
-                                  };
-                                },
-                                { hectares: 0, squareMeters: 0 }
-                              )
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    <span className="text-sm font-semibold text-gray-700">
-                      Legenda Peta
+              {isAuthenticated && (
+                <div className="leaflet-control rounded-xl shadow-xl overflow-hidden w-[320px]">
+                  <div
+                    className="bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white p-3 font-semibold text-sm flex justify-between items-center cursor-pointer"
+                    onClick={() => setInformation(!information)}
+                  >
+                    <span className="flex items-center">
+                      {information ? (
+                        <X className="h-4 w-4 mr-2" />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-2"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                      Informasi Peta
                     </span>
+                  </div>
+                  {information && (
+                    <div className="p-4 bg-white">
+                      {isAuthenticated && (
+                        <div className="border-b border-gray-200 pb-3 mb-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-gray-600 font-medium">
+                              Total Lahan:
+                            </span>
+                            <span className="text-sm">{polygons.length}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600 font-medium">
+                              Total Luas:
+                            </span>
+                            <span className="text-sm">
+                              {formatArea(
+                                polygons.reduce(
+                                  (acc, poly) => {
+                                    const area = calculateArea(poly.coords);
+                                    return {
+                                      hectares: acc.hectares + area.hectares,
+                                      squareMeters:
+                                        acc.squareMeters + area.squareMeters,
+                                    };
+                                  },
+                                  { hectares: 0, squareMeters: 0 }
+                                )
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
-                    <div className="space-y-4 mt-2">
-                      { latestRadarLayer && (
+                      <span className="text-sm font-semibold text-gray-700">
+                        Legenda Peta
+                      </span>
+                      <div className="space-y-4 mt-2">
+                        {latestRadarLayer && (
+                          <div>
+                            <span className="text-xs font-semibold text-gray-600 block mb-1">
+                              Radar Cuaca BMKG
+                            </span>
+                            <div
+                              className="w-full h-3 rounded-full"
+                              style={{
+                                background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
+                              }}
+                            />
+                            <div className="flex justify-between mt-1">
+                              <span className="text-xs text-gray-500">
+                                Tidak Ada Hujan
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                Hujan Sangat Lebat
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
                         <div>
                           <span className="text-xs font-semibold text-gray-600 block mb-1">
-                            Radar Cuaca BMKG
+                            Curah Hujan
                           </span>
                           <div
                             className="w-full h-3 rounded-full"
@@ -2450,64 +2438,52 @@ const Canvas = ({ location, nowData }) => {
                           />
                           <div className="flex justify-between mt-1">
                             <span className="text-xs text-gray-500">
-                              Tidak Ada Hujan
+                              Rendah
                             </span>
                             <span className="text-xs text-gray-500">
-                              Hujan Sangat Lebat
+                              Tinggi
                             </span>
                           </div>
                         </div>
-                      )}
-
-                      <div>
-                        <span className="text-xs font-semibold text-gray-600 block mb-1">
-                          Curah Hujan
-                        </span>
-                        <div
-                          className="w-full h-3 rounded-full"
-                          style={{
-                            background: `linear-gradient(to right, #00BFFF, #008000, #FFFF00, #FFA500, #FF0000, #FF00FF)`,
-                          }}
-                        />
-                        <div className="flex justify-between mt-1">
-                          <span className="text-xs text-gray-500">Rendah</span>
-                          <span className="text-xs text-gray-500">Tinggi</span>
+                        <div>
+                          <span className="text-xs font-semibold text-gray-600 block mb-1">
+                            Suhu Udara
+                          </span>
+                          <div
+                            className="w-full h-3 rounded-full"
+                            style={{
+                              background: `linear-gradient(to right, #00ffff, #00ff00, #ffff00, #ff0000)`,
+                            }}
+                          />
+                          <div className="flex justify-between mt-1">
+                            <span className="text-xs text-gray-500">
+                              Dingin
+                            </span>
+                            <span className="text-xs text-gray-500">Panas</span>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <span className="text-xs font-semibold text-gray-600 block mb-1">
-                          Suhu Udara
-                        </span>
-                        <div
-                          className="w-full h-3 rounded-full"
-                          style={{
-                            background: `linear-gradient(to right, #00ffff, #00ff00, #ffff00, #ff0000)`,
-                          }}
-                        />
-                        <div className="flex justify-between mt-1">
-                          <span className="text-xs text-gray-500">Dingin</span>
-                          <span className="text-xs text-gray-500">Panas</span>
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-xs font-semibold text-gray-600 block mb-1">
-                          Tingkat Kekeruhan Awan
-                        </span>
-                        <div
-                          className="w-full h-3 rounded-full"
-                          style={{
-                            background: `linear-gradient(to right, #e0e0e0, #a0a0a0, #606060)`,
-                          }}
-                        />
-                        <div className="flex justify-between mt-1">
-                          <span className="text-xs text-gray-500">Cerah</span>
-                          <span className="text-xs text-gray-500">Mendung</span>
+                        <div>
+                          <span className="text-xs font-semibold text-gray-600 block mb-1">
+                            Tingkat Kekeruhan Awan
+                          </span>
+                          <div
+                            className="w-full h-3 rounded-full"
+                            style={{
+                              background: `linear-gradient(to right, #e0e0e0, #a0a0a0, #606060)`,
+                            }}
+                          />
+                          <div className="flex justify-between mt-1">
+                            <span className="text-xs text-gray-500">Cerah</span>
+                            <span className="text-xs text-gray-500">
+                              Mendung
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -2576,7 +2552,7 @@ const Canvas = ({ location, nowData }) => {
 
           {/* floating button to direct to now location */}
           {/* make vertical in mobile and horizontal in dekstop */}
-          <div className="fixed bottom-5 z-[999] md:ml-5 md:left-auto left-5 flex flex-col md:flex-row gap-2">
+          <div className="fixed bottom-5 z-[999] flex flex-col md:flex-row gap-2">
             <button
               onClick={() => {
                 if (location) {
@@ -2589,7 +2565,7 @@ const Canvas = ({ location, nowData }) => {
                   alert("Lokasi Anda tidak ditemukan");
                 }
               }}
-              className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-[#6C7D41]"
+              className="bg-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center ml-2"
             >
               <div className="relative z-10 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white">
                 <svg
@@ -2603,6 +2579,49 @@ const Canvas = ({ location, nowData }) => {
                 </svg>
               </div>
             </button>
+
+            {!isAuthenticated
+              ? !isMobile && (
+                  <div className="fixed top-0 rounded-lg shadow-md z-[9999] m-2">
+                    <div
+                      className="flex items-center justify-between bg-red-50 border border-red-200 text-red-700 px-2 py-3 rounded gap-2"
+                      role="alert"
+                    >
+                      <p className="block sm:inline text-xs">
+                        <strong className="font-bold">Peringatan!</strong> Akses
+                        data terbatas, silahkan masuk untuk mendapatkan akses
+                        penuh.
+                      </p>
+                      <NavLink
+                        to="/"
+                        className="text-[#db7474]"
+                        aria-label="Tutup Peringatan"
+                        title="Tutup Peringatan"
+                      >
+                        <XIcon className="h-5 w-5" />
+                      </NavLink>
+                    </div>
+                  </div>
+                )
+              : null}
+
+            {!isAuthenticated
+              ? isMobile && (
+                  <div className="rounded-lg shadow-md z-[999] mx-2">
+                    <div
+                      className="flex items-center justify-center bg-red-50 border border-red-200 text-red-700 px-3 py-3 rounded relative"
+                      role="alert"
+                    >
+                      <p className="block sm:inline text-sm">
+                        <strong className="font-bold">Peringatan!</strong> Akses
+                        data terbatas, silahkan masuk untuk mendapatkan akses
+                        penuh.
+                      </p>
+                    </div>
+                  </div>
+                )
+              : null}
+
             {isAuthenticated && (
               <button
                 onClick={() => setShowNdiviTutorial(true)}
@@ -2710,7 +2729,7 @@ const Canvas = ({ location, nowData }) => {
                   </span>
 
                   <div className="space-y-4 mt-2">
-                    { latestRadarLayer && (
+                    {latestRadarLayer && (
                       <div>
                         <span className="text-xs font-semibold text-gray-600 block mb-1">
                           Radar Cuaca BMKG

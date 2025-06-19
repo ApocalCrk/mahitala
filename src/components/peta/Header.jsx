@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <>
       <nav
-        className={`absolute top-2.5 left-2 transition duration-300 ease-in-out]`}
+        className={`absolute top-2.5 left-3 transition duration-300 ease-in-out]`}
         style={{ zIndex: 99998 }}
       >
           <button

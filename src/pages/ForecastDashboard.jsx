@@ -45,7 +45,6 @@ const ForecastDashboard = () => {
   const [isAuthError, setIsAuthError] = useState(false);
   const [registerToken] = useState(Math.random().toString(36).substring(2, 9));
 
-  // --- OPTIMIZATION: Fetch all data in parallel ---
   useEffect(() => {
     const fetchAllData = async (coords) => {
       try {
@@ -117,7 +116,6 @@ const ForecastDashboard = () => {
     }
   }, []);
 
-  // Check otentikasi dari localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("token");
     if (storedUser) {
@@ -125,7 +123,6 @@ const ForecastDashboard = () => {
     }
   }, []);
 
-  // --- Auth Modal Handlers (Tetap sama, sudah bagus) ---
   const toggleLoginModal = useCallback(() => {
     setIsAuthError(false);
     setIsLoginOpen((prev) => !prev);
@@ -139,7 +136,7 @@ const ForecastDashboard = () => {
   const handleLogin = useCallback(async (formData) => {
     try {
       if (!formData.username || !formData.token) {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage("Username dan token harus diisi");
         return;
       }
@@ -150,11 +147,11 @@ const ForecastDashboard = () => {
         setIsLoginOpen(false);
         window.location.reload();
       } else {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
       }
     } catch (error) {
-      setIsError(true);
+      setIsAuthError(true);
       setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
     }
   }, []);
@@ -162,23 +159,22 @@ const ForecastDashboard = () => {
   const handleRegister = useCallback(async (formData) => {
     try {
       if (!formData.username) {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage("Username harus diisi");
         return;
       }
 
       const res = await registerAuth(formData);
-
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
         window.location.reload();
       } else {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
       }
     } catch (error) {
-      setIsError(true);
+      setIsAuthError(true);
       setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
     }
   }, []);

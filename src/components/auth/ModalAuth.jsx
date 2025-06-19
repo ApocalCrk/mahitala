@@ -93,8 +93,14 @@ const LoginForm = React.memo(({ onSubmit }) => {
     onSubmit(formData);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" onKeyDown={handleKeyDown}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Nama Pengguna</label>
         <input
@@ -148,14 +154,20 @@ const RegisterForm = React.memo(({ onSubmit, initialToken }) => {
     try {
       await navigator.clipboard.writeText(formData.token);
       setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
+      setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error('Failed to copy token:', err);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" onKeyDown={handleKeyDown}>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Nama Pengguna</label>
         <input

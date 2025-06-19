@@ -13,7 +13,7 @@ const HeadForum = () => {
   const [searchText, setSearchText] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsAuthError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
 
@@ -29,34 +29,33 @@ const HeadForum = () => {
   };
 
   const toggleLoginModal = useCallback(() => {
-    setIsError(false);
+    setIsAuthError(false);
     setIsLoginOpen((prev) => !prev);
   }, []);
 
   const toggleRegisterModal = useCallback(() => {
-    setIsError(false);
+    setIsAuthError(false);
     setIsRegisterOpen((prev) => !prev);
   }, []);
 
   const handleLogin = useCallback(async (formData) => {
     try {
       if (!formData.username || !formData.token) {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage("Username dan token harus diisi");
         return;
       }
 
       const res = await loginAuth(formData);
       if (res.status === 200) {
-        const { user } = res.data;
         setIsAuthenticated(true);
         setIsLoginOpen(false);
       } else {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
       }
     } catch (error) {
-      setIsError(true);
+      setIsAuthError(true);
       setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
     }
   }, []);
@@ -64,7 +63,7 @@ const HeadForum = () => {
   const handleRegister = useCallback(async (formData) => {
     try {
       if (!formData.username) {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage("Username harus diisi");
         return;
       }
@@ -72,15 +71,14 @@ const HeadForum = () => {
       const res = await registerAuth(formData);
   
       if (res.status === 200) {
-        const { user } = res.data;
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
       } else {
-        setIsError(true);
+        setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
       }
     } catch (error) {
-      setIsError(true);
+      setIsAuthError(true);
       setErrorMessage("Terjadi kesalahan, silahkan coba lagi");
     }
   }, []);
