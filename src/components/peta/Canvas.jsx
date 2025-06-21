@@ -162,10 +162,6 @@ const Canvas = ({ location, nowData }) => {
   const [cropData, setCropData] = useState([]);
   const [initialWeatherLoaded, setInitialWeatherLoaded] = useState(false);
 
-  const OWM_API_KEY = import.meta.env.VITE_VERCEL_OWM_API_KEY;
-  const SENTINEL_HUB_INSTANCE = import.meta.env
-    .VITE_VERCEL_SENTINEL_HUB_INSTANCE;
-
   // data user
   const [weatherCache, setWeatherCache] = useState({});
 
@@ -1358,7 +1354,12 @@ const Canvas = ({ location, nowData }) => {
             </label>
             <input
               type="date"
-              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none"
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none appearance-none"
+              style={{
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                appearance: "none",
+              }}
               value={estimated_time}
               onChange={(e) => setEstimatedTime(e.target.value)}
             />
