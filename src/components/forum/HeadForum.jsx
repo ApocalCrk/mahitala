@@ -7,6 +7,7 @@ import { loginAuth, registerAuth, logoutAuth } from "../../hooks/auth/Authentica
 import { useUser } from "../../utils/userContext";
 
 import { Modal, LoginForm, RegisterForm } from "../auth/ModalAuth";
+import { generateSecureToken } from "../../utils/Constants";
 
 const HeadForum = () => {
   const { setIsAuthenticated, isAuthenticated } = useUser();
@@ -50,6 +51,8 @@ const HeadForum = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsLoginOpen(false);
+        window.location.reload();
+
       } else {
         setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
@@ -73,6 +76,8 @@ const HeadForum = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
+        downloadTokenAsFile(formData.token, formData.username);
+        window.location.reload();
       } else {
         setIsAuthError(true);
         setErrorMessage(res.message || "Terjadi kesalahan, silahkan coba lagi");
