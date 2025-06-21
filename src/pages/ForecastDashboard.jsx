@@ -24,6 +24,8 @@ import useCurrentTimestamp from "../utils/getCurrentTimestamp";
 import { loginAuth, registerAuth } from "../hooks/auth/Authentication";
 import { getForecastMingguan } from "../hooks/forecast/getForecastMingguan";
 import { useUser } from "../utils/userContext";
+import { generateSecureToken } from "../utils/Constants";
+import { downloadTokenAsFile } from "../utils/organizeKeyFile";
 
 const ForecastDashboard = () => {
   const { day, date, month, year, time } = useCurrentTimestamp();
@@ -43,7 +45,7 @@ const ForecastDashboard = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isAuthError, setIsAuthError] = useState(false);
-  const [registerToken] = useState(Math.random().toString(36).substring(2, 9));
+  const registerToken = generateSecureToken(32);
 
   useEffect(() => {
     const fetchAllData = async (coords) => {
@@ -168,6 +170,7 @@ const ForecastDashboard = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
+        downloadTokenAsFile(formData.token, formData.username);
         window.location.reload();
       } else {
         setIsAuthError(true);

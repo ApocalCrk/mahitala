@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import { useUser } from "../utils/userContext";
 import { Modal, LoginForm, RegisterForm } from "../components/auth/ModalAuth";
 import { loginAuth, logoutAuth } from "../hooks/auth/Authentication";
+import { generateSecureToken } from "../utils/Constants";
+import { downloadTokenAsFile } from "../utils/organizeKeyFile";
 
 const Footer = () => {
   const { isAuthenticated, setIsAuthenticated } = useUser();
@@ -15,7 +17,7 @@ const Footer = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [registerToken] = useState(Math.random().toString(36).substring(2, 9));
+  const registerToken = generateSecureToken(32);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("token");
@@ -70,6 +72,7 @@ const Footer = () => {
       if (res.status === 200) {
         setIsAuthenticated(true);
         setIsRegisterOpen(false);
+        downloadTokenAsFile(formData.token, formData.username);
         window.location.reload();
       } else {
         setIsError(true);
@@ -234,7 +237,18 @@ const Footer = () => {
           {/* Copyright */}
           <div className="text-center">
             <p className="text-gray-500 text-sm">
-              &copy; {new Date().getFullYear()} Mahitala. All rights reserved.
+              &copy; {new Date().getFullYear()} Mahitala. All rights reserved. 
+            </p>
+            <p className="text-gray-500 text-sm">
+              Powered by{" "}
+              <a
+                href="https://bmkg.go.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#6C7D41] hover:underline"
+              >
+                BMKG
+              </a>
             </p>
           </div>
         </div>

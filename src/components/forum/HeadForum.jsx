@@ -15,7 +15,7 @@ const HeadForum = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isError, setIsAuthError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [registerToken] = useState(Math.random().toString(36).substr(2, 9));
+  const registerToken = generateSecureToken(32);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("token");

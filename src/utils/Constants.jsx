@@ -340,3 +340,11 @@ export const formatNumber = (value) => {
   const num = parseFloat(value.toString().replace(/[^\d.-]/g, ''));
   return new Intl.NumberFormat('id-ID').format(num);
 };
+
+export const generateSecureToken = (length = 32) => {
+    const array = new Uint8Array(length);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, byte =>
+      ('0' + byte.toString(16)).slice(-2)
+    ).join('');
+}
