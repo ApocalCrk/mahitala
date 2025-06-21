@@ -341,6 +341,12 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
           </div>
         )}
       </div>
+        <div className="p-4 text-xs text-gray-500 bg-gray-50 rounded-b-xl">
+        <p>
+          Data harga komoditas ini diperoleh dari Badan Pangan Nasional (BPN) dan
+          diperbarui setiap hari.
+        </p>
+        </div>
     </div>
   );
 };

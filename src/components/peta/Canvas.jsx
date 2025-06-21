@@ -88,42 +88,47 @@ const videoConstraints = {
 
 const NdiviTutorialModal = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999999] p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center animate-fade-in-up">
-        <Lightbulb className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999999] p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-xs sm:max-w-md p-4 sm:p-6 text-center animate-fade-in-up">
+        <Lightbulb className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-3 sm:mb-4" />
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
           Memantau Kesehatan Tanaman (NDVI)
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 text-sm sm:text-base mb-5">
           Fitur ini menggunakan data satelit untuk membuat "peta kesehatan"
           lahan Anda. Gunakan ini untuk menemukan masalah lebih dini.
         </p>
 
-        <div className="space-y-4 text-left mb-6">
+        <div className="space-y-3 text-left mb-5">
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 rounded-full bg-green-500 flex-shrink-0"></div>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500 flex-shrink-0"></div>
             <div>
-              <h3 className="font-semibold text-gray-700">Hijau Terang</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="font-semibold text-gray-700 text-sm sm:text-base">
+                Hijau Terang
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500">
                 Pertanda sangat baik. Tanaman Anda lebat, subur, dan sehat.
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 rounded-full bg-yellow-400 flex-shrink-0"></div>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-yellow-400 flex-shrink-0"></div>
             <div>
-              <h3 className="font-semibold text-gray-700">Kuning</h3>
-              <p className="text-sm text-gray-500">
-                Peringatan. Tanaman mungkin stres karena kurang air atau
-                nutrisi.
+              <h3 className="font-semibold text-gray-700 text-sm sm:text-base">
+                Kuning
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500">
+                Peringatan. Tanaman mungkin stres karena kurang air atau nutrisi.
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 rounded-full bg-red-500 flex-shrink-0"></div>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-500 flex-shrink-0"></div>
             <div>
-              <h3 className="font-semibold text-gray-700">Merah / Coklat</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="font-semibold text-gray-700 text-sm sm:text-base">
+                Merah / Coklat
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500">
                 Tanda bahaya. Area ini kemungkinan besar memiliki masalah serius
                 seperti hama atau penyakit.
               </p>
@@ -133,7 +138,7 @@ const NdiviTutorialModal = ({ onClose }) => {
 
         <button
           onClick={onClose}
-          className="w-full bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity"
+          className="w-full bg-gradient-to-r from-[#6C7D41] to-[#8BA350] text-white font-bold py-2 sm:py-3 rounded-lg hover:opacity-90 transition-opacity text-sm sm:text-base"
         >
           Saya Mengerti
         </button>
@@ -337,7 +342,7 @@ const Canvas = ({ location, nowData }) => {
         setPolygons(fieldData);
       }
     });
-  }, []);
+  }, [isAuthenticated]);
 
   const recommendationData = async (lat, lng) => {
     await getRekomendasiAI({
@@ -1323,7 +1328,12 @@ const Canvas = ({ location, nowData }) => {
             </label>
             <input
               type="date"
-              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none"
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none appearance-none"
+              style={{
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                appearance: "none",
+              }}
               value={cropDate}
               onChange={(e) => {
                 setCropDate(e.target.value);
@@ -1780,6 +1790,8 @@ const Canvas = ({ location, nowData }) => {
                 <TileLayer
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+                  maxZoom={19}
+                  minZoom={1}
                 />
               </LayersControl.BaseLayer>
 
@@ -2552,7 +2564,7 @@ const Canvas = ({ location, nowData }) => {
 
           {/* floating button to direct to now location */}
           {/* make vertical in mobile and horizontal in dekstop */}
-          <div className="fixed bottom-5 z-[999] flex flex-col md:flex-row gap-2">
+          <div className="fixed left-0 md:left-auto bottom-5 z-[999] flex flex-col md:flex-row gap-2">
             <button
               onClick={() => {
                 if (location) {

@@ -142,34 +142,36 @@ const Footer = () => {
               </h3>
               <div className="flex justify-center lg:justify-start">
                 {isAuthenticated ? (
-                  <button
-                    onClick={() => {
-                      Swal.fire({
-                        title: "Konfirmasi Keluar",
-                        text: "Apakah Anda yakin ingin keluar?",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#ff6565",
-                        confirmButtonText: "Ya, Keluar",
-                        cancelButtonText: "Batal",
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          logoutAuth();
-                          setIsAuthenticated(false);
-                          Swal.fire({
-                            title: "Berhasil Keluar",
-                            text: "Anda telah berhasil keluar.",
-                            icon: "success",
-                            timer: 2000,
-                            showConfirmButton: false,
-                          });
-                        }
-                      });
-                    }}
-                    className="text-gray-600 hover:text-[#6C7D41] font-medium transition-colors duration-300 text-center lg:text-left py-1"
-                  >
-                    Keluar
-                  </button>
+                  <div className="flex flex-col space-y-3">
+                    <button
+                      onClick={() => {
+                        Swal.fire({
+                          title: "Konfirmasi Keluar",
+                          text: "Apakah Anda yakin ingin keluar?",
+                          icon: "warning",
+                          showCancelButton: true,
+                          confirmButtonColor: "#ff6565",
+                          confirmButtonText: "Ya, Keluar",
+                          cancelButtonText: "Batal",
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            logoutAuth();
+                            setIsAuthenticated(false);
+                            Swal.fire({
+                              title: "Berhasil Keluar",
+                              text: "Anda telah berhasil keluar.",
+                              icon: "success",
+                              timer: 2000,
+                              showConfirmButton: false,
+                            });
+                          }
+                        });
+                      }}
+                      className="text-gray-600 hover:text-[#6C7D41] font-medium transition-colors duration-300 text-center lg:text-left py-1"
+                    >
+                      Keluar
+                    </button>
+                  </div>
                 ) : (
                   <div className="flex space-x-4">
                     <button
