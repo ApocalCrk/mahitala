@@ -91,7 +91,7 @@ useEffect(() => {
   if (!showReloadPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 left-auto sm:bottom-6 sm:right-6 max-w-sm w-full sm:w-auto sm:mx-0 z-[9999] animate-in slide-in-from-bottom-4 duration-500">
+    <div className="fixed bottom-0 md:right-4 w-full z-[9999] animate-in slide-in-from-bottom-4 duration-500 p-4 md:max-w-sm">
       <div className="bg-gradient-to-br from-white to-gray-50 backdrop-blur-sm border border-gray-200/60 rounded-2xl shadow-2xl shadow-black/10 p-4 sm:p-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-100/50 to-purple-100/50 rounded-full blur-2xl -translate-y-6 translate-x-6 sm:-translate-y-8 sm:translate-x-8"></div>
 
