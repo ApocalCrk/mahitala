@@ -1028,10 +1028,34 @@ const Canvas = ({ location, nowData }) => {
               placeholder="Silahkan Foto Tanah"
               value={soilType}
               onChange={(e) => setSoilType(e.target.value)}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                if (confirm) {
+                  setOpen(true);
+                } else {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Perhatian",
+                    text: "Silakan kunci lahan terlebih dahulu sebelum mengambil gambar.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
+              }}
             />
             <button
-              onClick={() => confirm && setOpen(true)}
+              onClick={() => {
+                if (confirm) {
+                  setOpen(true);
+                } else {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Perhatian",
+                    text: "Silakan kunci lahan terlebih dahulu sebelum mengambil gambar.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
+              }}
               className="bg-gray-500 text-white px-4 py-2 rounded-lg text-sm shadow-md w-full"
             >
               Ambil Gambar
