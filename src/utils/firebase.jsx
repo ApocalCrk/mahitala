@@ -28,9 +28,7 @@ export const requestPermissionAndRegisterToken = async () => {
       return null;
     }
 
-    const registration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js?v=3"
-    );
+    const registration = await navigator.serviceWorker.ready;
 
     const fcmToken = await getToken(messaging, {
       vapidKey:

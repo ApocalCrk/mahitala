@@ -1,4 +1,6 @@
-// vite.config.js
+// 🔧 Integrasi Firebase Messaging + Vite PWA (Workbox)
+// FILE: vite.config.js
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
@@ -69,7 +71,7 @@ export default defineConfig({
           },
           {
             urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst", 
+            handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",
               networkTimeoutSeconds: 5,
@@ -98,6 +100,14 @@ export default defineConfig({
           },
         ],
       },
+      // ✅ Tambahkan konfigurasi untuk swSrc
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
+      srcDir: "src",
+      filename: "custom-sw.js", // custom service worker
+      strategies: "injectManifest",
     }),
   ],
 });
