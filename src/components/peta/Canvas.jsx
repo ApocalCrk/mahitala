@@ -118,7 +118,8 @@ const NdiviTutorialModal = ({ onClose }) => {
                 Kuning
               </h3>
               <p className="text-xs sm:text-sm text-gray-500">
-                Peringatan. Tanaman mungkin stres karena kurang air atau nutrisi.
+                Peringatan. Tanaman mungkin stres karena kurang air atau
+                nutrisi.
               </p>
             </div>
           </div>
@@ -208,6 +209,8 @@ const Canvas = ({ location, nowData }) => {
   const [resultData, setResultData] = useState(null);
   const [tempData, setTempData] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const [unifiedRecommendation, setUnifiedRecommendation] = useState([]);
 
   // context menu
   const [contextMenu, setContextMenu] = useState({
@@ -867,6 +870,53 @@ const Canvas = ({ location, nowData }) => {
     }
   };
 
+  const mergeRecommendations = (imageData, nutrientData, weatherData) => {
+    const scores = {};
+
+    const listFromImage = imageData?.recommendation?.suitable_crops || [];
+    const listFromNutrients = nutrientData?.plants_by_condition || [];
+    const listFromWeather =
+      weatherData?.rekomendasi_final_json?.map((item) => item.nama) || [];
+
+    const processList = (list, source) => {
+      list.forEach((plant) => {
+        const plantName = capitalizeFirstLetter(plant);
+        if (!scores[plantName]) {
+          scores[plantName] = { score: 0, sources: [] };
+        }
+        scores[plantName].score++;
+        if (!scores[plantName].sources.includes(source)) {
+          scores[plantName].sources.push(source);
+        }
+      });
+    };
+
+    processList(listFromNutrients, "Nutrisi Tanah");
+    processList(listFromWeather, "Prediksi Cuaca");
+    processList(listFromImage, "Visual Tanah");
+
+    const sortedRecs = Object.entries(scores)
+      .map(([plant, data]) => ({
+        plant,
+        score: data.score,
+        reasons: data.sources.join(", "),
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    return sortedRecs;
+  };
+
+  useEffect(() => {
+    if (result && resultData && predictionData) {
+      const finalRecommendation = mergeRecommendations(
+        result,
+        resultData,
+        predictionData
+      );
+      setUnifiedRecommendation(finalRecommendation);
+    }
+  }, [result, resultData, predictionData]);
+
   const captureFromCamera = useCallback(async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     const blob = await fetch(imageSrc).then((res) => res.blob());
@@ -1065,12 +1115,14 @@ const Canvas = ({ location, nowData }) => {
                         {resultData.soil_parameters.soil}
                       </p>
                       {predictionData?.jenis_lahan && (
-                        <p className="text-sm text-gray-600 mt-1">
-                          Tipe Lahan:{" "}
-                          <span className="font-medium">
+                        <>
+                          <p className="text-sm text-gray-600 mt-1 mb-1">
+                            Tipe Lahan:
+                          </p>
+                          <span className="text-sm font-medium text-gray-900">
                             {predictionData.jenis_lahan}
                           </span>
-                        </p>
+                        </>
                       )}
                     </div>
 
@@ -1197,82 +1249,155 @@ const Canvas = ({ location, nowData }) => {
                     </h3>
                   </div>
 
-                  <div className="space-y-2">
-                    {/* Scientific Classification */}
-                    {resultData &&
-                      resultData.plants_by_condition &&
-                      resultData.plants_by_condition.length != 0 && (
-                        <div className="border-l-4 border-purple-400 pl-2">
-                          <div className="flex items-center gap-1 mb-1">
-                            <Leaf className="w-3 h-3 text-purple-600" />
-                            <span className="text-xs font-medium text-purple-700">
-                              Klasifikasi Ilmiah
-                            </span>
+                  {(() => {
+                    const nonProduktifKeywords = [
+                      "Kampung",
+                      "Permukiman",
+                      "Industri",
+                      "Lapangan",
+                      "Perkantoran",
+                      "Jasa",
+                    ];
+
+                    const jenisLahan =
+                      predictionData?.jenis_lahan?.toLowerCase() || "";
+
+                    const isNonProduktif = nonProduktifKeywords.some(
+                      (keyword) => jenisLahan.includes(keyword.toLowerCase())
+                    );
+
+                    return !isNonProduktif ? (
+                      <div>
+                        {unifiedRecommendation.length > 0 && (
+                          <div>
+                            <div className="space-y-2 mb-4">
+                              {unifiedRecommendation
+                                .slice(0, 3)
+                                .map((rec, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative bg-gray-50 rounded-lg p-5 hover:bg-gray-100 transition-colors duration-200"
+                                  >
+                                    <div className="flex gap-4">
+                                      <div className="flex-shrink-0">
+                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                          <span className="text-sm font-medium text-gray-600">
+                                            {index + 1}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div className="flex-1">
+                                        <h4 className="font-semibold text-gray-900 mb-2">
+                                          {rec.plant}
+                                        </h4>
+                                        <p className="text-gray-600 text-sm leading-relaxed">
+                                          {rec.reasons}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* Subtle left border */}
+                                    <div className="absolute left-0 top-4 bottom-4 w-1 bg-gray-300 rounded-full"></div>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
-                          <div className="flex flex-wrap gap-1">
-                            {resultData.plants_by_condition.map(
-                              (crop, index) => (
-                                <span
-                                  key={index}
-                                  className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs"
-                                >
-                                  {capitalizeFirstLetter(crop)}
-                                </span>
-                              )
+                        )}
+
+                        <details className="bg-white p-3 rounded-lg border">
+                          <summary className="font-medium text-sm cursor-pointer">
+                            Lihat Rincian Analisis Sistem
+                          </summary>
+                          <div className="mt-4 space-y-4 pt-4 border-t">
+                            {resultData?.plants_by_condition?.length > 0 && (
+                              <div className="border-l-4 border-purple-400 pl-2">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <Leaf className="w-3 h-3 text-purple-600" />
+                                  <span className="text-xs font-medium text-purple-700">
+                                    Klasifikasi Ilmiah
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {resultData.plants_by_condition.map(
+                                    (crop, index) => (
+                                      <span
+                                        key={index}
+                                        className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs"
+                                      >
+                                        {capitalizeFirstLetter(crop)}
+                                      </span>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {predictionData?.rekomendasi_final_json && (
+                              <div className="border-l-4 border-blue-400 pl-2">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <Cloud className="w-3 h-3 text-blue-600" />
+                                  <span className="text-xs font-medium text-blue-700">
+                                    Prediksi Cuaca
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {predictionData.rekomendasi_final_json.map(
+                                    (crop, index) => (
+                                      <span
+                                        key={index}
+                                        className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
+                                      >
+                                        {capitalizeFirstLetter(crop.nama)}
+                                      </span>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {result?.recommendation && (
+                              <div className="border-l-4 border-green-400 pl-2">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <BarChart2 className="w-3 h-3 text-green-600" />
+                                  <span className="text-xs font-medium text-green-700">
+                                    Parameter Tanah
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {result.recommendation.suitable_crops.map(
+                                    (crop, index) => (
+                                      <span
+                                        key={index}
+                                        className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                                      >
+                                        {capitalizeFirstLetter(crop)}
+                                      </span>
+                                    )
+                                  )}
+                                </div>
+                              </div>
                             )}
                           </div>
-                        </div>
-                      )}
-
-                    {/* Weather Prediction */}
-                    {predictionData &&
-                      predictionData.rekomendasi_final_json && (
-                        <div className="border-l-4 border-blue-400 pl-2">
-                          <div className="flex items-center gap-1 mb-1">
-                            <Cloud className="w-3 h-3 text-blue-600" />
-                            <span className="text-xs font-medium text-blue-700">
-                              Prediksi Cuaca
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap gap-1">
-                            {predictionData.rekomendasi_final_json.map(
-                              (crop, index) => (
-                                <span
-                                  key={index}
-                                  className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
-                                >
-                                  {capitalizeFirstLetter(crop.nama)}
-                                </span>
-                              )
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                    {/* Soil-based */}
-                    {result && result.recommendation && (
-                      <div className="border-l-4 border-green-400 pl-2">
-                        <div className="flex items-center gap-1 mb-1">
-                          <BarChart2 className="w-3 h-3 text-green-600" />
-                          <span className="text-xs font-medium text-green-700">
-                            Parameter Tanah
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {result.recommendation.suitable_crops.map(
-                            (crop, index) => (
-                              <span
-                                key={index}
-                                className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
-                              >
-                                {capitalizeFirstLetter(crop)}
-                              </span>
-                            )
-                          )}
-                        </div>
+                        </details>
                       </div>
-                    )}
-                  </div>
+                    ) : (
+                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                <Sprout className="h-5 w-5 text-slate-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-slate-900 text-sm">Rekomendasi Belum Tersedia</h4>
+                <p className="text-xs text-slate-600 mt-1">
+                  Lahan ini terdeteksi sebagai lahan non-produktif. Silakan pilih lahan produktif untuk mendapatkan rekomendasi tanaman.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
