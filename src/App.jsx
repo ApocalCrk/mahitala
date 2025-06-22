@@ -133,7 +133,6 @@ function App() {
     requestPermissionAndRegisterToken();
 
     const unsubscribe = onMessageListener().then((payload) => {
-      console.log('Foreground message received:', payload);
       const { title, body } = payload.notification;
       toast.info(<div><strong>{title}</strong><br />{body}</div>);
     });

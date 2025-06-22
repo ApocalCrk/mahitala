@@ -13,10 +13,31 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const { title, body } = payload.notification;
+  const notificationTitle = payload?.notification?.title || "Notifikasi";
   const notificationOptions = {
-    body: body
+    body: payload?.notification?.body || "Ada informasi baru.",
+    icon: '/favicon.ico',
+    data: {
+      url: payload?.data?.url || '/'
+    }
   };
 
-  self.registration.showNotification(title, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
+      for (let client of windowClients) {
+        if (client.url === target && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(target);
+      }
+    })
+  );
 });
