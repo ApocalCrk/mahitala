@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "prompt",
+      registerType: "autoUpdate",
       includeAssets: [
         "favicon.ico",
         "robots.txt",
@@ -100,13 +100,8 @@ export default defineConfig({
           },
         ],
       },
-      // ✅ Tambahkan konfigurasi untuk swSrc
-      devOptions: {
-        enabled: true,
-        type: "module",
-      },
       srcDir: "src",
-      filename: "custom-sw.js", // custom service worker
+      filename: "custom-sw.js",
       strategies: "injectManifest",
     }),
   ],
