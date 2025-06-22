@@ -29,7 +29,7 @@ export const requestPermissionAndRegisterToken = async () => {
     }
 
     const registration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js?v=2"
+      "/firebase-messaging-sw.js?v=3"
     );
 
     const fcmToken = await getToken(messaging, {

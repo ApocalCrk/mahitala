@@ -164,8 +164,8 @@ function App() {
           </Routes>
         </div>
         
-        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
         <PwaHandler />
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       </UserProvider>
     </HelmetProvider>
   );
