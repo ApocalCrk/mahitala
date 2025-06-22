@@ -11,8 +11,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png", "assets/Mahitala_Grup_004.png"],
+      registerType: "prompt",
+      includeAssets: [
+        "favicon.ico",
+        "robots.txt",
+        "apple-touch-icon.png",
+        "assets/Mahitala_Grup_004.png",
+      ],
       manifest: {
         name: "Mahitala",
         short_name: "Mahitala",
@@ -35,7 +40,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        skipWaiting: true,
+        skipWaiting: false,
         clientsClaim: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
@@ -44,6 +49,10 @@ export default defineConfig({
             handler: "NetworkFirst",
             options: {
               cacheName: "html-cache",
+              networkTimeoutSeconds: 3,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
           },
           {
@@ -53,30 +62,40 @@ export default defineConfig({
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "asset-cache",
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
-            handler: "CacheFirst",
-            options: {
-              cacheName: "api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24,
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
           {
-            handler: 'CacheFirst',
-            urlPattern: ({ request }) => request.destination === 'image',
+            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
+            handler: "NetworkFirst", 
             options: {
-              cacheName: 'image-cache',
+              cacheName: "api-cache",
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            handler: "CacheFirst",
+            urlPattern: ({ request }) => request.destination === "image",
+            options: {
+              cacheName: "image-cache",
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
               },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
             },
-          }
+          },
         ],
       },
     }),

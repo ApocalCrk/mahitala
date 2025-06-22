@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
 const STORAGE_KEY = "mahitala-update-dismissed";
+const DISMISS_DURATION = 24 * 60 * 60 * 1000;
 
 function PwaHandler() {
   const {
@@ -15,26 +16,79 @@ function PwaHandler() {
     onRegisterError(error) {
       console.error("SW registration error:", error);
     },
+    onNeedRefresh() {
+      console.log("SW needs refresh - user will decide");
+    },
+    onOfflineReady() {
+      console.log("App ready to work offline");
+    },
   });
 
   const [showReloadPrompt, setShowReloadPrompt] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(STORAGE_KEY);
-    if (needRefresh && !dismissed) {
-      setShowReloadPrompt(true);
+    const dismissedData = localStorage.getItem(STORAGE_KEY);
+    
+    if (needRefresh) {
+      if (dismissedData) {
+        try {
+          const { timestamp } = JSON.parse(dismissedData);
+          const now = Date.now();
+
+          if (now - timestamp > DISMISS_DURATION) {
+            localStorage.removeItem(STORAGE_KEY);
+            setShowReloadPrompt(true);
+          }
+        } catch {
+          localStorage.removeItem(STORAGE_KEY);
+          setShowReloadPrompt(true);
+        }
+      } else {
+        setShowReloadPrompt(true);
+      }
     }
   }, [needRefresh]);
 
-  const handleReload = () => {
+  const handleReload = async () => {
+    if (isUpdating) return;
+    
+    setIsUpdating(true);
     localStorage.removeItem(STORAGE_KEY);
-    updateServiceWorker(true);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      updateServiceWorker(true);
+      setIsUpdating(true);
+      setShowReloadPrompt(false);
+    } catch (error) {
+      console.error("Update failed:", error);
+      setIsUpdating(false);
+    }
   };
 
   const handleDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, "true");
+    const dismissData = {
+      timestamp: Date.now(),
+      dismissed: true
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissData));
     setShowReloadPrompt(false);
   };
+
+  useEffect(() => {
+    let timeoutId;
+    
+    if (needRefresh && showReloadPrompt) {
+      timeoutId = setTimeout(() => {
+        console.log("Auto dismissing update prompt");
+      }, 30000);
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [needRefresh, showReloadPrompt]);
 
   if (!showReloadPrompt) return null;
 
@@ -45,7 +99,8 @@ function PwaHandler() {
 
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+          disabled={isUpdating}
+          className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 group disabled:opacity-50"
         >
           <X className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
         </button>
@@ -56,7 +111,9 @@ function PwaHandler() {
           </div>
 
           <div className="flex-1 pt-0.5">
-            <h3 className="text-gray-900 font-semibold text-sm mb-1">Pembaruan Tersedia</h3>
+            <h3 className="text-gray-900 font-semibold text-sm mb-1">
+              Pembaruan Tersedia
+            </h3>
             <p className="text-gray-600 text-sm leading-relaxed">
               Versi terbaru aplikasi dengan fitur dan perbaikan baru telah tersedia.
             </p>
@@ -66,14 +123,23 @@ function PwaHandler() {
         <div className="mt-4 flex gap-2">
           <button
             onClick={handleReload}
-            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-green-600/25 hover:shadow-green-600/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+            disabled={isUpdating}
+            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg shadow-green-600/25 hover:shadow-green-600/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
-            <Download className="w-4 h-4" />
-            Perbarui Sekarang
+            { isUpdating ?
+              <span className="animate-spin">
+                <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+              </span>
+              :
+
+            <Download className='w-4 h-4' />
+            }
+            {isUpdating ? 'Memperbarui...' : 'Perbarui Sekarang'}
           </button>
           <button
             onClick={handleDismiss}
-            className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={isUpdating}
+            className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100"
           >
             Nanti
           </button>
