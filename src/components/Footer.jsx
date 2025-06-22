@@ -249,6 +249,25 @@ const Footer = () => {
               >
                 BMKG
               </a>
+              ,
+              <a
+                href="https://soilgrids.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#6C7D41] hover:underline"
+              >
+                SoilGrids
+              </a>
+              , and{" "}
+              <a
+                href="https://insights.planet.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#6C7D41] hover:underline"
+              >
+                Planet Labs
+              </a>
+              .
             </p>
           </div>
         </div>

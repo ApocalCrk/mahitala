@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import ForecastDashboard from "./pages/ForecastDashboard";
 import About from "./pages/About";
@@ -19,7 +19,10 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { UserProvider } from "./utils/userContext";
 import ProtectedRoute from "./utils/middleware";
-import { requestPermissionAndRegisterToken, onMessageListener } from "./utils/firebase";
+import {
+  requestPermissionAndRegisterToken,
+  onMessageListener,
+} from "./utils/firebase";
 import PwaHandler from "./PwaHandler";
 import DiskusiTerakhir from "./components/forum/lastdiscussion/DiskusiTerakhir";
 
@@ -35,7 +38,8 @@ const routesMeta = {
     title: "Mahitala - Peta Interaktif",
     description:
       "Peta interaktif Mahitala adalah fitur yang memungkinkan pengguna untuk melihat informasi cuaca dan tanaman di lokasi mereka. Dengan peta ini, pengguna dapat mengetahui kondisi cuaca saat ini, prediksi cuaca, serta rekomendasi tanaman yang cocok untuk ditanam di lokasi mereka.",
-    keywords: "Mahitala Peta Interaktif, peta cuaca, peta tanaman, peta pertanian, peta agrikultur, peta interaktif, peta lokasi, peta prediksi cuaca, peta rekomendasi tanaman, peta informasi pertanian, peta petani, peta agrikultur Indonesia",
+    keywords:
+      "Mahitala Peta Interaktif, peta cuaca, peta tanaman, peta pertanian, peta agrikultur, peta interaktif, peta lokasi, peta prediksi cuaca, peta rekomendasi tanaman, peta informasi pertanian, peta petani, peta agrikultur Indonesia",
   },
   "/tentang-kami": {
     title: "Mahitala - Tentang Kami",
@@ -99,8 +103,8 @@ const routesMeta = {
       "Cari diskusi di forum Mahitala untuk menemukan topik-topik menarik seputar pertanian. Gunakan fitur pencarian untuk menemukan diskusi yang relevan dengan minat Anda.",
     keywords:
       "Mahitala Cari Diskusi, forum diskusi pertanian, cari diskusi pertanian, komunitas petani, diskusi pertanian, informasi pertanian, pengetahuan pertanian, pertanian Indonesia, komunitas pertanian, diskusi tanaman, diskusi hama, diskusi penyakit tanaman, diskusi teknologi pertanian",
-  }
-}
+  },
+};
 
 const MainLayout = () => {
   return (
@@ -135,11 +139,52 @@ function App() {
     const unsubscribe = onMessageListener().then((payload) => {
       console.log("Message received. ", payload);
       const { title, body } = payload.notification;
-      toast.info(<div><strong>{title}</strong><br />{body}</div>);
+
+      toast.info(
+        <div
+          style={{
+            fontFamily: "system-ui, -apple-system, sans-serif",
+            padding: "4px 0",
+          }}
+        >
+          <div
+            style={{
+              fontWeight: "600",
+              fontSize: "15px",
+              color: "#111827",
+              marginBottom: "6px",
+              lineHeight: "1.3",
+            }}
+          >
+            {title}
+          </div>
+          <div
+            style={{
+              fontSize: "14px",
+              color: "#4b5563",
+              lineHeight: "1.4",
+            }}
+          >
+            {body}
+          </div>
+        </div>,
+        {
+          style: {
+            background: "#ffffff",
+            border: "1px solid #d1d5db",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            padding: "12px 16px",
+          },
+          progressStyle: {
+            background: "#3b82f6",
+          },
+        }
+      );
     });
 
     return () => {
-      unsubscribe.then(unsub => unsub()).catch(err => console.error(err));
+      unsubscribe.then((unsub) => unsub()).catch((err) => console.error(err));
     };
   }, []);
 
@@ -149,24 +194,76 @@ function App() {
         <div className="flex flex-col min-h-screen">
           <Routes>
             <Route element={<MainLayout />}>
-              <Route path="/tentang-kami" element={<PageWrapper routePath="/tentang-kami"><About /></PageWrapper>} />
-              <Route path="/forum" element={<PageWrapper routePath="/forum"><ForumDiskusi /></PageWrapper>} />
-              <Route path="/forum/buat-diskusi" element={<ProtectedRoute><BuatDiskusi /></ProtectedRoute>} />
-              <Route path="/forum/diskusi-terakhir" element={<ProtectedRoute><DiskusiTerakhir /></ProtectedRoute>} />
+              <Route
+                path="/tentang-kami"
+                element={
+                  <PageWrapper routePath="/tentang-kami">
+                    <About />
+                  </PageWrapper>
+                }
+              />
+              <Route
+                path="/forum"
+                element={
+                  <PageWrapper routePath="/forum">
+                    <ForumDiskusi />
+                  </PageWrapper>
+                }
+              />
+              <Route
+                path="/forum/buat-diskusi"
+                element={
+                  <ProtectedRoute>
+                    <BuatDiskusi />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/forum/diskusi-terakhir"
+                element={
+                  <ProtectedRoute>
+                    <DiskusiTerakhir />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/forum/diskusi/:id" element={<DetailDiskusi />} />
               <Route path="/forum/kategori" element={<KategoriDiskusi />} />
               <Route path="/forum/kategori/:id" element={<DetailKategori />} />
-              <Route path="/forum/diskusi-terbaru" element={<DiskusiTerbaruLayout />} />
-              <Route path="/forum/cari/:keyword" element={<CariDiskusiLayout />} />
+              <Route
+                path="/forum/diskusi-terbaru"
+                element={<DiskusiTerbaruLayout />}
+              />
+              <Route
+                path="/forum/cari/:keyword"
+                element={<CariDiskusiLayout />}
+              />
             </Route>
 
-            <Route path="/" element={<PageWrapper routePath="/"><ForecastDashboard /></PageWrapper>} />
-            <Route path="/peta" element={<PageWrapper routePath="/peta"><Peta /></PageWrapper>} />
+            <Route
+              path="/"
+              element={
+                <PageWrapper routePath="/">
+                  <ForecastDashboard />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/peta"
+              element={
+                <PageWrapper routePath="/peta">
+                  <Peta />
+                </PageWrapper>
+              }
+            />
           </Routes>
         </div>
-        
+
         <PwaHandler />
-        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+        />
       </UserProvider>
     </HelmetProvider>
   );
