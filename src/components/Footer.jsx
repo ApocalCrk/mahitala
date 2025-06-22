@@ -256,7 +256,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="text-[#6C7D41] hover:underline"
               >
-                SoilGrids
+                {" "}SoilGrids
               </a>
               , and{" "}
               <a

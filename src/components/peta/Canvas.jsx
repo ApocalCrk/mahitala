@@ -1028,19 +1028,6 @@ const Canvas = ({ location, nowData }) => {
               placeholder="Silahkan Foto Tanah"
               value={soilType}
               onChange={(e) => setSoilType(e.target.value)}
-              onClick={() => {
-                if (confirm) {
-                  setOpen(true);
-                } else {
-                  Swal.fire({
-                    icon: "warning",
-                    title: "Perhatian",
-                    text: "Silakan kunci lahan terlebih dahulu sebelum mengambil gambar.",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-                }
-              }}
             />
             <button
               onClick={() => {
