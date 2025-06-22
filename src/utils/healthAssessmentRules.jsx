@@ -1,11 +1,9 @@
 export const healthAssessmentRules = {
-  // Grains
   padi: {
     leafColorWeight: 0.35,
     stemConditionWeight: 0.15,
     leafConditionWeight: 0.35,
     growthWeight: 0.15,
-
     thresholds: {
       good: 0.7,
       attention: 0.4,
@@ -16,56 +14,19 @@ export const healthAssessmentRules = {
     stemConditionWeight: 0.3,
     leafConditionWeight: 0.2,
     growthWeight: 0.1,
-
     thresholds: {
       good: 0.7,
       attention: 0.4,
     },
   },
-
-  // Legumes/Beans
-  "kacang arab": {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.25,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.15,
-
-    thresholds: {
-      good: 0.65,
-      attention: 0.35,
-    },
-  },
-  "kacang merah": {
+  jeruk: {
     leafColorWeight: 0.35,
-    stemConditionWeight: 0.2,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.15,
-
-    thresholds: {
-      good: 0.65,
-      attention: 0.35,
-    },
-  },
-  "kacang gude": {
-    leafColorWeight: 0.3,
     stemConditionWeight: 0.25,
     leafConditionWeight: 0.25,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.65,
-      attention: 0.4,
-    },
-  },
-  "kacang ngengat": {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.2,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.2,
-
+    growthWeight: 0.15,
     thresholds: {
       good: 0.7,
-      attention: 0.4,
+      attention: 0.45,
     },
   },
   "kacang hijau": {
@@ -73,53 +34,16 @@ export const healthAssessmentRules = {
     stemConditionWeight: 0.2,
     leafConditionWeight: 0.25,
     growthWeight: 0.2,
-
     thresholds: {
       good: 0.7,
       attention: 0.4,
     },
   },
-  "kacang hitam": {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.2,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.65,
-      attention: 0.4,
-    },
-  },
-  "kacang lentil": {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.2,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.65,
-      attention: 0.4,
-    },
-  },
-
-  // Fruits
-  delima: {
-    leafColorWeight: 0.3,
+  kopi: {
+    leafColorWeight: 0.35,
     stemConditionWeight: 0.25,
     leafConditionWeight: 0.25,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.4,
-    },
-  },
-  pisang: {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.3,
-    leafConditionWeight: 0.25,
     growthWeight: 0.15,
-
     thresholds: {
       good: 0.7,
       attention: 0.45,
@@ -130,62 +54,6 @@ export const healthAssessmentRules = {
     stemConditionWeight: 0.3,
     leafConditionWeight: 0.25,
     growthWeight: 0.15,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.45,
-    },
-  },
-  anggur: {
-    leafColorWeight: 0.35,
-    stemConditionWeight: 0.3,
-    leafConditionWeight: 0.2,
-    growthWeight: 0.15,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.4,
-    },
-  },
-  semangka: {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.15,
-    leafConditionWeight: 0.35,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.4,
-    },
-  },
-  blewah: {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.15,
-    leafConditionWeight: 0.35,
-    growthWeight: 0.2,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.4,
-    },
-  },
-  apel: {
-    leafColorWeight: 0.35,
-    stemConditionWeight: 0.25,
-    leafConditionWeight: 0.25,
-    growthWeight: 0.15,
-
-    thresholds: {
-      good: 0.7,
-      attention: 0.45,
-    },
-  },
-  jeruk: {
-    leafColorWeight: 0.35,
-    stemConditionWeight: 0.25,
-    leafConditionWeight: 0.25,
-    growthWeight: 0.15,
-
     thresholds: {
       good: 0.7,
       attention: 0.45,
@@ -196,56 +64,140 @@ export const healthAssessmentRules = {
     stemConditionWeight: 0.15,
     leafConditionWeight: 0.3,
     growthWeight: 0.25,
-
     thresholds: {
       good: 0.7,
       attention: 0.4,
     },
   },
-  kelapa: {
-    leafColorWeight: 0.25,
-    stemConditionWeight: 0.35,
+  pisang: {
+    leafColorWeight: 0.3,
+    stemConditionWeight: 0.3,
     leafConditionWeight: 0.25,
     growthWeight: 0.15,
-
     thresholds: {
       good: 0.7,
       attention: 0.45,
     },
   },
-
-  // Commercial crops
-  kapas: {
-    leafColorWeight: 0.35,
-    stemConditionWeight: 0.2,
-    leafConditionWeight: 0.3,
-    growthWeight: 0.15,
-
+  semangka: {
+    leafColorWeight: 0.3,
+    stemConditionWeight: 0.15,
+    leafConditionWeight: 0.35,
+    growthWeight: 0.2,
     thresholds: {
       good: 0.7,
       attention: 0.4,
     },
   },
-  rami: {
-    leafColorWeight: 0.3,
-    stemConditionWeight: 0.3,
+
+  "bawang merah": {
+    leafColorWeight: 0.35,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.25,
+    growthWeight: 0.2,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  "bawang putih": {
+    leafColorWeight: 0.35,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.25,
+    growthWeight: 0.2,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  cabai: {
+    leafColorWeight: 0.35,
+    stemConditionWeight: 0.25,
     leafConditionWeight: 0.25,
     growthWeight: 0.15,
-
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  "daun bawang": {
+    leafColorWeight: 0.4,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.3,
+    growthWeight: 0.1,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  "kacang kedelai": {
+    leafColorWeight: 0.3,
+    stemConditionWeight: 0.25,
+    leafConditionWeight: 0.3,
+    growthWeight: 0.15,
     thresholds: {
       good: 0.65,
       attention: 0.4,
     },
   },
-  kopi: {
-    leafColorWeight: 0.35,
+  "kacang tanah": {
+    leafColorWeight: 0.3,
     stemConditionWeight: 0.25,
-    leafConditionWeight: 0.25,
+    leafConditionWeight: 0.3,
     growthWeight: 0.15,
-
+    thresholds: {
+      good: 0.65,
+      attention: 0.4,
+    },
+  },
+  kubis: {
+    leafColorWeight: 0.4,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.3,
+    growthWeight: 0.1,
     thresholds: {
       good: 0.7,
-      attention: 0.45,
+      attention: 0.4,
+    },
+  },
+  melon: {
+    leafColorWeight: 0.3,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.35,
+    growthWeight: 0.15,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  singkong: {
+    leafColorWeight: 0.25,
+    stemConditionWeight: 0.3,
+    leafConditionWeight: 0.25,
+    growthWeight: 0.2,
+    thresholds: {
+      good: 0.65,
+      attention: 0.4,
+    },
+  },
+  teh: {
+    leafColorWeight: 0.4,
+    stemConditionWeight: 0.2,
+    leafConditionWeight: 0.25,
+    growthWeight: 0.15,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
+    },
+  },
+  "ubi jalar": {
+    leafColorWeight: 0.3,
+    stemConditionWeight: 0.25,
+    leafConditionWeight: 0.25,
+    growthWeight: 0.2,
+    thresholds: {
+      good: 0.7,
+      attention: 0.4,
     },
   },
 };

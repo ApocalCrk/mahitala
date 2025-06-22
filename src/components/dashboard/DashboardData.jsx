@@ -20,7 +20,7 @@ function DashboardData() {
   const [activeTab, setActiveTab] = useState("lahan");
   const [dataLahan, setDataLahan] = useState([]);
   const [healthCheckData, setHealthCheckData] = useState({
-    plant: "jagung",
+    plant: "padi",
     leafColor: "",
     stemCondition: "",
     leafCondition: [],
@@ -118,7 +118,7 @@ function DashboardData() {
   const assessHealth = () => {
     const plantType = healthCheckData.plant;
     const rules =
-      healthAssessmentRules[plantType] || healthAssessmentRules.jagung;
+      healthAssessmentRules[plantType] || healthAssessmentRules.padi;
 
     // Calculate score for leaf color
     const leafColorScore = healthCheckData.leafColor

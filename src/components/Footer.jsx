@@ -249,7 +249,7 @@ const Footer = () => {
               >
                 BMKG
               </a>
-              ,
+              , 
               <a
                 href="https://soilgrids.org"
                 target="_blank"
