@@ -1365,6 +1365,7 @@ const Canvas = ({ location, nowData }) => {
             </label>
             <input
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:border-[#6C7D41] focus:ring-1 focus:ring-[#6C7D41] focus:outline-none appearance-none"
               style={{
                 WebkitAppearance: "none",
@@ -1624,7 +1625,7 @@ const Canvas = ({ location, nowData }) => {
         {/* Desktop sidebar */}
         {!isMobile && panelDesktop === "expanded" && (
           <m.div
-            className="z-[999] bg-white p-5 rounded-xl shadow-md w-[500px] border border-gray-200 h-screen"
+            className="z-[999] bg-white p-5 rounded-xl shadow-md w-[500px] border border-gray-200 h-screen overflow-y-auto"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
