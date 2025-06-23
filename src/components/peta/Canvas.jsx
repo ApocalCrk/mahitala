@@ -891,9 +891,9 @@ const Canvas = ({ location, nowData }) => {
       });
     };
 
+    processList(listFromImage, "Visual Tanah");
     processList(listFromNutrients, "Nutrisi Tanah");
     processList(listFromWeather, "Prediksi Cuaca");
-    processList(listFromImage, "Visual Tanah");
 
     const sortedRecs = Object.entries(scores)
       .map(([plant, data]) => ({
