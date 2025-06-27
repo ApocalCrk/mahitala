@@ -1256,7 +1256,13 @@ const Canvas = ({ location, nowData }) => {
                       "Industri",
                       "Lapangan",
                       "Perkantoran",
+                      "Perumahan",
+                      "Sekolah",
+                      "Pabrik",
                       "Jasa",
+                      "Perdagangan",
+                      "Pertokoan",
+                      "Kuburan"
                     ];
 
                     const jenisLahan =
@@ -1276,28 +1282,27 @@ const Canvas = ({ location, nowData }) => {
                                 .map((rec, index) => (
                                   <div
                                     key={index}
-                                    className="relative bg-gray-50 rounded-lg p-5 hover:bg-gray-100 transition-colors duration-200"
+                                    className="relative bg-green-50 rounded-lg p-5 hover:bg-green-100 transition-colors duration-200"
                                   >
                                     <div className="flex gap-4">
                                       <div className="flex-shrink-0">
-                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                          <span className="text-sm font-medium text-gray-600">
+                                        <div className="w-8 h-8 bg-green-200 rounded-full flex items-center justify-center">
+                                          <span className="text-sm font-medium text-green-600">
                                             {index + 1}
                                           </span>
                                         </div>
                                       </div>
                                       <div className="flex-1">
-                                        <h4 className="font-semibold text-gray-900 mb-2">
+                                        <h4 className="font-semibold text-green-900 mb-2">
                                           {rec.plant}
                                         </h4>
-                                        <p className="text-gray-600 text-sm leading-relaxed">
+                                        <p className="text-green-600 text-sm leading-relaxed">
                                           {rec.reasons}
                                         </p>
                                       </div>
                                     </div>
 
-                                    {/* Subtle left border */}
-                                    <div className="absolute left-0 top-4 bottom-4 w-1 bg-gray-300 rounded-full"></div>
+                                    <div className="absolute left-0 top-4 bottom-4 w-1 bg-green-300 rounded-full"></div>
                                   </div>
                                 ))}
                             </div>
