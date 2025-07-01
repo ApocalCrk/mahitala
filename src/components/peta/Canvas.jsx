@@ -1262,7 +1262,7 @@ const Canvas = ({ location, nowData }) => {
                       "Jasa",
                       "Perdagangan",
                       "Pertokoan",
-                      "Kuburan"
+                      "Kuburan",
                     ];
 
                     const jenisLahan =
@@ -1386,20 +1386,24 @@ const Canvas = ({ location, nowData }) => {
                       </div>
                     ) : (
                       <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                <Sprout className="h-5 w-5 text-slate-600" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-slate-900 text-sm">Rekomendasi Belum Tersedia</h4>
-                <p className="text-xs text-slate-600 mt-1">
-                  Lahan ini terdeteksi sebagai lahan non-produktif. Silakan pilih lahan produktif untuk mendapatkan rekomendasi tanaman.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                              <Sprout className="h-5 w-5 text-slate-600" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-slate-900 text-sm">
+                                Rekomendasi Belum Tersedia
+                              </h4>
+                              <p className="text-xs text-slate-600 mt-1">
+                                Lahan ini terdeteksi sebagai lahan
+                                non-produktif. Silakan pilih lahan produktif
+                                untuk mendapatkan rekomendasi tanaman.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     );
                   })()}
                 </div>
@@ -3086,6 +3090,9 @@ const Canvas = ({ location, nowData }) => {
 
                     <p className="mt-3 text-green-800 font-medium">
                       🌱 Tanaman yang cocok:{" "}
+                      {result.recommendation.suitable_crops.length === 0
+                        ? result.recommendation.reason
+                        : ""}
                       {result.recommendation.suitable_crops.map(
                         (crop, index) => (
                           <span key={index}>
