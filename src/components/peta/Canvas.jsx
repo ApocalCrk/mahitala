@@ -1301,7 +1301,7 @@ const Canvas = ({ location, nowData }) => {
                                         </p>
                                       </div>
                                     </div>
-                                    <div className="absolute left-0 top-4 bottom-4 w-1 text-green-600 rounded-full"></div>
+                                    <div className="absolute left-0 top-4 bottom-4 w-1 bg-green-600 rounded-full"></div>
                                   </div>
                                 ))}
                             </div>
@@ -1359,7 +1359,7 @@ const Canvas = ({ location, nowData }) => {
                               </div>
                             )}
 
-                            {result?.recommendation && (
+                            {result?.recommendation.length > 0 && (
                               <div className="border-l-4 border-green-400 pl-2">
                                 <div className="flex items-center gap-1 mb-1">
                                   <BarChart2 className="w-3 h-3 text-green-600" />
