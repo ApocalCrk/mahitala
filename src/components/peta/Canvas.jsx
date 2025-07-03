@@ -1359,7 +1359,8 @@ const Canvas = ({ location, nowData }) => {
                               </div>
                             )}
 
-                            {result?.recommendation.length > 0 && (
+                            {result?.recommendation && (
+                              result.recommendation.suitable_crops.length > 0 && (
                               <div className="border-l-4 border-green-400 pl-2">
                                 <div className="flex items-center gap-1 mb-1">
                                   <BarChart2 className="w-3 h-3 text-green-600" />
@@ -1380,6 +1381,7 @@ const Canvas = ({ location, nowData }) => {
                                   )}
                                 </div>
                               </div>
+                              )
                             )}
                           </div>
                         </details>
