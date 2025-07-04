@@ -19,7 +19,7 @@ const DiskusiTrending = ({ popularDiscussions }) => {
             )}
             {popularDiscussions.map((discussion) => (
               <ItemDiskusiTrending
-                key={discussion.id}
+                key={discussion.id_diskusi}
                 discussion={discussion}
               />
             ))}

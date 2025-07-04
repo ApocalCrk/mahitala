@@ -11,7 +11,7 @@ const ListDiskusiDicari = ({ displayedDiscussions }) => {
       ) : (
         <div className="p-8">
           <p className="text-gray-500 text-center">
-            Tidak ada diskusi yang ditemukan dalam periode ini.
+            Tidak ada diskusi yang ditemukan dengan kriteria pencarian ini.
           </p>
         </div>
       )}
