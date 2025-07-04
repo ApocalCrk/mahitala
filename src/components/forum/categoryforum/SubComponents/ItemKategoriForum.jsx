@@ -12,7 +12,7 @@ const ItemKategoriForum = ({ category }) => {
       <div className="absolute bottom-4 left-4 right-4 flex flex-col items-center transition-transform duration-700 ease-out group-hover:scale-110 group-hover:transform-gpu">
         <div className="relative w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg transform transition-transform duration-500 group-hover:scale-125 group-hover:translate-y-[-10px] ease-in-out group-hover:ease-bounce">
           <h2 className="text-center text-sm font-semibold text-[#6C7D41] px-2">
-            {category.nama}
+            {category.nama_kategori}
           </h2>
         </div>
         <p className="mt-2 text-xs text-gray-300 opacity-90 group-hover:text-white group-hover:opacity-100 transition-opacity duration-300">

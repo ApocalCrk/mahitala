@@ -17,7 +17,7 @@ const ItemKategori = ({ item }) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
       <div className="absolute bottom-4 left-4 text-white">
-        <h2 className="text-lg font-semibold">{item.nama}</h2>
+        <h2 className="text-lg font-semibold">{item.nama_kategori}</h2>
         <p className="text-sm">
           {item.jumlah_digunakan} Diskusi
         </p>

@@ -389,11 +389,11 @@ const Canvas = ({ location, nowData }) => {
   };
 
   const EditLahan = (index) => {
-    const selectedPolygon = polygons[index];
     setConfirm(true);
+    const selectedPolygon = polygons[index];
     setFieldName(selectedPolygon.fieldName);
     setSoilType(selectedPolygon.soilType);
-    setCropId(selectedPolygon.cropId);
+    setCropId(selectedPolygon.cropId.toString());
     setCropDate(selectedPolygon.cropDate.split("T")[0]);
     setEstimatedTime(selectedPolygon.estimated_time.split("T")[0]);
     setPolygonPoints(selectedPolygon.coords);
@@ -1360,30 +1360,30 @@ const Canvas = ({ location, nowData }) => {
                               </div>
                             )}
 
-                            {result?.recommendation && (
-                              result.recommendation.suitable_crops.length > 0 && (
-                              <div className="border-l-4 border-green-400 pl-2">
-                                <div className="flex items-center gap-1 mb-1">
-                                  <BarChart2 className="w-3 h-3 text-green-600" />
-                                  <span className="text-xs font-medium text-green-700">
-                                    Parameter Tanah
-                                  </span>
+                            {result?.recommendation &&
+                              result.recommendation.suitable_crops.length >
+                                0 && (
+                                <div className="border-l-4 border-green-400 pl-2">
+                                  <div className="flex items-center gap-1 mb-1">
+                                    <BarChart2 className="w-3 h-3 text-green-600" />
+                                    <span className="text-xs font-medium text-green-700">
+                                      Parameter Tanah
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-wrap gap-1">
+                                    {result.recommendation.suitable_crops.map(
+                                      (crop, index) => (
+                                        <span
+                                          key={index}
+                                          className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                                        >
+                                          {capitalizeFirstLetter(crop)}
+                                        </span>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap gap-1">
-                                  {result.recommendation.suitable_crops.map(
-                                    (crop, index) => (
-                                      <span
-                                        key={index}
-                                        className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
-                                      >
-                                        {capitalizeFirstLetter(crop)}
-                                      </span>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                              )
-                            )}
+                              )}
                           </div>
                         </details>
                       </div>
@@ -1843,6 +1843,9 @@ const Canvas = ({ location, nowData }) => {
                         setCropId("");
                         setCropDate("");
                         setEstimatedTime("");
+                        setResultData(null);
+                        setResult(null);
+                        setPreview(null);
                         setPolygonPoints([]);
                       }}
                     >
@@ -1896,7 +1899,16 @@ const Canvas = ({ location, nowData }) => {
               </button>
               <button
                 className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md w-full text-left transition-colors"
-                onClick={() => EditLahan(contextMenu.polygonIndex)}
+                onClick={() => {
+                  mapRef.current.setView(
+                    calculateCentroid(
+                      polygons[contextMenu.polygonIndex].coords
+                    ),
+                    18,
+                    { animate: true, duration: 0.5 }
+                  );
+                  EditLahan(contextMenu.polygonIndex);
+                }}
                 onContextMenu={(e) => e.preventDefault()}
               >
                 <ArrowLeft className="h-4 w-4" /> Edit

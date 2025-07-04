@@ -13,7 +13,7 @@ const KategoriForum = ({ searchTerm }) => {
   const itemsPerPage = 8;
 
   const filteredCategories = categories.filter((category) =>
-    category.nama.toLowerCase().includes(searchTerm.toLowerCase())
+    category.nama_kategori.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
