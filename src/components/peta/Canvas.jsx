@@ -390,9 +390,10 @@ const Canvas = ({ location, nowData }) => {
 
   const EditLahan = (index) => {
     const selectedPolygon = polygons[index];
+    setConfirm(true);
     setFieldName(selectedPolygon.fieldName);
     setSoilType(selectedPolygon.soilType);
-    setCropId(selectedPolygon.cropId.toString());
+    setCropId(selectedPolygon.cropId);
     setCropDate(selectedPolygon.cropDate.split("T")[0]);
     setEstimatedTime(selectedPolygon.estimated_time.split("T")[0]);
     setPolygonPoints(selectedPolygon.coords);
