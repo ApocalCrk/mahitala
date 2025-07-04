@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import ItemDiskusiTeratas from "./SubComponents/ItemDiskusiTeratas";
 
 import { getForumTeratas } from "../../hooks/forum/getForum";
@@ -25,6 +25,8 @@ const DiskusiTeratas = () => {
     if (discussions.length === 0) {
       setCurrentPage(0);
       setIsPaginated(false);
+    } else if (currentPage === 0) {
+      setCurrentPage(1);
     }
   }, [discussions, currentPage, totalPages]);
 
