@@ -1822,7 +1822,7 @@ const Canvas = ({ location, nowData }) => {
                         />
                         <path d="M10 7a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1H8a1 1 0 110-2h1V8a1 1 0 011-1z" />
                       </svg>
-                      Tambah Lahan
+                      {type === "add" ? "Tambah Lahan" : "Edit Lahan"}
                     </span>
                     {activeSection === "field" && (
                       <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#6C7D41] rounded-t-lg transform transition-transform duration-300"></span>
