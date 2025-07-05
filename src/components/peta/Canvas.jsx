@@ -1603,6 +1603,11 @@ const Canvas = ({ location, nowData }) => {
                       className="text-xs bg-blue-100 text-blue-600 py-1 px-3 rounded-full mr-2"
                       onClick={(e) => {
                         e.stopPropagation();
+                        mapRef.current.setView(
+                          calculateCentroid(poly.coords),
+                          18,
+                          { animate: true, duration: 0.5 }
+                        );
                         setType("edit");
                         EditLahan(index);
                       }}
