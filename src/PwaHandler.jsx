@@ -8,10 +8,10 @@ const DISMISS_DURATION = 24 * 60 * 60 * 1000;
 function PwaHandler() {
   const { needRefresh, updateServiceWorker } = useRegisterSW({
     onRegistered(r) {
-      console.log("Service Worker Registered", r);
+      console.log("Service Worker Registered");
     },
     onRegisterError(error) {
-      console.error("SW registration error:", error);
+      console.error("SW registration error");
     },
     onNeedRefresh() {
       console.log("SW needs refresh - user will decide");

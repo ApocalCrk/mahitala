@@ -90,6 +90,9 @@ registerRoute(
   ({ request }) => request.destination === 'image',
   new CacheFirst({
     cacheName: 'image-cache',
+    matchCallback: ({ url }) => {
+      return !url.href.includes('tile.openstreetmap.org') && !url.href.includes('a.tile.openstreetmap.org') && !url.href.includes('c.tile.openstreetmap.org');
+    },
     plugins: [
       new CacheableResponsePlugin({
         statuses: [0, 200],
