@@ -171,7 +171,14 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                                 <p
                                   className={`text-lg font-bold ${textAccent}`}
                                 >
-                                  
+                                  {item.satuan && item.hari_ini
+                                    ? item.satuan
+                                        .toLowerCase()
+                                        .includes("rp") ||
+                                      item.hari_ini.toString().includes("Rp")
+                                      ? formatCurrency(item.hari_ini)
+                                      : formatNumber(item.hari_ini)
+                                    : "Data tidak tersedia"}
                                 </p>
                               </div>
 
@@ -255,12 +262,19 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                             <div className="bg-gray-50 rounded p-1.5">
                               <p className="text-gray-500 text-xs">Kemarin</p>
                               <p className="font-semibold text-gray-700">
+                                {item.satuan && item.kemarin
+                                  ? item.satuan.toLowerCase().includes("rp") ||
+                                    item.kemarin.toString().includes("Rp")
+                                    ? formatCurrency(item.kemarin)
+                                    : formatNumber(item.kemarin)
+                                  : "Data tidak tersedia"}
                               </p>
                             </div>
                             <div className={`${bgAccent} rounded p-1.5`}>
                               <p className="text-gray-500 text-xs">Selisih</p>
                               <p className={`font-semibold ${textAccent}`}>
-                                Rp. {item.gap > 0 ? "+" : ""} {formatNumber(item.gap)}
+                                Rp. {item.gap > 0 ? "+" : ""}{" "}
+                                {formatNumber(item.gap)}
                               </p>
                             </div>
                           </div>
@@ -334,12 +348,12 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
           </div>
         )}
       </div>
-        <div className="p-4 text-xs text-gray-500 bg-gray-50 rounded-b-xl">
+      <div className="p-4 text-xs text-gray-500 bg-gray-50 rounded-b-xl">
         <p>
-          Data harga komoditas ini diperoleh dari Badan Pangan Nasional (BPN) dan
-          diperbarui setiap hari.
+          Data harga komoditas ini diperoleh dari Badan Pangan Nasional (BPN)
+          dan diperbarui setiap hari.
         </p>
-        </div>
+      </div>
     </div>
   );
 };
