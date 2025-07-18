@@ -255,10 +255,6 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                             <div className="bg-gray-50 rounded p-1.5">
                               <p className="text-gray-500 text-xs">Kemarin</p>
                               <p className="font-semibold text-gray-700">
-                                {item.satuan.toLowerCase().includes("rp") ||
-                                item.kemarin.toString().includes("Rp")
-                                  ? formatCurrency(item.kemarin)
-                                  : formatNumber(item.kemarin)}
                               </p>
                             </div>
                             <div className={`${bgAccent} rounded p-1.5`}>
