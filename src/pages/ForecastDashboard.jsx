@@ -69,8 +69,8 @@ const ForecastDashboard = () => {
         const [forecastRes, nowRes, hargaRes, mingguanRes] = await Promise.all([
           getDataForecast({ location: locationDetails }),
           getNowForecast({ location: locationDetails }),
-          getHargaKomoditas({ location: locationDetails }),
           getForecastMingguan({ location: locationDetails }),
+          getHargaKomoditas(),
         ]);
 
         setData(forecastRes);
