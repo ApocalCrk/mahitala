@@ -171,10 +171,17 @@ const HargaKomoditas = ({ dataHargaKomoditas }) => {
                                 <p
                                   className={`text-lg font-bold ${textAccent}`}
                                 >
-                                  {item.satuan.toLowerCase().includes("rp") ||
+                                  {/* {item.satuan.toLowerCase().includes("rp") ||
                                   item.hari_ini.toString().includes("Rp")
                                     ? formatCurrency(item.hari_ini)
-                                    : formatNumber(item.hari_ini)}
+                                    : formatNumber(item.hari_ini)} */}
+                                    {/* index-ZQIBr7kr.js:40 TypeError: Cannot read properties of undefined (reading 'toLowerCase') */}
+                                  {item.satuan && item.hari_ini
+                                    ? item.satuan.toLowerCase().includes("rp") ||
+                                      item.hari_ini.toString().includes("Rp")
+                                      ? formatCurrency(item.hari_ini)
+                                      : formatNumber(item.hari_ini)
+                                    : "Data tidak tersedia"}
                                 </p>
                               </div>
 
