@@ -14,7 +14,6 @@ This is the frontend repository for the Weather Prediction System, which integra
 - **Language**: JavaScript (Node.js)
 - **Framework**: Express.js
 - **Database**: MySQL
-- **AI Model**: Python-based `.pkl` model integrated via SQL database insertion and API calls
 
 ## Future Enhancements
 
