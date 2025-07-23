@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 
 import { useUser } from "../utils/userContext";
 import { Modal, LoginForm, RegisterForm } from "../components/auth/ModalAuth";
-import { loginAuth, logoutAuth } from "../hooks/auth/Authentication";
+import { loginAuth, registerAuth, logoutAuth } from "../hooks/auth/Authentication";
 import { generateSecureToken } from "../utils/Constants";
 import { downloadTokenAsFile } from "../utils/organizeKeyFile";
 
